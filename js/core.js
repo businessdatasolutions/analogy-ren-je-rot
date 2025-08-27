@@ -38,9 +38,12 @@ const createDefaultSession = () => ({
     winners: []
   },
   phase2: {
-    patterns: '',
-    archetype: '',
-    templateUsed: null
+    votes: { companyA: 0, companyB: 0 },
+    currentPairIndex: 0,
+    timerLeft: 120,
+    totalVotes: 0,
+    percentageA: 0,
+    percentageB: 0
   },
   phase3: {
     forerunner: '',
@@ -143,12 +146,8 @@ document.addEventListener('alpine:init', () => {
       }))
     },
     
-    // Phase 2 specific data
-    phase2: {
-      patterns: '',
-      archetype: '',
-      templateUsed: null
-    },
+    // Phase 2 specific data - initialized from phase2.js
+    phase2: null,
     
     // Phase 3 specific data
     phase3: {
@@ -191,6 +190,15 @@ document.addEventListener('alpine:init', () => {
         this.timer.duration = this.session.settings.timerDuration;
         this.timer.remaining = this.timer.duration;
         
+        // Initialize Phase 2 functionality
+        if (window.initializePhase2) {
+          this.phase2 = window.initializePhase2();
+          // Load Phase 2 state if it exists
+          if (this.session.phase2) {
+            this.phase2.loadState(this.session.phase2);
+          }
+        }
+        
         // Start auto-save if enabled
         if (this.session.settings.autoSave) {
           this.startAutoSave();
@@ -202,7 +210,7 @@ document.addEventListener('alpine:init', () => {
         console.log('Application initialized successfully', {
           sessionId: this.session.id,
           currentPhase: this.currentPhase,
-          phase2Patterns: this.phase2.patterns
+          phase2Initialized: !!this.phase2
         });
         
       } catch (error) {
@@ -297,13 +305,20 @@ document.addEventListener('alpine:init', () => {
       // Update session object from reactive phase data with deep copy
       this.session.currentPhase = this.currentPhase;
       this.session.phase1 = JSON.parse(JSON.stringify(this.phase1));
-      this.session.phase2 = JSON.parse(JSON.stringify(this.phase2));
+      
+      // Handle Phase 2 data differently since it's a complex object
+      if (this.phase2 && this.phase2.getState) {
+        this.session.phase2 = this.phase2.getState();
+      } else if (this.phase2) {
+        this.session.phase2 = JSON.parse(JSON.stringify(this.phase2));
+      }
+      
       this.session.phase3 = JSON.parse(JSON.stringify(this.phase3));
       this.session.phase4 = JSON.parse(JSON.stringify(this.phase4));
       this.session.settings.timerDuration = this.timer.duration;
       
       console.log('Updated session from phase data', {
-        phase2Patterns: this.session.phase2.patterns,
+        phase2Votes: this.session.phase2?.votes || 'Not available',
         phase3Forerunner: this.session.phase3.forerunner
       });
     },
@@ -355,6 +370,13 @@ document.addEventListener('alpine:init', () => {
     
     markUnsaved() {
       this.saveStatus = 'saving...';
+    },
+    
+    // Format time in MM:SS format
+    formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     },
     
     // Utility function for deep merging objects

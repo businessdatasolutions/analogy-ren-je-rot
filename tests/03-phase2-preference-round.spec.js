@@ -1,0 +1,370 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('Phase 2: Preference Round Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await page.waitForSelector('[x-show="!loading"]', { state: 'visible' });
+    
+    // Navigate to Phase 2
+    await page.click('nav button:has-text("Phase 2")');
+    await page.waitForTimeout(500);
+  });
+
+  test.describe('Timer System', () => {
+    test('timer displays default 2 minutes for voting rounds', async ({ page }) => {
+      // Check initial timer display
+      const timerDisplay = page.locator('[x-text="formatTime(phase2?.timer?.timeLeft || 120)"]');
+      await expect(timerDisplay).toContainText('2:00');
+      
+      // Check timer controls are present
+      await expect(page.locator('button:has-text("Start Timer")')).toBeVisible();
+      await expect(page.locator('button:has-text("Pause")')).toBeVisible();
+      await expect(page.locator('button:has-text("Reset")')).toBeVisible();
+    });
+
+    test('timer can be started and counts down', async ({ page }) => {
+      const startButton = page.locator('button:has-text("Start Timer")');
+      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      
+      await startButton.click();
+      
+      // Wait a moment and check timer decreases
+      await page.waitForTimeout(1100);
+      await expect(timerDisplay).toContainText('1:59');
+      
+      // Check start button is disabled during countdown
+      await expect(startButton).toBeDisabled();
+    });
+
+    test('timer can be paused and resumed', async ({ page }) => {
+      const startButton = page.locator('button:has-text("Start Timer")');
+      const pauseButton = page.locator('button:has-text("Pause")');
+      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      
+      // Start timer
+      await startButton.click();
+      await page.waitForTimeout(1100);
+      
+      // Pause timer
+      await pauseButton.click();
+      const pausedTime = await timerDisplay.textContent();
+      
+      // Wait and verify time doesn't change when paused
+      await page.waitForTimeout(1000);
+      await expect(timerDisplay).toContainText(pausedTime);
+      
+      // Resume timer
+      await startButton.click();
+      await page.waitForTimeout(1100);
+      await expect(timerDisplay).not.toContainText(pausedTime);
+    });
+
+    test('timer can be reset to original time', async ({ page }) => {
+      const startButton = page.locator('button:has-text("Start Timer")');
+      const resetButton = page.locator('button:has-text("Reset")');
+      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      
+      // Start timer and let it run
+      await startButton.click();
+      await page.waitForTimeout(2100);
+      
+      // Reset timer
+      await resetButton.click();
+      await expect(timerDisplay).toContainText('2:00');
+      await expect(startButton).toBeEnabled();
+    });
+
+    test('timer shows completion state when reaching zero', async ({ page }) => {
+      // Set a very short timer for testing
+      await page.evaluate(() => {
+        const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
+        app.timer.timeLeft = 2; // 2 seconds
+      });
+      
+      const startButton = page.locator('button:has-text("Start Timer")');
+      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      
+      await startButton.click();
+      
+      // Wait for timer to complete
+      await page.waitForTimeout(3000);
+      await expect(timerDisplay).toContainText('0:00');
+      
+      // Check timer completion indicators
+      await expect(page.locator('.timer-completed')).toBeVisible();
+    });
+  });
+
+  test.describe('Company Pairs Display', () => {
+    test('displays current company pair with A and B options', async ({ page }) => {
+      // Check company pair display
+      const companyPairDisplay = page.locator('[x-show="currentPhase === 2"]');
+      await expect(companyPairDisplay).toBeVisible();
+      
+      // Check A and B company displays
+      const companyA = page.locator('[x-text="currentPair.companyA"]');
+      const companyB = page.locator('[x-text="currentPair.companyB"]');
+      
+      await expect(companyA).toBeVisible();
+      await expect(companyB).toBeVisible();
+      
+      // Verify companies are different
+      const companyAText = await companyA.textContent();
+      const companyBText = await companyB.textContent();
+      expect(companyAText).not.toBe(companyBText);
+    });
+
+    test('displays pair counter showing current position', async ({ page }) => {
+      const pairCounter = page.locator('[x-text="pairCounter"]');
+      await expect(pairCounter).toBeVisible();
+      
+      // Should show format like "1 / 10"
+      const counterText = await pairCounter.textContent();
+      expect(counterText).toMatch(/^\d+ \/ \d+$/);
+    });
+
+    test('can navigate to next company pair', async ({ page }) => {
+      const nextButton = page.locator('button:has-text("Next Pair")');
+      const pairCounter = page.locator('[x-text="pairCounter"]');
+      
+      // Get initial pair info
+      const initialCounter = await pairCounter.textContent();
+      const initialCompanyA = await page.locator('[x-text="currentPair.companyA"]').textContent();
+      
+      // Click next if available
+      if (await nextButton.isEnabled()) {
+        await nextButton.click();
+        await page.waitForTimeout(500);
+        
+        // Verify pair changed
+        const newCounter = await pairCounter.textContent();
+        const newCompanyA = await page.locator('[x-text="currentPair.companyA"]').textContent();
+        
+        expect(newCounter).not.toBe(initialCounter);
+        expect(newCompanyA).not.toBe(initialCompanyA);
+      }
+    });
+
+    test('can navigate to previous company pair', async ({ page }) => {
+      const nextButton = page.locator('button:has-text("Next Pair")');
+      const prevButton = page.locator('button:has-text("Previous Pair")');
+      const pairCounter = page.locator('[x-text="pairCounter"]');
+      
+      // Go to next pair first
+      if (await nextButton.isEnabled()) {
+        await nextButton.click();
+        await page.waitForTimeout(500);
+        
+        const secondPairCounter = await pairCounter.textContent();
+        
+        // Go back to previous
+        await prevButton.click();
+        await page.waitForTimeout(500);
+        
+        const backToPairCounter = await pairCounter.textContent();
+        expect(backToPairCounter).not.toBe(secondPairCounter);
+      }
+    });
+  });
+
+  test.describe('Voting System', () => {
+    test('displays vote counts for both options', async ({ page }) => {
+      const votesA = page.locator('[x-text="phase2.votes.companyA"]');
+      const votesB = page.locator('[x-text="phase2.votes.companyB"]');
+      
+      await expect(votesA).toBeVisible();
+      await expect(votesB).toBeVisible();
+      
+      // Should start at 0
+      await expect(votesA).toContainText('0');
+      await expect(votesB).toContainText('0');
+    });
+
+    test('can vote for Company A', async ({ page }) => {
+      const voteAButton = page.locator('button:has-text("Vote A")');
+      const votesA = page.locator('[x-text="phase2.votes.companyA"]');
+      
+      await voteAButton.click();
+      await page.waitForTimeout(500);
+      
+      await expect(votesA).toContainText('1');
+    });
+
+    test('can vote for Company B', async ({ page }) => {
+      const voteBButton = page.locator('button:has-text("Vote B")');
+      const votesB = page.locator('[x-text="phase2.votes.companyB"]');
+      
+      await voteBButton.click();
+      await page.waitForTimeout(500);
+      
+      await expect(votesB).toContainText('1');
+    });
+
+    test('vote counts accumulate correctly', async ({ page }) => {
+      const voteAButton = page.locator('button:has-text("Vote A")');
+      const voteBButton = page.locator('button:has-text("Vote B")');
+      const votesA = page.locator('[x-text="phase2.votes.companyA"]');
+      const votesB = page.locator('[x-text="phase2.votes.companyB"]');
+      
+      // Vote for A multiple times
+      await voteAButton.click();
+      await voteAButton.click();
+      await voteAButton.click();
+      
+      // Vote for B once
+      await voteBButton.click();
+      
+      await page.waitForTimeout(500);
+      
+      await expect(votesA).toContainText('3');
+      await expect(votesB).toContainText('1');
+    });
+
+    test('can reset vote counts', async ({ page }) => {
+      const voteAButton = page.locator('button:has-text("Vote A")');
+      const voteBButton = page.locator('button:has-text("Vote B")');
+      const resetButton = page.locator('button:has-text("Reset Votes")');
+      const votesA = page.locator('[x-text="phase2.votes.companyA"]');
+      const votesB = page.locator('[x-text="phase2.votes.companyB"]');
+      
+      // Add some votes
+      await voteAButton.click();
+      await voteBButton.click();
+      await voteBButton.click();
+      
+      // Reset votes
+      await resetButton.click();
+      await page.waitForTimeout(500);
+      
+      await expect(votesA).toContainText('0');
+      await expect(votesB).toContainText('0');
+    });
+  });
+
+  test.describe('Data Persistence', () => {
+    test('vote data persists across page refresh', async ({ page }) => {
+      const voteAButton = page.locator('button:has-text("Vote A")');
+      const voteBButton = page.locator('button:has-text("Vote B")');
+      
+      // Add votes
+      await voteAButton.click();
+      await voteAButton.click();
+      await voteBButton.click();
+      
+      // Wait for auto-save
+      await page.waitForTimeout(3000);
+      
+      // Refresh page
+      await page.reload();
+      await page.waitForSelector('[x-show="!loading"]', { state: 'visible' });
+      
+      // Navigate back to Phase 2
+      await page.click('nav button:has-text("Phase 2")');
+      
+      // Check votes persisted
+      const votesA = page.locator('[x-text="phase2.votes.companyA"]');
+      const votesB = page.locator('[x-text="phase2.votes.companyB"]');
+      
+      await expect(votesA).toContainText('2');
+      await expect(votesB).toContainText('1');
+    });
+
+    test('current pair position persists across page refresh', async ({ page }) => {
+      const nextButton = page.locator('button:has-text("Next Pair")');
+      const pairCounter = page.locator('[x-text="pairCounter"]');
+      
+      // Navigate to next pair if possible
+      if (await nextButton.isEnabled()) {
+        await nextButton.click();
+        await nextButton.click(); // Go to pair 3
+        
+        const pairPosition = await pairCounter.textContent();
+        
+        // Wait for auto-save
+        await page.waitForTimeout(3000);
+        
+        // Refresh page
+        await page.reload();
+        await page.waitForSelector('[x-show="!loading"]', { state: 'visible' });
+        await page.click('nav button:has-text("Phase 2")');
+        
+        // Check position persisted
+        await expect(pairCounter).toContainText(pairPosition);
+      }
+    });
+  });
+
+  test.describe('Phase 2 Integration', () => {
+    test('Phase 2 data updates session object', async ({ page }) => {
+      const voteAButton = page.locator('button:has-text("Vote A")');
+      
+      await voteAButton.click();
+      await page.waitForTimeout(1000);
+      
+      // Check session data includes Phase 2 votes
+      const sessionData = await page.evaluate(() => {
+        const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
+        return app.session.phase2;
+      });
+      
+      expect(sessionData.votes.companyA).toBeGreaterThan(0);
+    });
+
+    test('auto-save triggers on vote changes', async ({ page }) => {
+      const voteAButton = page.locator('button:has-text("Vote A")');
+      const saveStatus = page.locator('[x-text="saveStatus"]');
+      
+      // Check initial save status
+      await expect(saveStatus).toContainText('saved');
+      
+      // Make a vote to trigger unsaved state
+      await voteAButton.click();
+      
+      // Wait for auto-save cycle
+      await page.waitForTimeout(6000);
+      
+      // Should be saved again
+      await expect(saveStatus).toContainText('saved');
+    });
+
+    test('Phase 2 completion allows navigation to Phase 3', async ({ page }) => {
+      // Complete some voting activity
+      const voteAButton = page.locator('button:has-text("Vote A")');
+      await voteAButton.click();
+      
+      // Navigate through all pairs (simulate completion)
+      const nextButton = page.locator('button:has-text("Next Pair")');
+      while (await nextButton.isEnabled()) {
+        await nextButton.click();
+        await page.waitForTimeout(200);
+      }
+      
+      // Check Phase 3 becomes accessible
+      const phase3Button = page.locator('nav button:has-text("Phase 3")');
+      await expect(phase3Button).not.toHaveClass(/opacity-50/);
+    });
+  });
+
+  test.describe('Responsive Design', () => {
+    test('Phase 2 layout works on mobile viewport', async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 667 });
+      
+      // Check key elements are visible
+      await expect(page.locator('[x-text="currentPair.companyA"]')).toBeVisible();
+      await expect(page.locator('[x-text="currentPair.companyB"]')).toBeVisible();
+      await expect(page.locator('button:has-text("Vote A")')).toBeVisible();
+      await expect(page.locator('button:has-text("Vote B")')).toBeVisible();
+    });
+
+    test('timer controls stack properly on small screens', async ({ page }) => {
+      await page.setViewportSize({ width: 320, height: 568 });
+      
+      const timerControls = page.locator('.timer-controls');
+      await expect(timerControls).toBeVisible();
+      
+      // Timer buttons should be accessible
+      await expect(page.locator('button:has-text("Start Timer")')).toBeVisible();
+      await expect(page.locator('button:has-text("Reset")')).toBeVisible();
+    });
+  });
+});
