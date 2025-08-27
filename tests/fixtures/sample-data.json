@@ -1,0 +1,165 @@
+{
+  "session": {
+    "id": "test-session-123",
+    "createdAt": "2025-08-27T10:00:00Z",
+    "facilitator": "Test Facilitator",
+    "participants": 8,
+    "currentPhase": 1
+  },
+  "phase1": {
+    "preferences": {
+      "rounds": [
+        {
+          "id": 1,
+          "pair": ["Netflix", "Blockbuster"],
+          "votes": { "Netflix": 5, "Blockbuster": 3 },
+          "winner": "Netflix",
+          "duration": 30
+        },
+        {
+          "id": 2,
+          "pair": ["Uber", "Traditional Taxi"],
+          "votes": { "Uber": 7, "Traditional Taxi": 1 },
+          "winner": "Uber",
+          "duration": 30
+        },
+        {
+          "id": 3,
+          "pair": ["Amazon", "Barnes & Noble"],
+          "votes": { "Amazon": 6, "Barnes & Noble": 2 },
+          "winner": "Amazon",
+          "duration": 30
+        }
+      ],
+      "winners": ["Netflix", "Uber", "Amazon"]
+    }
+  },
+  "phase2": {
+    "archetype": {
+      "patterns": ["disruption", "digital transformation", "customer experience", "scalability"],
+      "definition": "Companies that leverage technology to fundamentally transform traditional business models and create superior customer experiences.",
+      "templateUsed": "Digital Disruptor",
+      "customizations": ["focus on customer obsession", "platform business model"]
+    }
+  },
+  "phase3": {
+    "decomposition": {
+      "forerunner": "Netflix",
+      "positiveAnalogies": {
+        "businessModel": "Subscription-based recurring revenue with personalized content recommendations",
+        "customers": "Global audience seeking on-demand entertainment with personalized experiences",
+        "goToMarket": "Direct-to-consumer platform with data-driven content creation and acquisition"
+      },
+      "negativeAnalogies": {
+        "marketDifferences": ["Physical inventory constraints", "Geographic distribution limitations", "Content licensing complexities"],
+        "uniqueAssets": ["Original content creation capabilities", "Global streaming infrastructure", "Advanced recommendation algorithms"]
+      },
+      "causalRelationships": [
+        {
+          "factor": "Data-driven personalization",
+          "outcome": "Increased user engagement and retention",
+          "strength": "strong",
+          "explanation": "Personalized recommendations lead to more viewing time and lower churn rates"
+        },
+        {
+          "factor": "Original content investment",
+          "outcome": "Reduced licensing dependencies",
+          "strength": "medium",
+          "explanation": "Exclusive content reduces reliance on third-party licensing but requires significant upfront investment"
+        }
+      ]
+    }
+  },
+  "phase4": {
+    "translation": {
+      "hypotheses": [
+        {
+          "id": 1,
+          "premise": "Our company invests heavily in data analytics and personalization technology",
+          "conclusion": "We will achieve higher customer retention and engagement rates",
+          "priority": 9,
+          "confidence": 8,
+          "template": "Technology Investment"
+        },
+        {
+          "id": 2,
+          "premise": "We develop proprietary content/products instead of relying solely on third-party offerings",
+          "conclusion": "We will gain competitive differentiation and reduce supply chain dependencies",
+          "priority": 7,
+          "confidence": 6,
+          "template": "Vertical Integration"
+        }
+      ],
+      "actionItems": [
+        {
+          "id": 1,
+          "task": "Conduct market research on personalization technology vendors",
+          "owner": "Product Team",
+          "deadline": "2025-09-15",
+          "successCriteria": "Identified 3-5 potential vendors with cost estimates and implementation timelines"
+        },
+        {
+          "id": 2,
+          "task": "Develop business case for original content/product development",
+          "owner": "Strategy Team",
+          "deadline": "2025-09-30",
+          "successCriteria": "ROI analysis and resource requirements for in-house development vs. third-party partnerships"
+        }
+      ]
+    }
+  },
+  "companyPairs": [
+    ["Netflix", "Blockbuster"],
+    ["Uber", "Traditional Taxi"],
+    ["Amazon", "Barnes & Noble"],
+    ["Tesla", "Ford"],
+    ["Airbnb", "Hilton"],
+    ["Spotify", "Record Stores"],
+    ["Google", "Yellow Pages"],
+    ["Facebook", "Newspapers"],
+    ["WhatsApp", "SMS"],
+    ["Zoom", "Conference Rooms"],
+    ["PayPal", "Bank Transfers"],
+    ["Instagram", "Photo Albums"],
+    ["YouTube", "TV Networks"],
+    ["LinkedIn", "Headhunters"],
+    ["Dropbox", "USB Drives"]
+  ],
+  "archetypeTemplates": [
+    {
+      "name": "Digital Disruptor",
+      "description": "Companies that use technology to fundamentally change traditional industries",
+      "patterns": ["technology adoption", "customer experience", "efficiency gains"],
+      "examples": ["Netflix", "Uber", "Amazon"]
+    },
+    {
+      "name": "Platform Builder",
+      "description": "Companies that create ecosystems connecting multiple parties",
+      "patterns": ["network effects", "marketplace dynamics", "scalability"],
+      "examples": ["Facebook", "Amazon Marketplace", "Airbnb"]
+    },
+    {
+      "name": "Data-Driven Optimizer",
+      "description": "Companies that leverage data analytics for competitive advantage",
+      "patterns": ["analytics", "personalization", "predictive insights"],
+      "examples": ["Google", "Netflix", "Spotify"]
+    }
+  ],
+  "guidedQuestions": {
+    "phase2": [
+      "What common patterns do you see across the winning companies?",
+      "How do these companies approach customer relationships differently?",
+      "What role does technology play in their success?"
+    ],
+    "phase3": [
+      "What specific capabilities enabled the forerunner's success?",
+      "How did they overcome traditional industry constraints?",
+      "What unique assets or advantages do they possess?"
+    ],
+    "phase4": [
+      "Which insights are most applicable to your current situation?",
+      "What would need to change in your organization to apply these lessons?",
+      "What are the highest-impact actions you could take immediately?"
+    ]
+  }
+}

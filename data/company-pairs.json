@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "category": "Platform vs Integrated Product",
+    "companyA": {
+      "name": "Android",
+      "description": "Open platform ecosystem with multiple hardware partners",
+      "characteristics": ["Open platform", "Multiple partners", "Customizable", "Wide reach"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Apple iOS",
+      "description": "Closed, integrated hardware-software ecosystem",
+      "characteristics": ["Closed ecosystem", "Integrated design", "Premium experience", "Controlled quality"],
+      "logo": null
+    }
+  },
+  {
+    "id": 2,
+    "category": "Disruptive Innovation vs Operational Excellence",
+    "companyA": {
+      "name": "Tesla",
+      "description": "Revolutionary electric vehicle and energy company",
+      "characteristics": ["Disruptive innovation", "Electric first", "Software-defined", "Direct sales"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Toyota",
+      "description": "Reliable, efficient automotive manufacturing excellence",
+      "characteristics": ["Operational excellence", "Lean manufacturing", "Reliability", "Dealer network"],
+      "logo": null
+    }
+  },
+  {
+    "id": 3,
+    "category": "Brand-driven vs Price-driven",
+    "companyA": {
+      "name": "Nike",
+      "description": "Premium athletic brand with emotional connection",
+      "characteristics": ["Premium brand", "Emotional marketing", "Athlete endorsements", "Innovation focus"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Decathlon",
+      "description": "Accessible sports equipment for everyone",
+      "characteristics": ["Value pricing", "Accessibility", "Wide range", "House brands"],
+      "logo": null
+    }
+  },
+  {
+    "id": 4,
+    "category": "Niche Specialist vs Broad Generalist",
+    "companyA": {
+      "name": "VanMoof",
+      "description": "Premium smart e-bikes for urban professionals",
+      "characteristics": ["Niche focus", "Premium positioning", "Smart features", "Urban design"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Gazelle",
+      "description": "Traditional Dutch bicycles for all segments",
+      "characteristics": ["Broad market", "Traditional design", "Multiple segments", "Established brand"],
+      "logo": null
+    }
+  },
+  {
+    "id": 5,
+    "category": "Software vs Hardware Focus",
+    "companyA": {
+      "name": "Microsoft",
+      "description": "Software and cloud services platform leader",
+      "characteristics": ["Software focus", "Cloud services", "Platform strategy", "Developer ecosystem"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Intel",
+      "description": "Hardware innovation and manufacturing excellence",
+      "characteristics": ["Hardware innovation", "Manufacturing", "Technology leadership", "B2B focus"],
+      "logo": null
+    }
+  },
+  {
+    "id": 6,
+    "category": "Direct-to-Consumer vs Retail Partnerships",
+    "companyA": {
+      "name": "Warby Parker",
+      "description": "Direct-to-consumer eyewear with online-first approach",
+      "characteristics": ["Direct sales", "Online first", "Vertical integration", "Brand control"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Ray-Ban",
+      "description": "Traditional retail distribution through partners",
+      "characteristics": ["Retail partnerships", "Broad distribution", "Traditional channels", "Wholesale model"],
+      "logo": null
+    }
+  },
+  {
+    "id": 7,
+    "category": "Subscription vs One-time Purchase",
+    "companyA": {
+      "name": "Netflix",
+      "description": "Subscription-based streaming entertainment platform",
+      "characteristics": ["Subscription model", "Recurring revenue", "Content investment", "Platform approach"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Disney Movies",
+      "description": "Traditional movie releases with one-time purchases",
+      "characteristics": ["One-time purchase", "Theatrical releases", "Physical media", "Licensing revenue"],
+      "logo": null
+    }
+  },
+  {
+    "id": 8,
+    "category": "Global Scale vs Local Focus",
+    "companyA": {
+      "name": "McDonald's",
+      "description": "Global fast-food chain with standardized operations",
+      "characteristics": ["Global scale", "Standardization", "Franchise model", "Consistent experience"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Local Artisan Cafe",
+      "description": "Community-focused coffee shop with local character",
+      "characteristics": ["Local focus", "Community connection", "Artisanal approach", "Unique character"],
+      "logo": null
+    }
+  },
+  {
+    "id": 9,
+    "category": "Technology-first vs Human-first",
+    "companyA": {
+      "name": "Amazon",
+      "description": "Technology and automation-driven commerce platform",
+      "characteristics": ["Technology focus", "Automation", "Data-driven", "Efficiency optimization"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "Nordstrom",
+      "description": "Premium customer service and personal relationships",
+      "characteristics": ["Human touch", "Personal service", "Relationship building", "Customer experience"],
+      "logo": null
+    }
+  },
+  {
+    "id": 10,
+    "category": "Asset-light vs Asset-heavy",
+    "companyA": {
+      "name": "Uber",
+      "description": "Platform connecting drivers and riders without owning vehicles",
+      "characteristics": ["Asset-light", "Platform model", "Network effects", "Scalable technology"],
+      "logo": null
+    },
+    "companyB": {
+      "name": "FedEx",
+      "description": "Logistics company owning planes, trucks, and facilities",
+      "characteristics": ["Asset-heavy", "Infrastructure investment", "Operational control", "Capacity ownership"],
+      "logo": null
+    }
+  }
+]

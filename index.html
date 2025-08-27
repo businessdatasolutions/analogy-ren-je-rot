@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="nl" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analogy Game Facilitator - Het Ren-Je-Rot-Analogie-Verkenner-spel</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Supporting Libraries -->
+    <script src="https://unpkg.com/localforage@1.10.0/dist/localforage.min.js"></script>
+    <script src="https://unpkg.com/hotkeys-js@3.10.3/dist/hotkeys.esm.js" type="module"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .timer-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-button {
+            animation: pulse 2s infinite;
+        }
+        
+        @media (min-width: 1024px) {
+            .presentation-mode .control-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full font-sans antialiased" x-data="gameApp">
+    <!-- Loading Screen -->
+    <div x-show="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Loading Analogy Game Facilitator...</p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div x-show="!loading" class="h-full flex flex-col">
+        
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <!-- Logo & Title -->
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            <h1 class="text-xl font-bold text-gray-900">Analogy Game Facilitator</h1>
+                            <p class="text-sm text-gray-500">Het Ren-Je-Rot-Analogie-Verkenner-spel</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Session Info & Controls -->
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right text-sm">
+                            <p class="font-medium text-gray-900" x-text="session.teamName || 'New Session'"></p>
+                            <p class="text-gray-500" x-text="session.facilitator || 'No Facilitator'"></p>
+                        </div>
+                        
+                        <!-- Phase Navigation -->
+                        <nav class="flex space-x-2">
+                            <template x-for="(phase, index) in phases" :key="index">
+                                <button 
+                                    @click="setCurrentPhase(index + 1)"
+                                    :class="currentPhase === (index + 1) ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                    class="px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                                    x-text="'Phase ' + (index + 1)"
+                                ></button>
+                            </template>
+                        </nav>
+                        
+                        <!-- Utility Buttons -->
+                        <div class="flex items-center space-x-2">
+                            <button @click="presentationMode = !presentationMode" 
+                                    :class="presentationMode ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'"
+                                    class="px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors">
+                                <span x-show="!presentationMode">Present</span>
+                                <span x-show="presentationMode">Control</span>
+                            </button>
+                            
+                            <button @click="showSessionModal = true" 
+                                    class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
+                                Settings
+                            </button>
+                            
+                            <button @click="exportSession()" 
+                                    class="px-3 py-2 bg-primary-600 text-white rounded-md text-sm font-medium hover:bg-primary-700 transition-colors">
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex" :class="presentationMode ? 'presentation-mode' : ''">
+            
+            <!-- Control Panel (Hidden in presentation mode) -->
+            <aside class="control-panel w-80 bg-white border-r border-gray-200 flex flex-col">
+                <!-- Phase Selector -->
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold mb-3" x-text="phases[currentPhase - 1]?.title"></h2>
+                    <p class="text-sm text-gray-600" x-text="phases[currentPhase - 1]?.description"></p>
+                </div>
+                
+                <!-- Phase-specific Controls -->
+                <div class="flex-1 overflow-y-auto p-4">
+                    <!-- Phase 1: Preference Round Controls -->
+                    <div x-show="currentPhase === 1" class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Current Round</h3>
+                            <p class="text-sm text-gray-600 mb-2">Round <span x-text="phase1.currentRound + 1"></span> of <span x-text="phase1.companyPairs.length"></span></p>
+                            
+                            <div class="flex space-x-2">
+                                <button @click="previousRound()" 
+                                        :disabled="phase1.currentRound === 0"
+                                        class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Previous
+                                </button>
+                                <button @click="nextRound()" 
+                                        :disabled="phase1.currentRound >= phase1.companyPairs.length - 1"
+                                        class="px-3 py-1 bg-primary-600 text-white rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Timer</h3>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="text-2xl font-bold" x-text="timer.remaining"></span>
+                                <span class="text-gray-500">seconds</span>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button @click="startTimer()" 
+                                        :disabled="timer.running"
+                                        class="px-3 py-1 bg-green-600 text-white rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Start
+                                </button>
+                                <button @click="pauseTimer()" 
+                                        :disabled="!timer.running"
+                                        class="px-3 py-1 bg-yellow-600 text-white rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Pause
+                                </button>
+                                <button @click="resetTimer()" 
+                                        class="px-3 py-1 bg-gray-600 text-white rounded text-sm">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Vote Counting</h3>
+                            <div x-show="phase1.companyPairs[phase1.currentRound]" class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm" x-text="phase1.companyPairs[phase1.currentRound]?.companyA.name"></span>
+                                    <div class="flex items-center space-x-2">
+                                        <button @click="adjustVote('A', -1)" class="w-6 h-6 bg-red-500 text-white rounded-full text-xs">-</button>
+                                        <span class="w-8 text-center font-medium" x-text="phase1.results[phase1.currentRound]?.votesA || 0"></span>
+                                        <button @click="adjustVote('A', 1)" class="w-6 h-6 bg-green-500 text-white rounded-full text-xs">+</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm" x-text="phase1.companyPairs[phase1.currentRound]?.companyB.name"></span>
+                                    <div class="flex items-center space-x-2">
+                                        <button @click="adjustVote('B', -1)" class="w-6 h-6 bg-red-500 text-white rounded-full text-xs">-</button>
+                                        <span class="w-8 text-center font-medium" x-text="phase1.results[phase1.currentRound]?.votesB || 0"></span>
+                                        <button @click="adjustVote('B', 1)" class="w-6 h-6 bg-green-500 text-white rounded-full text-xs">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Scorecard -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Scorecard</h3>
+                            <div class="space-y-1 text-xs">
+                                <template x-for="(result, index) in phase1.results" :key="index">
+                                    <div class="flex justify-between items-center py-1 border-b border-gray-200 last:border-b-0">
+                                        <span x-text="'Round ' + (index + 1)"></span>
+                                        <span class="font-medium text-green-600" x-text="result.winner"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 2: Archetype Analysis Controls -->
+                    <div x-show="currentPhase === 2" class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Winners Summary</h3>
+                            <div class="space-y-1 text-sm">
+                                <template x-for="winner in getWinners()" :key="winner">
+                                    <div class="py-1 px-2 bg-white rounded border" x-text="winner"></div>
+                                </template>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Guided Analysis</h3>
+                            <div class="space-y-3 text-sm">
+                                <button @click="showGuidedPrompts = !showGuidedPrompts" 
+                                        class="w-full px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                    <span x-show="!showGuidedPrompts">Show Guided Questions</span>
+                                    <span x-show="showGuidedPrompts">Hide Guided Questions</span>
+                                </button>
+                                
+                                <div x-show="showGuidedPrompts" class="space-y-2 p-3 bg-white rounded border">
+                                    <p class="font-medium text-blue-800">Discussion Prompts:</p>
+                                    <ul class="space-y-1 text-xs text-blue-700">
+                                        <li>• What business model characteristics do they share?</li>
+                                        <li>• How do they approach their customers?</li>
+                                        <li>• What defines their innovation and design approach?</li>
+                                        <li>• How do they position themselves in the market?</li>
+                                        <li>• What makes their brand identity unique?</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Pattern Keywords</h3>
+                            <textarea x-model="phase2.patterns" 
+                                      placeholder="Enter patterns separated by commas (e.g., premium brand, direct customer connection, integrated design)..."
+                                      class="w-full p-2 border border-gray-300 rounded text-sm resize-none"
+                                      rows="3"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Separate keywords with commas</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Archetype Templates</h3>
+                            <select @change="applyArchetypeTemplate($event.target.value)" 
+                                    class="w-full p-2 border border-gray-300 rounded text-sm mb-2">
+                                <option value="">Choose a template...</option>
+                                <option value="disruptor">Disruptive Innovator</option>
+                                <option value="premium">Premium Brand Leader</option>
+                                <option value="platform">Platform Orchestrator</option>
+                                <option value="integrated">Integrated Solution Provider</option>
+                                <option value="customer">Customer-Centric Pioneer</option>
+                            </select>
+                            
+                            <textarea x-model="phase2.archetype" 
+                                      placeholder="Define the strategic archetype in 2-3 sentences..."
+                                      class="w-full p-2 border border-gray-300 rounded text-sm resize-none"
+                                      rows="4"></textarea>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>Keep it concise: 2-3 sentences</span>
+                                <span x-text="phase2.archetype.length + ' characters'"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 3: Decomposition Controls -->
+                    <div x-show="currentPhase === 3" class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Select Forerunner</h3>
+                            <select x-model="phase3.forerunner" class="w-full p-2 border border-gray-300 rounded text-sm mb-2">
+                                <option value="">Choose a company...</option>
+                                <template x-for="winner in getWinners()" :key="winner">
+                                    <option :value="winner" x-text="winner"></option>
+                                </template>
+                            </select>
+                            <p class="text-xs text-gray-500" x-show="!phase3.forerunner">Select the most representative company for deep analysis</p>
+                            <p class="text-xs text-green-600" x-show="phase3.forerunner" x-text="'Analyzing: ' + phase3.forerunner"></p>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4" x-show="phase3.forerunner">
+                            <h3 class="font-medium mb-2">Add Analysis Items</h3>
+                            <div class="space-y-2">
+                                <button @click="addPositiveAnalogy()" 
+                                        class="w-full px-3 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700">
+                                    + Positive Analogy
+                                </button>
+                                <button @click="addNegativeAnalogy()" 
+                                        class="w-full px-3 py-2 bg-red-600 text-white rounded text-sm hover:bg-red-700">
+                                    + Negative Analogy
+                                </button>
+                                <button @click="addCausalRelation()" 
+                                        class="w-full px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+                                    + Causal Relation
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Analysis Progress</h3>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between">
+                                    <span>Positive Analogies</span>
+                                    <span class="text-green-600" x-text="phase3.positiveAnalogies.length + ' items'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Negative Analogies</span>
+                                    <span class="text-red-600" x-text="phase3.negativeAnalogies.length + ' items'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Causal Relations</span>
+                                    <span class="text-blue-600" x-text="phase3.causalRelations.length + ' items'"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4" x-show="phase3.forerunner">
+                            <h3 class="font-medium mb-2">Guided Questions</h3>
+                            <div class="space-y-2 text-xs text-gray-700">
+                                <div class="p-2 bg-green-50 rounded border border-green-200">
+                                    <p class="font-medium text-green-800">Positive Analogies:</p>
+                                    <p>What business model elements are similar to ours?</p>
+                                </div>
+                                <div class="p-2 bg-red-50 rounded border border-red-200">
+                                    <p class="font-medium text-red-800">Negative Analogies:</p>
+                                    <p>What fundamental differences exist?</p>
+                                </div>
+                                <div class="p-2 bg-blue-50 rounded border border-blue-200">
+                                    <p class="font-medium text-blue-800">Causal Relations:</p>
+                                    <p>Which factors lead directly to their success?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 4: Translation Controls -->
+                    <div x-show="currentPhase === 4" class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Strategic Hypotheses</h3>
+                            <button @click="addHypothesis()" 
+                                    class="w-full px-3 py-2 bg-primary-600 text-white rounded text-sm hover:bg-primary-700 mb-3">
+                                + Add New Hypothesis
+                            </button>
+                            
+                            <div class="space-y-2 text-xs">
+                                <template x-for="(hypothesis, index) in phase4.hypotheses" :key="index">
+                                    <div class="flex justify-between items-center py-2 px-3 bg-white rounded border">
+                                        <div class="flex-1">
+                                            <span class="font-medium" x-text="'Hypothesis ' + (index + 1)"></span>
+                                            <p class="text-gray-600 mt-1 text-xs" 
+                                               x-text="hypothesis.statement ? (hypothesis.statement.substring(0, 50) + '...') : 'Not defined'"></p>
+                                        </div>
+                                        <button @click="removeHypothesis(index)" 
+                                                class="text-red-500 hover:text-red-700 ml-2">✕</button>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <div x-show="phase4.hypotheses.length === 0" class="text-center py-4 text-gray-500 text-xs">
+                                No hypotheses created yet
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Hypothesis Templates</h3>
+                            <select @change="applyHypothesisTemplate($event.target.value)" 
+                                    class="w-full p-2 border border-gray-300 rounded text-sm mb-2">
+                                <option value="">Choose a template...</option>
+                                <option value="platform">Platform Strategy</option>
+                                <option value="premium">Premium Positioning</option>
+                                <option value="ecosystem">Ecosystem Building</option>
+                                <option value="innovation">Innovation Focus</option>
+                                <option value="customer">Customer-Centric</option>
+                            </select>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Action Items</h3>
+                            <button @click="addActionItem()" 
+                                    class="w-full px-3 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700 mb-3">
+                                + Add Action Item
+                            </button>
+                            
+                            <div class="space-y-2 text-xs">
+                                <template x-for="(action, index) in phase4.actionItems" :key="index">
+                                    <div class="flex justify-between items-center py-2 px-3 bg-white rounded border">
+                                        <div class="flex-1">
+                                            <span class="font-medium" x-text="action.task || 'New Action'"></span>
+                                            <p class="text-gray-600 text-xs" x-text="action.owner ? 'Owner: ' + action.owner : 'No owner assigned'"></p>
+                                        </div>
+                                        <button @click="removeActionItem(index)" 
+                                                class="text-red-500 hover:text-red-700 ml-2">✕</button>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <div x-show="phase4.actionItems.length === 0" class="text-center py-4 text-gray-500 text-xs">
+                                No action items created yet
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-medium mb-2">Session Summary</h3>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between">
+                                    <span>Archetype Defined:</span>
+                                    <span :class="phase2.archetype ? 'text-green-600' : 'text-gray-500'" 
+                                          x-text="phase2.archetype ? '✓ Yes' : 'Not yet'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Forerunner Analyzed:</span>
+                                    <span :class="phase3.forerunner ? 'text-green-600' : 'text-gray-500'" 
+                                          x-text="phase3.forerunner || 'Not selected'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Hypotheses Created:</span>
+                                    <span class="text-blue-600" x-text="phase4.hypotheses.length"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Actions Planned:</span>
+                                    <span class="text-green-600" x-text="phase4.actionItems.length"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Save Status -->
+                <div class="p-4 border-t border-gray-200 bg-gray-50">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">Auto-save</span>
+                        <span :class="saveStatus === 'saved' ? 'text-green-600' : 'text-yellow-600'" 
+                              x-text="saveStatus"></span>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Presentation Area -->
+            <section class="flex-1 bg-white flex flex-col">
+                <!-- Phase 1: Company Pair Presentation -->
+                <div x-show="currentPhase === 1" class="flex-1 flex">
+                    <!-- Company Pair Display -->
+                    <div x-show="phase1.companyPairs[phase1.currentRound]" class="w-full flex">
+                        <!-- Company A -->
+                        <div class="w-1/2 bg-blue-50 flex flex-col items-center justify-center p-8 border-r-2 border-gray-300">
+                            <div class="text-center">
+                                <h2 class="text-4xl font-bold mb-4 text-blue-900" 
+                                    x-text="phase1.companyPairs[phase1.currentRound]?.companyA.name"></h2>
+                                <p class="text-lg text-blue-700 mb-6" 
+                                   x-text="phase1.companyPairs[phase1.currentRound]?.companyA.description"></p>
+                                <div class="text-6xl font-bold text-blue-600" 
+                                     x-text="phase1.results[phase1.currentRound]?.votesA || 0"></div>
+                                <p class="text-blue-600 mt-2">votes</p>
+                            </div>
+                        </div>
+                        
+                        <!-- VS Divider with Timer -->
+                        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-full p-4 border-4 border-gray-300 z-10">
+                            <div class="relative w-16 h-16">
+                                <!-- Timer Ring -->
+                                <svg class="w-16 h-16 timer-ring" viewBox="0 0 64 64">
+                                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
+                                    <circle cx="32" cy="32" r="28" 
+                                            :stroke="timer.remaining <= 5 ? '#dc2626' : timer.remaining <= 10 ? '#f59e0b' : '#059669'"
+                                            stroke-width="4" fill="none" stroke-linecap="round"
+                                            :stroke-dasharray="175.84"
+                                            :stroke-dashoffset="175.84 - (175.84 * timer.remaining / timer.duration)"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-lg font-bold" x-text="timer.remaining"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Company B -->
+                        <div class="w-1/2 bg-green-50 flex flex-col items-center justify-center p-8">
+                            <div class="text-center">
+                                <h2 class="text-4xl font-bold mb-4 text-green-900" 
+                                    x-text="phase1.companyPairs[phase1.currentRound]?.companyB.name"></h2>
+                                <p class="text-lg text-green-700 mb-6" 
+                                   x-text="phase1.companyPairs[phase1.currentRound]?.companyB.description"></p>
+                                <div class="text-6xl font-bold text-green-600" 
+                                     x-text="phase1.results[phase1.currentRound]?.votesB || 0"></div>
+                                <p class="text-green-600 mt-2">votes</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Question Overlay -->
+                    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-95 rounded-lg p-6 shadow-lg">
+                        <h3 class="text-2xl font-semibold text-center text-gray-900">
+                            Wie willen we liever zijn?
+                        </h3>
+                    </div>
+                </div>
+                
+                <!-- Phase 2: Archetype Analysis Display -->
+                <div x-show="currentPhase === 2" class="flex-1 p-8">
+                    <div class="max-w-6xl mx-auto">
+                        <!-- Winners Section -->
+                        <div class="mb-8">
+                            <h2 class="text-3xl font-bold text-center mb-6">Winning Companies</h2>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <template x-for="winner in getWinners()" :key="winner">
+                                    <div class="bg-white rounded-lg shadow-md p-4 border-2 border-green-200 text-center">
+                                        <h3 class="text-lg font-semibold text-green-800" x-text="winner"></h3>
+                                    </div>
+                                </template>
+                            </div>
+                            <p class="text-center text-gray-600 text-lg">
+                                What patterns do you see? What do these organizations have in common?
+                            </p>
+                        </div>
+                        
+                        <!-- Pattern Analysis Section -->
+                        <div x-show="phase2.patterns" class="mb-8">
+                            <h3 class="text-2xl font-semibold mb-4">Identified Patterns</h3>
+                            <div class="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <template x-for="pattern in phase2.patterns.split(',').filter(p => p.trim())" :key="pattern">
+                                        <div class="bg-white rounded px-3 py-2 text-center shadow-sm">
+                                            <span class="text-blue-800 font-medium" x-text="pattern.trim()"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Strategic Archetype Definition -->
+                        <div class="bg-gradient-to-br from-primary-50 to-blue-50 rounded-lg p-8 border border-primary-200">
+                            <h3 class="text-2xl font-semibold mb-4 text-center text-primary-800">
+                                Strategic Archetype
+                            </h3>
+                            <div class="bg-white rounded-lg p-6 shadow-sm">
+                                <p class="text-lg leading-relaxed text-center" 
+                                   x-text="phase2.archetype || 'Archetype definition in progress...'"
+                                   :class="phase2.archetype ? 'text-gray-900' : 'text-gray-500 italic'">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Phase 3: Decomposition Display -->
+                <div x-show="currentPhase === 3" class="flex-1 p-8 overflow-y-auto">
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-3xl font-bold text-center mb-8">
+                            Decomposition Analysis: <span x-text="phase3.forerunner || 'Select Forerunner'" class="text-primary-600"></span>
+                        </h2>
+                        
+                        <div x-show="!phase3.forerunner" class="text-center py-12">
+                            <p class="text-gray-500 text-lg">Select a forerunner company from the control panel to begin analysis</p>
+                        </div>
+                        
+                        <div x-show="phase3.forerunner" class="space-y-8">
+                            <!-- Positive Analogies Section -->
+                            <div>
+                                <h3 class="text-2xl font-semibold mb-4 text-green-700">
+                                    Positive Analogies <span class="text-sm text-gray-500">({phase3.positiveAnalogies.length} similarities identified)</span>
+                                </h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <template x-for="(analogy, index) in phase3.positiveAnalogies" :key="index">
+                                        <div class="bg-green-50 rounded-lg p-4 border border-green-200 relative group">
+                                            <button @click="removePositiveAnalogy(index)" 
+                                                    class="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                ✕
+                                            </button>
+                                            <div class="pr-8">
+                                                <input x-model="analogy.category" 
+                                                       placeholder="Category (e.g., Business Model, Customer Approach)"
+                                                       class="w-full font-medium text-green-800 bg-transparent border-none p-0 mb-2 placeholder-green-600">
+                                                <textarea x-model="analogy.description" 
+                                                          placeholder="Describe the similarity in detail..."
+                                                          class="w-full text-green-700 text-sm bg-transparent border-none p-0 resize-none placeholder-green-500"
+                                                          rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div x-show="phase3.positiveAnalogies.length === 0" class="text-center py-8 text-green-600 border-2 border-dashed border-green-300 rounded-lg">
+                                    No positive analogies added yet. Use the control panel to add similarities.
+                                </div>
+                            </div>
+                            
+                            <!-- Negative Analogies Section -->
+                            <div>
+                                <h3 class="text-2xl font-semibold mb-4 text-red-700">
+                                    Negative Analogies <span class="text-sm text-gray-500">({phase3.negativeAnalogies.length} differences identified)</span>
+                                </h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <template x-for="(analogy, index) in phase3.negativeAnalogies" :key="index">
+                                        <div class="bg-red-50 rounded-lg p-4 border border-red-200 relative group">
+                                            <button @click="removeNegativeAnalogy(index)" 
+                                                    class="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                ✕
+                                            </button>
+                                            <div class="pr-8">
+                                                <input x-model="analogy.category" 
+                                                       placeholder="Category (e.g., Market Context, Technology)"
+                                                       class="w-full font-medium text-red-800 bg-transparent border-none p-0 mb-2 placeholder-red-600">
+                                                <textarea x-model="analogy.description" 
+                                                          placeholder="Describe the key difference..."
+                                                          class="w-full text-red-700 text-sm bg-transparent border-none p-0 resize-none placeholder-red-500"
+                                                          rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div x-show="phase3.negativeAnalogies.length === 0" class="text-center py-8 text-red-600 border-2 border-dashed border-red-300 rounded-lg">
+                                    No negative analogies added yet. Use the control panel to add differences.
+                                </div>
+                            </div>
+                            
+                            <!-- Causal Relations Section -->
+                            <div>
+                                <h3 class="text-2xl font-semibold mb-4 text-blue-700">
+                                    Causal Relations <span class="text-sm text-gray-500">({phase3.causalRelations.length} connections mapped)</span>
+                                </h3>
+                                <div class="space-y-4">
+                                    <template x-for="(relation, index) in phase3.causalRelations" :key="index">
+                                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200 relative group">
+                                            <button @click="removeCausalRelation(index)" 
+                                                    class="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                ✕
+                                            </button>
+                                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center pr-8">
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-xs text-blue-600 mb-1">Factor (Premise)</label>
+                                                    <textarea x-model="relation.factor" 
+                                                              placeholder="What specific factor or capability..."
+                                                              class="w-full text-blue-800 bg-white border border-blue-300 rounded p-2 text-sm resize-none"
+                                                              rows="2"></textarea>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-2xl text-blue-600">→</div>
+                                                    <select x-model="relation.strength" class="text-xs bg-white border border-blue-300 rounded px-1 py-1 text-blue-700">
+                                                        <option value="weak">Weak</option>
+                                                        <option value="medium">Medium</option>
+                                                        <option value="strong">Strong</option>
+                                                    </select>
+                                                </div>
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-xs text-blue-600 mb-1">Outcome (Conclusion)</label>
+                                                    <textarea x-model="relation.outcome" 
+                                                              placeholder="Leads to what business result..."
+                                                              class="w-full text-blue-800 bg-white border border-blue-300 rounded p-2 text-sm resize-none"
+                                                              rows="2"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div x-show="phase3.causalRelations.length === 0" class="text-center py-8 text-blue-600 border-2 border-dashed border-blue-300 rounded-lg">
+                                    No causal relations mapped yet. Use the control panel to add cause-effect relationships.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Phase 4: Strategic Translation Display -->
+                <div x-show="currentPhase === 4" class="flex-1 p-8 overflow-y-auto">
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-3xl font-bold text-center mb-8">Strategic Translation</h2>
+                        
+                        <!-- Strategic Hypotheses Section -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6">
+                                Strategic Hypotheses <span class="text-sm text-gray-500">({phase4.hypotheses.length} hypotheses formulated)</span>
+                            </h3>
+                            
+                            <div class="space-y-6">
+                                <template x-for="(hypothesis, index) in phase4.hypotheses" :key="index">
+                                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-primary-500 relative group">
+                                        <button @click="removeHypothesis(index)" 
+                                                class="absolute top-4 right-4 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            ✕
+                                        </button>
+                                        
+                                        <div class="pr-8">
+                                            <h4 class="text-lg font-semibold mb-4 text-primary-800" x-text="'Hypothesis ' + (index + 1)"></h4>
+                                            
+                                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                                <!-- Premise (IF) Section -->
+                                                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                                    <label class="block text-sm font-medium text-blue-800 mb-2">
+                                                        IF (Premise) - What we will implement:
+                                                    </label>
+                                                    <textarea x-model="hypothesis.premise" 
+                                                              placeholder="IF we implement/adopt/build..."
+                                                              class="w-full p-3 border border-blue-300 rounded text-sm resize-none bg-white"
+                                                              rows="3"></textarea>
+                                                </div>
+                                                
+                                                <!-- Conclusion (THEN) Section -->
+                                                <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                                                    <label class="block text-sm font-medium text-green-800 mb-2">
+                                                        THEN (Conclusion) - Expected outcome:
+                                                    </label>
+                                                    <textarea x-model="hypothesis.conclusion" 
+                                                              placeholder="THEN we expect to achieve..."
+                                                              class="w-full p-3 border border-green-300 rounded text-sm resize-none bg-white"
+                                                              rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Full Statement -->
+                                            <div class="mt-4">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                    Complete Hypothesis Statement:
+                                                </label>
+                                                <textarea x-model="hypothesis.statement" 
+                                                          :placeholder="'IF ' + (hypothesis.premise || '[premise]') + ' THEN ' + (hypothesis.conclusion || '[conclusion]')"
+                                                          class="w-full p-3 border border-gray-300 rounded text-sm resize-none bg-gray-50"
+                                                          rows="2"></textarea>
+                                            </div>
+                                            
+                                            <!-- Priority and Notes -->
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Priority:</label>
+                                                    <select x-model="hypothesis.priority" class="w-full p-2 border border-gray-300 rounded text-sm bg-white">
+                                                        <option value="high">High Priority</option>
+                                                        <option value="medium">Medium Priority</option>
+                                                        <option value="low">Low Priority</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Confidence:</label>
+                                                    <select x-model="hypothesis.confidence" class="w-full p-2 border border-gray-300 rounded text-sm bg-white">
+                                                        <option value="high">High Confidence</option>
+                                                        <option value="medium">Medium Confidence</option>
+                                                        <option value="low">Low Confidence</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <div x-show="phase4.hypotheses.length === 0" class="text-center py-12 text-primary-600 border-2 border-dashed border-primary-300 rounded-lg">
+                                No strategic hypotheses created yet. Use the control panel to add hypotheses.
+                            </div>
+                        </div>
+                        
+                        <!-- Action Items Section -->
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-6">
+                                Next Actions <span class="text-sm text-gray-500">({phase4.actionItems.length} actions planned)</span>
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <template x-for="(action, index) in phase4.actionItems" :key="index">
+                                    <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200 relative group">
+                                        <button @click="removeActionItem(index)" 
+                                                class="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            ✕
+                                        </button>
+                                        
+                                        <div class="pr-8">
+                                            <div class="mb-3">
+                                                <label class="block text-sm font-medium text-yellow-800 mb-1">Task Description:</label>
+                                                <textarea x-model="action.task" 
+                                                          placeholder="What specific task needs to be completed?"
+                                                          class="w-full p-2 border border-yellow-300 rounded text-sm resize-none bg-white"
+                                                          rows="2"></textarea>
+                                            </div>
+                                            
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-yellow-800 mb-1">Owner:</label>
+                                                    <input x-model="action.owner" 
+                                                           placeholder="Who is responsible?"
+                                                           class="w-full p-2 border border-yellow-300 rounded text-sm bg-white">
+                                                </div>
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-medium text-yellow-800 mb-1">Deadline:</label>
+                                                    <input x-model="action.deadline" 
+                                                           type="date"
+                                                           class="w-full p-2 border border-yellow-300 rounded text-sm bg-white">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-yellow-800 mb-1">Success Criteria:</label>
+                                                <textarea x-model="action.successCriteria" 
+                                                          placeholder="How will we know this is complete?"
+                                                          class="w-full p-2 border border-yellow-300 rounded text-sm resize-none bg-white"
+                                                          rows="2"></textarea>
+                                            </div>
+                                            
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-yellow-800 mb-1">Status:</label>
+                                                <select x-model="action.status" class="w-full p-2 border border-yellow-300 rounded text-sm bg-white">
+                                                    <option value="pending">Pending</option>
+                                                    <option value="in-progress">In Progress</option>
+                                                    <option value="completed">Completed</option>
+                                                    <option value="blocked">Blocked</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <div x-show="phase4.actionItems.length === 0" class="text-center py-12 text-yellow-600 border-2 border-dashed border-yellow-300 rounded-lg">
+                                No action items created yet. Use the control panel to add next steps.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Session Setup Modal -->
+    <div x-show="showSessionModal" 
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         @click.away="showSessionModal = false">
+        <div class="bg-white rounded-lg p-6 w-96 max-w-90vw">
+            <h2 class="text-xl font-bold mb-4">Session Settings</h2>
+            
+            <form @submit.prevent="saveSessionSettings">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Team Name</label>
+                        <input type="text" x-model="session.teamName" 
+                               class="w-full p-2 border border-gray-300 rounded-md text-sm"
+                               placeholder="Enter team name">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Facilitator</label>
+                        <input type="text" x-model="session.facilitator" 
+                               class="w-full p-2 border border-gray-300 rounded-md text-sm"
+                               placeholder="Enter facilitator name">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Timer Duration (seconds)</label>
+                        <input type="number" x-model="timer.duration" min="5" max="60"
+                               class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2 mt-6">
+                    <button type="submit" 
+                            class="flex-1 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">
+                        Save
+                    </button>
+                    <button type="button" @click="showSessionModal = false" 
+                            class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div x-show="showExportModal" 
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         @click.away="showExportModal = false">
+        <div class="bg-white rounded-lg p-6 w-96 max-w-90vw">
+            <h2 class="text-xl font-bold mb-4">Export Session</h2>
+            <p class="text-gray-600 text-sm mb-6">Choose the format for your session export:</p>
+            
+            <div class="space-y-3">
+                <!-- JSON Export -->
+                <button @click="exportJSON(); showExportModal = false" 
+                        class="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 text-left transition-colors">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-blue-600 font-bold text-sm">{ }</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">JSON Data</h3>
+                            <p class="text-gray-500 text-xs">Complete session data for backup and analysis</p>
+                        </div>
+                    </div>
+                </button>
+                
+                <!-- Markdown Report Export -->
+                <button @click="exportMarkdown(); showExportModal = false" 
+                        class="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 text-left transition-colors">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-green-600 font-bold text-sm">MD</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Markdown Report</h3>
+                            <p class="text-gray-500 text-xs">Formatted report for sharing and documentation</p>
+                        </div>
+                    </div>
+                </button>
+                
+                <!-- Email Summary (Future) -->
+                <button disabled 
+                        class="w-full p-4 border-2 border-gray-200 rounded-lg bg-gray-50 text-left opacity-50 cursor-not-allowed">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-gray-400 font-bold text-sm">📧</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-500">Email Summary</h3>
+                            <p class="text-gray-400 text-xs">Coming soon - Send summary via email</p>
+                        </div>
+                    </div>
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <button @click="showExportModal = false" 
+                        class="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>
