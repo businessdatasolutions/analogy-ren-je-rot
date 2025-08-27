@@ -1,0 +1,235 @@
+{
+  "strategic_pairs": [
+    {
+      "companyA": "Android",
+      "companyB": "Apple iOS",
+      "strategic_contrast": "Platform vs. Geïntegreerd Product",
+      "distinguishing_element": "Controle over het ecosysteem",
+      "dilemma_question": "Bouw je een open ecosysteem voor maximale schaal, of een perfect gecontroleerde totaaloplossing voor een premium ervaring?",
+      "strategies": {
+        "companyA": "Open platform voor alle fabrikanten. Schaal door breedte en data.",
+        "companyB": "Gesloten ecosysteem met volledige controle. Premium kwaliteit en ervaring."
+      }
+    },
+    {
+      "companyA": "Tesla",
+      "companyB": "Toyota",
+      "strategic_contrast": "Disruptieve Innovator vs. Operationele Excellentie",
+      "distinguishing_element": "De benadering van productontwikkeling",
+      "dilemma_question": "Zet je de markt op zijn kop met radicale, software-gedreven vernieuwing, of win je door het bestaande productieproces continu te perfectioneren?",
+      "strategies": {
+        "companyA": "Auto als computer op wielen. Software-updates en directe verkoop.",
+        "companyB": "Perfectie in productie. Efficiëntie, kwaliteit en betrouwbaarheid."
+      }
+    },
+    {
+      "companyA": "Airbnb",
+      "companyB": "Hilton",
+      "strategic_contrast": "Datagedreven Netwerk vs. Traditioneel Asset-model",
+      "distinguishing_element": "De basis van de bedrijfswaarde (bezit)",
+      "dilemma_question": "Is je waarde gebaseerd op het bezit van fysieke middelen, of op de kracht van je data en het netwerk dat je faciliteert?",
+      "strategies": {
+        "companyA": "Geen vastgoed. Waarde via netwerk, reviews en AI-matching.",
+        "companyB": "Bezit hotels op toplocaties. Gestandaardiseerde kwaliteit."
+      }
+    },
+    {
+      "companyA": "Figma",
+      "companyB": "Adobe",
+      "strategic_contrast": "Niche Specialist vs. Brede Generalist (Software)",
+      "distinguishing_element": "Focus van het productaanbod",
+      "dilemma_question": "Domineer je één specifieke functie door die beter te doen dan wie dan ook, of bied je een brede, geïntegreerde suite aan oplossingen?",
+      "strategies": {
+        "companyA": "Laserfocus op één ding: real-time collaboratief design.",
+        "companyB": "Brede Creative Cloud suite. Cross-selling in ecosysteem."
+      }
+    },
+    {
+      "companyA": "Netflix",
+      "companyB": "Spotify",
+      "strategic_contrast": "Verticale Integratie vs. Horizontale Specialisatie",
+      "distinguishing_element": "Mate van controle over de waardeketen",
+      "dilemma_question": "Beheers je de hele keten zelf (van productie tot distributie), of ben je de allerbeste in één cruciale schakel van die keten?",
+      "strategies": {
+        "companyA": "Hele keten: eigen content, algoritmes en distributie.",
+        "companyB": "Één schakel: beste audiodistributie en personalisatie."
+      }
+    },
+    {
+      "companyA": "Apple Health",
+      "companyB": "Adyen/Stripe",
+      "strategic_contrast": "Gesloten Data-Ecosysteem vs. Open API-Platform",
+      "distinguishing_element": "Toegankelijkheid van data en functionaliteit",
+      "dilemma_question": "Is je data een afgeschermde vesting om je eigen producten te versterken, of zijn het open bouwblokken waarmee anderen waarde kunnen creëren?",
+      "strategies": {
+        "companyA": "Gesloten ecosysteem. Data versterkt eigen hardware.",
+        "companyB": "Open API's als product. Makkelijke integratie voor anderen."
+      }
+    },
+    {
+      "companyA": "YouTube",
+      "companyB": "Bitcoin",
+      "strategic_contrast": "Gecentraliseerd Netwerk vs. Gedecentraliseerd Protocol",
+      "distinguishing_element": "Structuur van autoriteit en eigendom",
+      "dilemma_question": "Wordt het netwerk bestuurd vanuit één centraal punt, of door de gebruikers gezamenlijk zonder centrale autoriteit?",
+      "strategies": {
+        "companyA": "Centrale controle door Google. Macht en winst gecentraliseerd.",
+        "companyB": "Geen eigenaar. Onderhouden door onafhankelijke deelnemers."
+      }
+    },
+    {
+      "companyA": "Amazon",
+      "companyB": "OpenAI",
+      "strategic_contrast": "AI als Efficiëntie-versneller vs. AI als Kernproduct",
+      "distinguishing_element": "De rol van AI in het verdienmodel",
+      "dilemma_question": "Gebruik je AI om je bestaande business beter en sneller te maken, of *is* de intelligentie van de AI zelf het product dat je verkoopt?",
+      "strategies": {
+        "companyA": "AI optimaliseert e-commerce en logistiek. Klant koopt fysiek product.",
+        "companyB": "Het product ís de intelligentie. Intelligence-as-a-service."
+      }
+    },
+    {
+      "companyA": "Salesforce",
+      "companyB": "Monday.com",
+      "strategic_contrast": "Diep Geïntegreerd Platform vs. Flexibel Werk-framework",
+      "distinguishing_element": "Benadering van complexiteit en maatwerk",
+      "dilemma_question": "Bied je een diepgaande, specialistische oplossing voor de hele onderneming, of een flexibel framework dat elk team zelf kan aanpassen?",
+      "strategies": {
+        "companyA": "Complex platform voor ondernemingen. Top-down verkoop.",
+        "companyB": "Flexibel Work OS. Bottom-up via teamgemak."
+      }
+    },
+    {
+      "companyA": "Facebook",
+      "companyB": "TikTok",
+      "strategic_contrast": "Social Graph vs. Content Graph",
+      "distinguishing_element": "Het aanbevelingsalgoritme",
+      "dilemma_question": "Is je netwerk gebaseerd op wie je kent (connecties), of op wat je leuk vindt (interesses)?",
+      "strategies": {
+        "companyA": "Social graph: content van mensen die je volgt.",
+        "companyB": "Content graph: algoritme op basis van gedrag, niet connecties."
+      }
+    },
+    {
+      "companyA": "Urban Arrow",
+      "companyB": "Gazelle",
+      "strategic_contrast": "Niche Specialist vs. Brede Generalist (Fysiek Product)",
+      "distinguishing_element": "Breedte van het assortiment",
+      "dilemma_question": "Focus je op het perfect oplossen van één specifiek probleem voor een kleine groep, of bied je een betrouwbare oplossing voor bijna iedereen?",
+      "strategies": {
+        "companyA": "Uitsluitend premium elektrische bakfietsen voor niche.",
+        "companyB": "Breed assortiment fietsen voor alle segmenten en prijsklassen."
+      }
+    },
+    {
+      "companyA": "Apple",
+      "companyB": "Samsung",
+      "strategic_contrast": "Verticale Ecosysteem-integratie vs. Horizontale Productdiversificatie",
+      "distinguishing_element": "Controle over de waardeketen",
+      "dilemma_question": "Creëer je waarde door totale controle over een gesloten ecosysteem, of door excellent te zijn in productie en keuze te bieden binnen een open ecosysteem?",
+      "strategies": {
+        "companyA": "Totale controle: hardware, software en diensten in ecosysteem.",
+        "companyB": "Productie-excellentie. Budget tot high-end in open systeem."
+      }
+    },
+    {
+      "companyA": "Google",
+      "companyB": "Microsoft",
+      "strategic_contrast": "Consumentgedreven Datamodel vs. Enterprisegedreven Platformmodel",
+      "distinguishing_element": "De primaire bron van inkomsten",
+      "dilemma_question": "Is je businessmodel gebouwd op het monetariseren van data van gratis consumentendiensten, of op het verkopen van productiviteits- en platformabonnementen aan bedrijven?",
+      "strategies": {
+        "companyA": "Gratis diensten voor data. Advertenties als verdienmodel.",
+        "companyB": "Software en cloud-abonnementen aan bedrijven. Directe verkoop."
+      }
+    },
+    {
+      "companyA": "Amazon",
+      "companyB": "Alibaba",
+      "strategic_contrast": "Logistiek-gedreven Retailer vs. Platform-gedreven Marktplaats",
+      "distinguishing_element": "Het beheer van voorraad (inventory)",
+      "dilemma_question": "Ben je een retailer die een gigantisch logistiek netwerk beheert om zelf te verkopen, of ben je een 'asset-light' platform dat transacties tussen anderen faciliteert?",
+      "strategies": {
+        "companyA": "Is in de kern een retailer en een logistiek bedrijf; ze kopen, bezitten en verzenden zelf een groot deel van de producten via een eigen, kapitaalintensief netwerk.",
+        "companyB": "Is een pure, 'asset-light' marktplaats; ze bezitten geen voorraad maar faciliteren transacties tussen miljoenen kopers en verkopers met digitale tools."
+      }
+    },
+    {
+      "companyA": "Netflix",
+      "companyB": "Disney",
+      "strategic_contrast": "Datagedreven Contentcreatie vs. IP-gedreven Franchisebouw",
+      "distinguishing_element": "De oorsprong van de contentstrategie",
+      "dilemma_question": "Creëer je nieuwe hits op basis van data en kijkgedrag, of exploiteer je bestaand, iconisch intellectueel eigendom via een synergetisch vliegwiel?",
+      "strategies": {
+        "companyA": "Een techbedrijf dat data gebruikt om te voorspellen wat men wil zien en op basis daarvan een brede catalogus van nieuwe content produceert.",
+        "companyB": "Een mediabedrijf dat zijn decennia-oude, iconische IP (Intellectual Property) maximaal exploiteert via films, series, merchandise en pretparken."
+      }
+    },
+    {
+      "companyA": "Spotify",
+      "companyB": "Apple Music",
+      "strategic_contrast": "Pure-Play Specialist vs. Ecosysteem-component",
+      "distinguishing_element": "Het strategische doel van de dienst",
+      "dilemma_question": "Is deze dienst je kernactiviteit die zelfstandig winstgevend moet zijn, of is het een feature om je duurdere kernproduct (hardware) aantrekkelijker te maken?",
+      "strategies": {
+        "companyA": "Muziekstreaming *is* het volledige bedrijf; ze moeten hier winstgevend zijn om te overleven en concurreren als een pure-play specialist.",
+        "companyB": "Muziekstreaming is een middel om de verkoop en loyaliteit van hardware (iPhones, HomePods) te verhogen en gebruikers dieper in het Apple-ecosysteem te verankeren."
+      }
+    },
+    {
+      "companyA": "Uber",
+      "companyB": "Lyft",
+      "strategic_contrast": "Globale Alles-App Aggregator vs. Gefocuste Marktspeler",
+      "distinguishing_element": "De strategische scope",
+      "dilemma_question": "Streef je naar wereldwijde dominantie door te diversifiëren naar alle aanverwante markten, of focus je op het winnen van één specifieke dienst in één regio?",
+      "strategies": {
+        "companyA": "De ambitie is om de 'Amazon van transport' te worden, door hun logistieke netwerk te diversifiëren naar alles van maaltijdbezorging (Eats) tot vracht (Freight).",
+        "companyB": "Heeft zich historisch gezien veel meer gefocust op het winnen van één specifieke markt: personenvervoer in Noord-Amerika."
+      }
+    },
+    {
+      "companyA": "Airbnb",
+      "companyB": "Booking.com",
+      "strategic_contrast": "Community-gedreven Merk vs. Transactie-gedreven Aggregator",
+      "distinguishing_element": "De kern van de waardepropositie",
+      "dilemma_question": "Bouw je een merk rond community, vertrouwen en unieke ervaringen, of bouw je een efficiënte machine gericht op conversie en transactiegemak?",
+      "strategies": {
+        "companyA": "Heeft een merk gebouwd rond unieke ervaringen, authenticiteit en het vertrouwen tussen host en gast ('Belong Anywhere').",
+        "companyB": "Is een meester in performance marketing en conversie-optimalisatie. Het platform is ontworpen voor maximale efficiëntie in het zoek- en boekproces."
+      }
+    },
+    {
+      "companyA": "Instagram",
+      "companyB": "Snapchat",
+      "strategic_contrast": "Publieke Etalage (Broadcast) vs. Private Communicatie (Messaging)",
+      "distinguishing_element": "De permanentie van content",
+      "dilemma_question": "Is je platform een publieke etalage voor een gepolijst en permanent archief, of een kanaal voor snelle, tijdelijke en intieme communicatie?",
+      "strategies": {
+        "companyA": "Is gebouwd rond een permanente, gecureerde 'grid' die functioneert als een publieke etalage van iemands leven of merk.",
+        "companyB": "Is gebouwd rond het idee van snelle, efemere (tijdelijke) communicatie tussen hechte vrienden, wat een meer authentieke en intieme vorm van interactie stimuleert."
+      }
+    },
+    {
+      "companyA": "LEGO",
+      "companyB": "Nintendo",
+      "strategic_contrast": "Open Innovatie (Co-creatie) vs. Gesloten Innovatie (Gecontroleerde Perfectie)",
+      "distinguishing_element": "De bron van productideeën en innovatie",
+      "dilemma_question": "Vertrouw je op de creativiteit van je eigen team binnen een gecontroleerde omgeving, of stel je je open voor de collectieve intelligentie van je community en de buitenwereld?",
+      "strategies": {
+        "companyA": "Open innovatie via community. LEGO Ideas platform.",
+        "companyB": "Gesloten innovatie. Geheime interne ontwikkeling."
+      }
+    },
+    {
+      "companyA": "Fairphone",
+      "companyB": "TOMS Shoes",
+      "strategic_contrast": "Systeemverandering vs. Directe Hulpverlening",
+      "distinguishing_element": "De aanpak van het maatschappelijke probleem",
+      "dilemma_question": "Probeer je de symptomen van een probleem direct te verlichten met een tastbare oplossing, of richt je je op het veranderen van het onderliggende, complexe systeem dat het probleem veroorzaakt?",
+      "strategies": {
+        "companyA": "Verandert hele industrie. Duurzame materialen, repareerbaar.",
+        "companyB": "Direct verlichten van symptoom. 'One for One'-model."
+      }
+    }
+  ]
+}

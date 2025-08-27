@@ -238,108 +238,282 @@
                     
                     <!-- Phase 2: Preference Round Controls -->
                     <div x-show="currentPhase === 2" class="space-y-4">
-                        <!-- Timer Controls -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h3 class="font-medium mb-2">Voting Timer</h3>
-                            <div class="timer-display" :class="phase2?.timer?.timeLeft <= 0 ? 'timer-completed' : ''">
-                                <div class="text-center mb-3">
-                                    <div class="text-3xl font-bold" x-text="formatTime(phase2?.timer?.timeLeft || 120)"></div>
-                                    <div class="text-sm text-gray-500">remaining</div>
-                                </div>
-                            </div>
-                            
-                            <div class="timer-controls flex space-x-2">
-                                <button @click="phase2?.startTimer()" 
-                                        :disabled="phase2?.timer?.isRunning && !phase2?.timer?.isPaused"
-                                        class="px-3 py-1 bg-green-600 text-white rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Start Timer
-                                </button>
-                                <button @click="phase2?.pauseTimer()" 
-                                        :disabled="!phase2?.timer?.isRunning || phase2?.timer?.isPaused"
-                                        class="px-3 py-1 bg-yellow-600 text-white rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Pause
-                                </button>
-                                <button @click="phase2?.resetTimer()" 
-                                        class="px-3 py-1 bg-gray-600 text-white rounded text-sm">
-                                    Reset
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Company Pair Navigation -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h3 class="font-medium mb-2">Company Pairs</h3>
-                            <div class="text-center mb-3">
-                                <span class="text-lg font-semibold" x-text="phase2?.pairCounter || '1 / 10'"></span>
-                            </div>
-                            
-                            <div class="flex space-x-2">
-                                <button @click="phase2?.previousPair()" 
-                                        :disabled="!phase2?.companyPairs?.canGoPrev"
-                                        class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Previous Pair
-                                </button>
-                                <button @click="phase2?.nextPair()" 
-                                        :disabled="!phase2?.companyPairs?.canGoNext"
-                                        class="px-3 py-1 bg-primary-600 text-white rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Next Pair
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Voting Controls -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h3 class="font-medium mb-2">Vote Counting</h3>
-                            
-                            <div class="space-y-3">
-                                <!-- Vote A -->
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium" x-text="phase2?.currentPair?.companyA || 'Company A'"></span>
-                                    <div class="flex items-center space-x-2">
-                                        <button @click="phase2?.voteA()" 
-                                                class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
-                                            Vote A
-                                        </button>
-                                        <span class="w-8 text-center font-bold" x-text="phase2?.votes?.companyA || 0"></span>
+                        <!-- Physical Positioning Timer Control Panel -->
+                        <div class="bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-4 border border-blue-200">
+                            <!-- Header with Status -->
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="font-semibold text-lg text-gray-800">Physical Positioning Round</h3>
+                                    <div class="flex items-center space-x-3 mt-1">
+                                        <!-- Current Status Indicator -->
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 rounded-full" 
+                                                 :class="{
+                                                   'bg-gray-400': phase2?.timerState === 'ready',
+                                                   'bg-green-500 animate-pulse': phase2?.timerState === 'announcement',
+                                                   'bg-blue-500': phase2?.timerState === 'countdown',
+                                                   'bg-red-500': phase2?.timerState === 'completed',
+                                                   'bg-purple-500': phase2?.timerState === 'discussion'
+                                                 }"></div>
+                                            <span class="text-sm text-gray-600 capitalize" x-text="phase2?.timerState || 'ready'"></span>
+                                        </div>
+                                        
+                                        <!-- Round Progress -->
+                                        <div class="text-sm text-gray-500">
+                                            Round <span x-text="(phase2?.currentPairIndex || 0) + 1"></span> of <span x-text="phase2?.companyPairs?.pairs?.length || 5"></span>
+                                        </div>
                                     </div>
                                 </div>
                                 
-                                <!-- Vote B -->
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium" x-text="phase2?.currentPair?.companyB || 'Company B'"></span>
-                                    <div class="flex items-center space-x-2">
-                                        <button @click="phase2?.voteB()" 
-                                                class="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-                                            Vote B
-                                        </button>
-                                        <span class="w-8 text-center font-bold" x-text="phase2?.votes?.companyB || 0"></span>
+                                <!-- Audio Controls -->
+                                <div class="flex items-center space-x-2">
+                                    <!-- Audio Enable Button (fallback for manual enable if auto-enable fails) -->
+                                    <button @click="phase2?.initAudio().then(() => $nextTick())" 
+                                            x-show="!phase2?.audioState?.isEnabled && phase2?.timerState !== 'ready'"
+                                            class="px-3 py-1 bg-blue-500 text-white rounded-md text-xs font-medium hover:bg-blue-600 shadow-sm"
+                                            title="Enable audio for countdown beeps and completion bell">
+                                        🔊 Enable Audio
+                                    </button>
+                                    
+                                    <!-- Mute/Unmute Toggle -->
+                                    <button @click="phase2?.toggleAudioMute(); $nextTick()" 
+                                            x-show="phase2?.audioState?.isEnabled"
+                                            :class="phase2?.audioState?.isMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'"
+                                            class="px-2 py-1 text-white rounded-md text-sm shadow-sm transition-colors"
+                                            :title="phase2?.audioState?.isMuted ? 'Unmute audio' : 'Mute audio'">
+                                        <span x-text="phase2?.audioState?.isMuted ? '🔇' : '🔊'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Timer Display Area -->
+                            <div class="bg-white rounded-lg p-6 border shadow-sm mb-4">
+                                <div class="text-center">
+                                    <!-- Ready State -->
+                                    <div x-show="phase2?.timerState === 'ready'" class="space-y-2">
+                                        <div class="text-3xl font-bold text-gray-600">Ready to Start</div>
+                                        <div class="text-sm text-gray-500">Click "Start Round" when participants are ready</div>
+                                    </div>
+                                    
+                                    <!-- Announcement State -->
+                                    <div x-show="phase2?.timerState === 'announcement'" class="space-y-2">
+                                        <div class="text-5xl font-bold text-green-600 animate-pulse">Ready? GO!</div>
+                                        <div class="text-sm text-green-700">Participants get ready to move...</div>
+                                    </div>
+                                    
+                                    <!-- Countdown State -->
+                                    <div x-show="phase2?.timerState === 'countdown'" class="space-y-2"
+                                         :class="(phase2?.timerLeft || 10) <= 3 ? 'text-red-600' : 'text-blue-600'">
+                                        <div class="text-7xl font-bold tabular-nums" x-text="phase2?.timerLeft || 10"></div>
+                                        <div class="text-lg font-medium">seconds to choose position</div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
+                                            <div class="bg-current h-2 rounded-full transition-all duration-1000"
+                                                 :style="`width: ${((10 - (phase2?.timerLeft || 10)) / 10) * 100}%`"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Completed State -->
+                                    <div x-show="phase2?.timerState === 'completed'" class="space-y-2">
+                                        <div class="text-4xl font-bold text-red-600 animate-bounce">TIME'S UP!</div>
+                                        <div class="text-sm text-red-700">Transitioning to discussion...</div>
+                                    </div>
+                                    
+                                    <!-- Discussion State -->
+                                    <div x-show="phase2?.timerState === 'discussion'" class="space-y-2">
+                                        <div class="text-2xl font-semibold text-purple-600">💬 Discussion & Reflection</div>
+                                        <div class="text-sm text-purple-700">Facilitate discussion about the strategic choice</div>
+                                        <div class="text-xs text-gray-500 mt-2">Click "Next Round" to continue to the next company pair</div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="mt-4 pt-3 border-t border-gray-200">
-                                <button @click="phase2?.resetVotes()" 
-                                        class="w-full px-3 py-2 bg-red-600 text-white rounded text-sm hover:bg-red-700">
-                                    Reset Votes
+                            <!-- Timer Control Buttons -->
+                            <div class="flex justify-center space-x-3">
+                                <!-- Start/Ready Button -->
+                                <button @click="phase2?.startTimer()" 
+                                        x-show="phase2?.timerState === 'ready'"
+                                        class="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold text-base hover:bg-green-700 shadow-lg transition-all transform hover:scale-105">
+                                    🚀 Start Round
+                                </button>
+                                
+                                <!-- Next Round Button (Discussion Phase) -->
+                                <button @click="phase2?.nextRound()" 
+                                        x-show="phase2?.timerState === 'discussion'"
+                                        class="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold text-base hover:bg-purple-700 shadow-lg transition-all transform hover:scale-105">
+                                    ➡️ Next Round
+                                </button>
+                                
+                                <!-- Pause Button (Countdown Phase) -->
+                                <button @click="phase2?.pauseTimer()" 
+                                        x-show="phase2?.timerState === 'countdown' && !phase2?.timer?.isPaused"
+                                        class="px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 shadow-md transition-colors">
+                                    ⏸️ Pause
+                                </button>
+                                
+                                <!-- Resume Button (Paused) -->
+                                <button @click="phase2?.startTimer()" 
+                                        x-show="phase2?.timer?.isPaused"
+                                        class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 shadow-md transition-colors">
+                                    ▶️ Resume
+                                </button>
+                                
+                                <!-- Reset Button (Emergency/Admin) -->
+                                <button @click="phase2?.resetTimer()" 
+                                        class="px-3 py-1 bg-gray-400 text-gray-700 rounded font-medium text-sm hover:bg-gray-500 hover:text-white transition-colors"
+                                        title="Reset timer (emergency use)">
+                                    🔄 Reset
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Vote Summary -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h3 class="font-medium mb-2">Vote Summary</h3>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between">
-                                    <span>Total Votes:</span>
-                                    <span class="font-medium" x-text="phase2?.votingSystem?.totalVotes || 0"></span>
+                        <!-- Company Pair Navigation & Progress -->
+                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="font-semibold text-gray-800">Strategic Company Pairs</h3>
+                                <div class="text-sm font-medium text-indigo-600">
+                                    <span x-text="phase2?.pairCounter || '1 / 5'"></span>
                                 </div>
-                                <div class="flex justify-between" x-show="(phase2?.votingSystem?.totalVotes || 0) > 0">
-                                    <span x-text="(phase2?.currentPair?.companyA || 'Company A') + ':'"></span>
-                                    <span class="font-medium" x-text="(phase2?.votingSystem?.percentageA || 0) + '%'"></span>
+                            </div>
+                            
+                            <!-- Current Pair Preview -->
+                            <div class="bg-white rounded-lg p-3 mb-3 border shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-gray-800 mb-1" x-text="phase2?.currentPair?.category || 'Strategic Dilemma'"></div>
+                                        <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                            <span class="font-medium text-blue-600" x-text="phase2?.currentPair?.companyA || 'Company A'"></span>
+                                            <span class="text-gray-400">vs</span>
+                                            <span class="font-medium text-green-600" x-text="phase2?.currentPair?.companyB || 'Company B'"></span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between" x-show="(phase2?.votingSystem?.totalVotes || 0) > 0">
-                                    <span x-text="(phase2?.currentPair?.companyB || 'Company B') + ':'"></span>
-                                    <span class="font-medium" x-text="(phase2?.votingSystem?.percentageB || 0) + '%'"></span>
+                            </div>
+                            
+                            <!-- Navigation Controls -->
+                            <div class="flex justify-between items-center">
+                                <button @click="phase2?.previousPair()" 
+                                        :disabled="!phase2?.companyPairs?.canGoPrev"
+                                        class="px-3 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                    ← Previous
+                                </button>
+                                
+                                <!-- Progress Dots -->
+                                <div class="flex space-x-2">
+                                    <template x-for="(pair, index) in phase2?.companyPairs?.pairs || [1,2,3,4,5]" :key="index">
+                                        <button @click="phase2?.companyPairs?.goToPair ? phase2.companyPairs.goToPair(index) : null"
+                                                class="w-3 h-3 rounded-full transition-colors"
+                                                :class="index === (phase2?.currentPairIndex || 0) ? 'bg-indigo-600' : 'bg-gray-300 hover:bg-gray-400'"
+                                                :title="`Go to pair ${index + 1}`"></button>
+                                    </template>
+                                </div>
+                                
+                                <button @click="phase2?.nextPair()" 
+                                        :disabled="!phase2?.companyPairs?.canGoNext"
+                                        class="px-3 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                    Next →
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Voting & Statistics Dashboard -->
+                        <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
+                            <h3 class="font-semibold text-gray-800 mb-3">Vote Tracking & Results</h3>
+                            
+                            <!-- Vote Buttons -->
+                            <div class="space-y-3 mb-4">
+                                <div class="bg-white rounded-lg p-3 border shadow-sm">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span x-text="phase2?.currentPair?.companyA || 'Company A'" class="font-semibold text-blue-700"></span>
+                                        <span class="text-2xl font-bold text-blue-600" x-text="phase2?.votes?.companyA || 0"></span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button @click="phase2?.voteA()" 
+                                                class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                            + Vote for A
+                                        </button>
+                                        <button @click="phase2?.decreaseVoteA()" 
+                                                class="px-2 py-2 bg-blue-400 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors text-xs"
+                                                title="Decrease vote (Shift+A)">
+                                            −
+                                        </button>
+                                        <div class="text-xs text-gray-500 w-12 text-right" x-text="`${phase2?.votingSystem?.percentageA || 0}%`"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-lg p-3 border shadow-sm">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span x-text="phase2?.currentPair?.companyB || 'Company B'" class="font-semibold text-green-700"></span>
+                                        <span class="text-2xl font-bold text-green-600" x-text="phase2?.votes?.companyB || 0"></span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button @click="phase2?.voteB()" 
+                                                class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                                            + Vote for B
+                                        </button>
+                                        <button @click="phase2?.decreaseVoteB()" 
+                                                class="px-2 py-2 bg-green-400 text-white rounded-lg font-medium hover:bg-green-500 transition-colors text-xs"
+                                                title="Decrease vote (Shift+B)">
+                                            −
+                                        </button>
+                                        <div class="text-xs text-gray-500 w-12 text-right" x-text="`${phase2?.votingSystem?.percentageB || 0}%`"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Visual Vote Distribution -->
+                            <div x-show="(phase2?.votes?.companyA || 0) + (phase2?.votes?.companyB || 0) > 0" class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 flex justify-between">
+                                    <span>Vote Distribution</span>
+                                    <span class="font-medium">Total: <span x-text="phase2?.votingSystem?.totalVotes || 0"></span></span>
+                                </div>
+                                <div class="flex rounded-full overflow-hidden h-4 bg-gray-200">
+                                    <div class="bg-blue-500 transition-all duration-500 flex items-center justify-center text-white text-xs font-medium"
+                                         :style="`width: ${phase2?.votingSystem?.percentageA || 0}%`"
+                                         x-text="(phase2?.votingSystem?.percentageA || 0) > 15 ? `${phase2?.votingSystem?.percentageA || 0}%` : ''"></div>
+                                    <div class="bg-green-500 transition-all duration-500 flex items-center justify-center text-white text-xs font-medium"
+                                         :style="`width: ${phase2?.votingSystem?.percentageB || 0}%`"
+                                         x-text="(phase2?.votingSystem?.percentageB || 0) > 15 ? `${phase2?.votingSystem?.percentageB || 0}%` : ''"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Reset Button -->
+                            <button @click="phase2?.resetVotes()" 
+                                    class="w-full px-3 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors text-sm">
+                                🔄 Reset Current Pair Votes
+                            </button>
+                        </div>
+                        
+                        <!-- Facilitator Instructions -->
+                        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-4 border border-yellow-200">
+                            <h3 class="font-semibold text-gray-800 mb-2">💡 Facilitator Guide</h3>
+                            <div class="text-sm space-y-2">
+                                <div x-show="phase2?.timerState === 'ready'" class="text-gray-700">
+                                    <strong>Ready Phase:</strong> Explain the strategic dilemma to participants, then click "Start Round"
+                                </div>
+                                <div x-show="phase2?.timerState === 'announcement'" class="text-green-700">
+                                    <strong>Announcement:</strong> Participants prepare to move to their chosen side
+                                </div>
+                                <div x-show="phase2?.timerState === 'countdown'" class="text-blue-700">
+                                    <strong>Countdown:</strong> Participants choose their position (left/right) based on preference
+                                </div>
+                                <div x-show="phase2?.timerState === 'completed'" class="text-red-700">
+                                    <strong>Time's Up:</strong> Count participants on each side and record votes
+                                </div>
+                                <div x-show="phase2?.timerState === 'discussion'" class="text-purple-700">
+                                    <strong>Discussion:</strong> Facilitate reflection on the strategic choice and reasoning
+                                </div>
+                            </div>
+                            
+                            <!-- Keyboard Shortcuts -->
+                            <div class="mt-3 pt-3 border-t border-yellow-200">
+                                <div class="text-xs text-gray-600 mb-1">Keyboard Shortcuts:</div>
+                                <div class="grid grid-cols-2 gap-1 text-xs">
+                                    <div><kbd class="bg-gray-200 px-1 rounded">Space</kbd> Start/Pause</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">R</kbd> Reset Timer</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">←/→</kbd> Navigate Pairs</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">A/B</kbd> Vote A/B</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">Shift+A/B</kbd> Decrease Votes</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">N</kbd> Next Round</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">Ctrl+Del</kbd> Clear Storage</div>
                                 </div>
                             </div>
                         </div>
@@ -576,58 +750,207 @@
                 </div>
                 
                 <!-- Phase 2: Preference Round Display -->
-                <div x-show="currentPhase === 2" class="flex-1 flex">
+                <div x-show="currentPhase === 2" class="flex-1 flex" 
+                     :class="{
+                         'bg-gradient-to-br from-blue-100 to-green-100': phase2?.timerState === 'ready',
+                         'bg-gradient-to-br from-green-200 to-yellow-200 animate-pulse': phase2?.timerState === 'announcement',
+                         'bg-gradient-to-br from-gray-100 to-gray-50': phase2?.timerState === 'countdown',
+                         'bg-gradient-to-br from-red-100 to-orange-100': phase2?.timerState === 'completed',
+                         'bg-gradient-to-br from-purple-100 to-pink-100': phase2?.timerState === 'discussion'
+                     }">
+                    
+                    <!-- Position Guide Arrows -->
+                    <div class="absolute top-8 left-8 z-20" 
+                         x-show="phase2?.timerState === 'countdown' || phase2?.timerState === 'announcement'">
+                        <div class="flex items-center bg-blue-900 text-white px-6 py-3 rounded-full shadow-lg">
+                            <span class="text-2xl mr-3">←</span>
+                            <span class="font-bold text-lg">Go LEFT for</span>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute top-8 right-8 z-20" 
+                         x-show="phase2?.timerState === 'countdown' || phase2?.timerState === 'announcement'">
+                        <div class="flex items-center bg-green-900 text-white px-6 py-3 rounded-full shadow-lg">
+                            <span class="font-bold text-lg">Go RIGHT for</span>
+                            <span class="text-2xl ml-3">→</span>
+                        </div>
+                    </div>
+                    
                     <!-- Company Pair Display -->
                     <div class="w-full flex relative">
                         <!-- Company A -->
-                        <div class="w-1/2 bg-blue-50 flex flex-col items-center justify-center p-8 border-r-2 border-gray-300">
-                            <div class="text-center">
-                                <h2 class="text-4xl font-bold mb-4 text-blue-900" 
+                        <div class="w-1/2 flex flex-col items-center justify-center p-12 border-r-4" 
+                             :class="{
+                                 'bg-blue-50 border-blue-300': phase2?.timerState !== 'countdown',
+                                 'bg-blue-200 border-blue-500 shadow-inner': phase2?.timerState === 'countdown'
+                             }">
+                            <div class="text-center max-w-lg">
+                                <h2 class="text-6xl font-black mb-6 leading-tight" 
+                                    :class="{
+                                        'text-blue-900': phase2?.timerState !== 'countdown',
+                                        'text-blue-800': phase2?.timerState === 'countdown'
+                                    }"
                                     x-text="phase2?.currentPair?.companyA || 'Company A'"></h2>
-                                <div class="text-6xl font-bold text-blue-600 mb-4" 
-                                     x-text="phase2?.votes?.companyA || 0"></div>
-                                <p class="text-blue-600">votes</p>
+                                    
+                                <!-- Vote Count (Discussion Phase) -->
+                                <div x-show="phase2?.timerState === 'discussion'" class="mb-6">
+                                    <div class="text-8xl font-bold text-blue-600 mb-2" 
+                                         x-text="phase2?.votes?.companyA || 0"></div>
+                                    <p class="text-xl text-blue-600 font-semibold">participants</p>
+                                </div>
+                                
+                                <!-- Strategic Description -->
+                                <div class="mt-8">
+                                    <p class="text-lg text-blue-800 mb-4 font-medium leading-relaxed" 
+                                       x-text="phase2?.currentPair?.companyADescription"></p>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- VS Divider with Timer -->
-                        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-full p-4 border-4 border-gray-300 z-10">
-                            <div class="relative w-16 h-16">
-                                <!-- Timer Ring -->
-                                <svg class="w-16 h-16 timer-ring" viewBox="0 0 64 64">
-                                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
-                                    <circle cx="32" cy="32" r="28" 
-                                            :stroke="(phase2?.timer?.timeLeft || 120) <= 5 ? '#dc2626' : (phase2?.timer?.timeLeft || 120) <= 10 ? '#f59e0b' : '#059669'"
-                                            stroke-width="4" fill="none" stroke-linecap="round"
-                                            :stroke-dasharray="175.84"
-                                            :stroke-dashoffset="175.84 - (175.84 * (120 - (phase2?.timer?.timeLeft || 120)) / 120)"></circle>
+                        <!-- Simplified VS Divider with Timer -->
+                        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
+                            <div class="w-32 h-32 bg-white rounded-full border-4 shadow-2xl flex items-center justify-center transition-all duration-500" 
+                                 :class="{
+                                     'border-gray-400 bg-white': phase2?.timerState === 'ready',
+                                     'border-green-600 bg-green-400 animate-pulse': phase2?.timerState === 'announcement',
+                                     'border-blue-500 bg-white': phase2?.timerState === 'countdown',
+                                     'border-red-600 bg-red-400': phase2?.timerState === 'completed',
+                                     'border-purple-600 bg-purple-400': phase2?.timerState === 'discussion'
+                                 }">
+                                
+                                <!-- Timer Ring (Countdown only) -->
+                                <svg x-show="phase2?.timerState === 'countdown'" class="absolute w-32 h-32" viewBox="0 0 128 128">
+                                    <circle cx="64" cy="64" r="58" stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
+                                    <circle cx="64" cy="64" r="58" 
+                                            :stroke="(phase2?.timerLeft || 10) <= 3 ? '#dc2626' : (phase2?.timerLeft || 10) <= 5 ? '#f59e0b' : '#059669'"
+                                            stroke-width="4" fill="none" stroke-linecap="round" 
+                                            :stroke-dasharray="364.42"
+                                            :stroke-dashoffset="364.42 - (364.42 * (10 - (phase2?.timerLeft || 10)) / 10)"
+                                            class="transition-all duration-1000"></circle>
                                 </svg>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <span class="text-lg font-bold" x-text="formatTime(phase2?.timer?.timeLeft || 120)"></span>
+                                
+                                <div class="text-center z-10">
+                                    <!-- Ready State -->
+                                    <div x-show="phase2?.timerState === 'ready'">
+                                        <div class="text-sm font-bold text-gray-700">READY</div>
+                                    </div>
+                                    
+                                    <!-- Announcement State -->
+                                    <div x-show="phase2?.timerState === 'announcement'" class="animate-bounce">
+                                        <div class="text-2xl font-black text-white">GO!</div>
+                                    </div>
+                                    
+                                    <!-- Countdown State -->
+                                    <div x-show="phase2?.timerState === 'countdown'">
+                                        <div class="text-3xl font-black" 
+                                             :class="{
+                                                 'text-red-600 animate-pulse': (phase2?.timerLeft || 10) <= 3,
+                                                 'text-orange-600': (phase2?.timerLeft || 10) <= 5 && (phase2?.timerLeft || 10) > 3,
+                                                 'text-blue-600': (phase2?.timerLeft || 10) > 5
+                                             }"
+                                             x-text="phase2?.timerLeft || 10"></div>
+                                    </div>
+                                    
+                                    <!-- Completed State -->
+                                    <div x-show="phase2?.timerState === 'completed'" class="animate-bounce">
+                                        <div class="text-lg font-black text-white">STOP!</div>
+                                    </div>
+                                    
+                                    <!-- Discussion State -->
+                                    <div x-show="phase2?.timerState === 'discussion'">
+                                        <div class="text-lg text-white">💬</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Company B -->
-                        <div class="w-1/2 bg-green-50 flex flex-col items-center justify-center p-8">
-                            <div class="text-center">
-                                <h2 class="text-4xl font-bold mb-4 text-green-900" 
+                        <div class="w-1/2 flex flex-col items-center justify-center p-12" 
+                             :class="{
+                                 'bg-green-50': phase2?.timerState !== 'countdown',
+                                 'bg-green-200 shadow-inner': phase2?.timerState === 'countdown'
+                             }">
+                            <div class="text-center max-w-lg">
+                                <h2 class="text-6xl font-black mb-6 leading-tight" 
+                                    :class="{
+                                        'text-green-900': phase2?.timerState !== 'countdown',
+                                        'text-green-800': phase2?.timerState === 'countdown'
+                                    }"
                                     x-text="phase2?.currentPair?.companyB || 'Company B'"></h2>
-                                <div class="text-6xl font-bold text-green-600 mb-4" 
-                                     x-text="phase2?.votes?.companyB || 0"></div>
-                                <p class="text-green-600">votes</p>
+                                    
+                                <!-- Vote Count (Discussion Phase) -->
+                                <div x-show="phase2?.timerState === 'discussion'" class="mb-6">
+                                    <div class="text-8xl font-bold text-green-600 mb-2" 
+                                         x-text="phase2?.votes?.companyB || 0"></div>
+                                    <p class="text-xl text-green-600 font-semibold">participants</p>
+                                </div>
+                                
+                                <!-- Strategic Description -->
+                                <div class="mt-8">
+                                    <p class="text-lg text-green-800 mb-4 font-medium leading-relaxed" 
+                                       x-text="phase2?.currentPair?.companyBDescription"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Question Overlay -->
-                    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-95 rounded-lg p-6 shadow-lg">
-                        <h3 class="text-2xl font-semibold text-center text-gray-900 mb-2">
-                            Preference Round
-                        </h3>
-                        <p class="text-center text-gray-600">
-                            Pair <span x-text="phase2?.pairCounter || '1 / 10'"></span> - Which company do you prefer?
-                        </p>
+                    <!-- Simplified Question Overlay -->
+                    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-95 rounded-2xl shadow-2xl p-6 max-w-3xl transition-all duration-500"
+                         :class="{
+                             'bg-yellow-400 bg-opacity-95 animate-pulse': phase2?.timerState === 'announcement'
+                         }">
+                        
+                        <!-- Round Info Header -->
+                        <div class="text-center mb-4">
+                            <h3 class="text-2xl font-bold mb-2" 
+                                :class="{
+                                    'text-gray-900': phase2?.timerState !== 'announcement',
+                                    'text-yellow-900': phase2?.timerState === 'announcement'
+                                }">
+                                Physical Positioning Workshop
+                            </h3>
+                            <p class="text-lg font-medium" 
+                               :class="{
+                                   'text-gray-600': phase2?.timerState !== 'announcement',
+                                   'text-yellow-800': phase2?.timerState === 'announcement'
+                               }">
+                                Round <span x-text="phase2?.pairCounter || '1 / 5'"></span> - <span x-text="phase2?.currentPair?.category || 'Strategic Dilemma'"></span>
+                            </p>
+                        </div>
+                        
+                        <!-- Strategic Dilemma Question -->
+                        <div x-show="phase2?.currentPair?.dilemma_question" class="mb-4 text-center">
+                            <h4 class="font-bold mb-2" 
+                                :class="{
+                                    'text-gray-800': phase2?.timerState !== 'announcement',
+                                    'text-yellow-900': phase2?.timerState === 'announcement'
+                                }">Strategic Dilemma:</h4>
+                            <p class="text-base font-medium" 
+                               :class="{
+                                   'text-gray-700': phase2?.timerState !== 'announcement',
+                                   'text-yellow-800': phase2?.timerState === 'announcement'
+                               }"
+                               x-text="phase2?.currentPair?.dilemma_question"></p>
+                        </div>
+                        
+                        <!-- Instructions based on timer state -->
+                        <div class="text-center">
+                            <div x-show="phase2?.timerState === 'ready'" class="text-gray-600">
+                                <p class="font-semibold">Get ready to make your choice physically by moving left or right!</p>
+                            </div>
+                            <div x-show="phase2?.timerState === 'announcement'" class="text-yellow-900">
+                                <p class="font-black text-lg animate-bounce">🏃‍♂️ MOVE TO YOUR POSITION NOW! 🏃‍♀️</p>
+                            </div>
+                            <div x-show="phase2?.timerState === 'countdown'" class="text-blue-700">
+                                <p class="font-bold">Choose your side and stay there until time runs out!</p>
+                            </div>
+                            <div x-show="phase2?.timerState === 'completed'" class="text-red-700">
+                                <p class="font-bold">⏰ Time's up! Stay in position for counting.</p>
+                            </div>
+                            <div x-show="phase2?.timerState === 'discussion'" class="text-purple-700">
+                                <p class="font-bold">💬 Discuss your choice with others nearby!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -946,6 +1269,31 @@
                     </button>
                 </div>
             </form>
+            
+            <!-- Local Storage Management Section -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Data Management</h3>
+                <p class="text-sm text-gray-600 mb-4">Manage your local session data:</p>
+                
+                <div class="space-y-2">
+                    <!-- Reset Current Session -->
+                    <button @click="resetCurrentSession()" 
+                            class="w-full px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors">
+                        🔄 Reset Current Session
+                    </button>
+                    
+                    <!-- Clear All Local Storage -->
+                    <button @click="clearLocalStorage()" 
+                            class="w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+                        🗑️ Clear All Local Storage
+                    </button>
+                </div>
+                
+                <div class="text-xs text-gray-500 mt-3">
+                    <p><strong>Reset Session:</strong> Starts fresh without affecting other saved sessions</p>
+                    <p><strong>Clear Storage:</strong> Deletes all saved sessions and data permanently</p>
+                </div>
+            </div>
         </div>
     </div>
 

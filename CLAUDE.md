@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is the "Het Ren-Je-Rot-Analogie-Verkenner-spel" project - a strategic workshop game designed to help management teams discover their strategic preferences through structured analogical reasoning.
 
 The game consists of four phases:
+
 1. **Voorkeursronde (Preference Round)**: Teams make quick choices between company pairs to reveal strategic preferences
 2. **Archetype-Analyse**: Pattern recognition to define the team's strategic archetype
 3. **Decompositie**: Deep analysis of a chosen exemplar company
@@ -21,6 +22,7 @@ This project is being built using a **test-driven, phase-by-phase approach** whe
 Starting with minimal viable foundation and building incrementally with full test coverage for each component.
 
 ### Target File Structure (Modular Architecture)
+
 ```
 /analogy-ren-je-rot/
 ├── index.html                 # Main application entry point
@@ -56,9 +58,10 @@ Starting with minimal viable foundation and building incrementally with full tes
 ```
 
 ### Technology Stack
+
 - **Frontend Framework**: Pure HTML5 with Alpine.js v3.x for reactivity
 - **CSS Framework**: Tailwind CSS v3.x via CDN + custom CSS
-- **State Management**: Alpine.js stores + LocalForage for persistence  
+- **State Management**: Alpine.js stores + LocalForage for persistence
 - **Storage**: Browser-based (IndexedDB/WebSQL/localStorage) via LocalForage
 - **Testing**: Playwright for comprehensive cross-browser testing
 - **Export**: JSON and Markdown report generation
@@ -66,6 +69,7 @@ Starting with minimal viable foundation and building incrementally with full tes
 ### Development Phases
 
 **Phase 1: Foundation & Core Infrastructure (Current)**
+
 - ✅ Basic HTML structure with Alpine.js initialization
 - ✅ Session management (create, load, save)
 - ✅ Phase navigation system
@@ -73,6 +77,7 @@ Starting with minimal viable foundation and building incrementally with full tes
 - ✅ Comprehensive Playwright test coverage
 
 **Phase 2: Preference Round Implementation (Next)**
+
 - Company pair display system
 - Countdown timer with visual indicators
 - Vote counting interface (+/- buttons)
@@ -80,30 +85,35 @@ Starting with minimal viable foundation and building incrementally with full tes
 - Keyboard shortcuts (Space, R, 1, 2)
 
 **Phase 3: Archetype Analysis Features**
+
 - Winners summary from Phase 1
 - Pattern keyword input (comma-separated)
 - Archetype templates system
 - Guided discussion prompts
 
 **Phase 4: Decomposition Analysis**
+
 - Forerunner selection interface
 - Positive/negative analogy forms
 - Causal relationship mapper
 - Inline editing capabilities
 
 **Phase 5: Strategic Translation**
+
 - IF-THEN hypothesis builder
 - Hypothesis templates system
 - Action item tracker with CRUD
 - Priority and confidence scoring
 
 **Phase 6: Export & Reporting**
+
 - JSON export functionality
 - Markdown report generator
 - Export modal interface
 - File download mechanisms
 
 **Phase 7: Integration & Polish**
+
 - Presentation mode toggle
 - Auto-save functionality
 - Settings modal enhancements
@@ -112,6 +122,7 @@ Starting with minimal viable foundation and building incrementally with full tes
 ## Development Commands
 
 ### Initial Setup (One Time)
+
 ```bash
 # Navigate to project directory
 cd analogy-ren-je-rot
@@ -127,6 +138,7 @@ npx playwright install
 ```
 
 ### Development Workflow
+
 ```bash
 # Start development server (required for ES modules)
 python -m http.server 8000
@@ -150,12 +162,14 @@ npx playwright show-report
 ### Phase-by-Phase Development Process
 
 **For Each Development Phase:**
+
 1. **Write Tests First**: Create test file for phase (e.g., `tests/02-preference-round.spec.js`)
 2. **Implement Minimum**: Build just enough code to make tests pass
 3. **Refactor**: Improve code while maintaining test coverage
 4. **Quality Gate**: Ensure all tests pass before moving to next phase
 
 ### Current Phase: Foundation (Phase 1)
+
 ```bash
 # Test foundation functionality
 npx playwright test tests/01-foundation.spec.js
@@ -165,6 +179,7 @@ npx playwright test --reporter=html
 ```
 
 ### Key Architecture Decisions
+
 - **No Backend Required**: All data stored in browser localStorage/IndexedDB
 - **Modular JavaScript**: Separate files for each phase (`js/phase1-*.js`)
 - **CDN Dependencies**: Tailwind CSS, Alpine.js, LocalForage via CDN
@@ -174,18 +189,21 @@ npx playwright test --reporter=html
 ## Development Guidelines
 
 ### Test-Driven Development Rules
+
 1. **Red**: Write a failing test that defines desired behavior
 2. **Green**: Write minimal code to make the test pass
 3. **Refactor**: Improve code while keeping tests green
 4. **Quality Gate**: All tests must pass before proceeding to next phase
 
 ### Adding New Features
+
 1. **Write Tests First**: Define expected behavior through tests
 2. **Modular Implementation**: Add functionality to appropriate phase file
 3. **Update Tests**: Ensure comprehensive coverage
 4. **Cross-Browser Testing**: Verify functionality across all supported browsers
 
 ### File Organization Rules
+
 - **Core Logic**: `js/core.js` for session management and Alpine.js setup
 - **Phase Logic**: `js/phase[N]-[name].js` for each phase's functionality
 - **Shared Utilities**: `js/utils.js` for common helper functions
@@ -194,6 +212,7 @@ npx playwright test --reporter=html
 - **Test Files**: `tests/[NN]-[phase-name].spec.js` following naming convention
 
 ### Testing Standards
+
 - **Coverage**: Each phase must achieve >95% test coverage
 - **Browser Support**: Tests must pass on Chrome, Firefox, Safari, Edge
 - **Performance**: Phase transitions must be <2 seconds
@@ -203,17 +222,18 @@ npx playwright test --reporter=html
 ## Key Concepts
 
 - **Strategic Archetype**: The collective strategic preference pattern identified through company pair choices
-- **Voorloper (Forerunner)**: The exemplar company chosen for deep analysis  
+- **Voorloper (Forerunner)**: The exemplar company chosen for deep analysis
 - **Verticale Relaties (Vertical Relations)**: The causal logic connecting specific factors to business success
 - **Strategic Hypotheses**: Testable "if...then..." statements for the organization's strategy
 
 ## Quality Gates for Each Phase
 
 ### Definition of Done
+
 Each phase must meet these criteria before proceeding:
 
 1. ✅ **All Features Implemented**: According to phase specification
-2. ✅ **Tests Pass**: 100% pass rate across all browsers (Chrome, Firefox, Safari, Edge)  
+2. ✅ **Tests Pass**: 100% pass rate across all browsers (Chrome, Firefox, Safari, Edge)
 3. ✅ **Coverage >95%**: Comprehensive test coverage for phase functionality
 4. ✅ **Performance Met**: <2s phase transitions, timer accuracy ±100ms
 5. ✅ **Accessibility Verified**: WCAG 2.1 AA compliance tested
@@ -222,20 +242,23 @@ Each phase must meet these criteria before proceeding:
 8. ✅ **Documentation Updated**: Code comments and README updates
 
 ### Browser Testing Requirements
+
 - **Chrome 90+**: 100% compatibility (primary)
 - **Firefox 88+**: 95% compatibility (secondary)
-- **Safari 14+**: 95% compatibility (secondary) 
+- **Safari 14+**: 95% compatibility (secondary)
 - **Edge 90+**: 85% compatibility (tertiary)
 
 ## Debugging and Troubleshooting
 
 ### Common Issues
+
 1. **Alpine.js Not Initializing**: Check for JavaScript errors in console
 2. **LocalForage Errors**: Verify browser storage permissions
 3. **Timer Inaccuracy**: Test across different browsers for timing issues
 4. **Test Failures**: Use `--headed` flag to see browser interactions
 
 ### Debugging Commands
+
 ```bash
 # Run specific test with browser visible
 npx playwright test tests/01-foundation.spec.js --headed --debug
@@ -250,11 +273,13 @@ npx playwright test --reporter=html,line
 ## Task List Management
 
 ### Task Implementation Protocol
+
 - **One Sub-task at a Time**: Work on only ONE sub-task at a time from `tasks/tasks-web-app-prd.md`
 - **Stop and Ask**: After completing each sub-task, stop and wait for user approval ("yes" or "y") before proceeding
 - **Mark Completed**: Immediately mark finished sub-tasks as `[x]` in the task list file
 
 ### Completion Protocol for Parent Tasks
+
 When ALL sub-tasks under a parent task are marked `[x]`, follow this sequence:
 
 1. **Run Full Test Suite**: `npx playwright test` (all tests must pass)
@@ -270,15 +295,18 @@ When ALL sub-tasks under a parent task are marked `[x]`, follow this sequence:
 5. **Mark Parent Task**: Only then mark parent task as `[x]`
 
 ### Task List Maintenance
+
 - **Update After Work**: Modify `tasks/tasks-web-app-prd.md` after any significant changes
 - **Keep Relevant Files Current**: Update file descriptions as project evolves
 - **Add Discovered Tasks**: Include any new tasks that emerge during development
 - **Maintain Accuracy**: Ensure task status reflects actual completion
 
 ### Conventional Commit Format
+
 Use these prefixes for commits:
+
 - `feat(phase#):` - New features or functionality
-- `test(phase#):` - Test additions or modifications  
+- `test(phase#):` - Test additions or modifications
 - `fix(phase#):` - Bug fixes or corrections
 - `refactor(phase#):` - Code improvements without functionality changes
 - `docs:` - Documentation updates
@@ -286,12 +314,14 @@ Use these prefixes for commits:
 ## Contributing Guidelines
 
 ### Code Style
+
 - Use TypeScript-style JSDoc comments for functions
 - Follow Alpine.js naming conventions (kebab-case for attributes)
 - Keep functions small and focused (max 20 lines)
 - Use meaningful variable names that describe purpose
 
 ### Git Workflow Integration
+
 1. Follow task list protocol (work sub-task by sub-task)
 2. Write tests first, then implementation (TDD approach)
 3. Run full test suite before any commit
@@ -299,6 +329,7 @@ Use these prefixes for commits:
 5. Maintain clean git history with descriptive messages
 
 ### Example Commit Messages
+
 ```bash
 # Single sub-task completion
 git commit -m "test(phase1): add foundation tests for Alpine.js initialization" \
@@ -306,7 +337,7 @@ git commit -m "test(phase1): add foundation tests for Alpine.js initialization" 
           -m "- Verifies LocalForage integration works" \
           -m "Task 2.2 from tasks-web-app-prd.md"
 
-# Parent task completion  
+# Parent task completion
 git commit -m "feat(phase1): complete foundation and core infrastructure" \
           -m "- Basic HTML structure with Alpine.js and Tailwind" \
           -m "- Session management with LocalForage persistence" \
@@ -318,7 +349,7 @@ git commit -m "feat(phase1): complete foundation and core infrastructure" \
 ## Future Enhancement Ideas (Version 2.0)
 
 - Multi-language support (Dutch/English toggle)
-- PDF export with professional formatting  
+- PDF export with professional formatting
 - Company logo integration with image uploads
 - Advanced analytics and pattern recognition
 - Integration with presentation tools (PowerPoint export)

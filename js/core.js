@@ -193,12 +193,17 @@ document.addEventListener('alpine:init', () => {
         // Initialize Phase 2 functionality
         if (window.initializePhase2) {
           console.log('Initializing Phase 2...');
-          this.phase2 = window.initializePhase2();
-          console.log('Phase 2 initialized:', this.phase2);
-          // Load Phase 2 state if it exists
-          if (this.session.phase2) {
-            console.log('Loading Phase 2 saved state:', this.session.phase2);
-            this.phase2.loadState(this.session.phase2);
+          try {
+            this.phase2 = await window.initializePhase2();
+            console.log('Phase 2 initialized:', this.phase2);
+            // Load Phase 2 state if it exists
+            if (this.session.phase2) {
+              console.log('Loading Phase 2 saved state:', this.session.phase2);
+              this.phase2.loadState(this.session.phase2);
+            }
+          } catch (error) {
+            console.error('Failed to initialize Phase 2:', error);
+            this.showError('Failed to load strategic pairs. Please check your connection and try again.');
           }
         } else {
           console.error('Phase 2 initialization function not found! Make sure phase2.js is loaded first.');
@@ -643,6 +648,59 @@ document.addEventListener('alpine:init', () => {
     exportSession() {
       this.showExportModal = true;
     },
+
+    // Local Storage Management
+    async clearLocalStorage() {
+      if (confirm('Are you sure you want to clear all local storage? This will delete all saved sessions and cannot be undone.')) {
+        try {
+          await localforage.clear();
+          console.log('Local storage cleared successfully');
+          
+          // Reset current session to default state
+          this.session = createDefaultSession();
+          this.currentPhase = 1;
+          
+          // Reset Phase 2 if it exists
+          if (this.phase2) {
+            this.phase2 = await window.initializePhase2();
+          }
+          
+          // Reset timer
+          this.timer.duration = this.session.settings.timerDuration;
+          this.timer.remaining = this.timer.duration;
+          this.resetTimer();
+          
+          alert('Local storage has been cleared. Starting with a fresh session.');
+        } catch (error) {
+          console.error('Error clearing local storage:', error);
+          alert('Error clearing local storage: ' + error.message);
+        }
+      }
+    },
+
+    async resetCurrentSession() {
+      if (confirm('Are you sure you want to reset the current session? All current progress will be lost.')) {
+        // Reset current session to default state
+        this.session = createDefaultSession();
+        this.currentPhase = 1;
+        
+        // Reset Phase 2 if it exists
+        if (this.phase2) {
+          try {
+            this.phase2 = await window.initializePhase2();
+          } catch (error) {
+            console.error('Error reinitializing Phase 2:', error);
+          }
+        }
+        
+        // Reset timer
+        this.timer.duration = this.session.settings.timerDuration;
+        this.timer.remaining = this.timer.duration;
+        this.resetTimer();
+        
+        alert('Session has been reset.');
+      }
+    },
     
     exportJSON() {
       this.updateSessionFromPhaseData();
@@ -719,13 +777,63 @@ ${this.phase2.archetype || 'Not defined'}
               } else {
                 this.startTimer();
               }
+            } else if (this.currentPhase === 2) {
+              // Phase 2: Start/Pause timer
+              if (this.phase2?.timerState === 'ready') {
+                this.phase2.startTimer();
+              } else if (this.phase2?.timerState === 'countdown') {
+                this.phase2.pauseTimer();
+              }
             }
             break;
           case 'r':
           case 'R':
+            e.preventDefault();
             if (this.currentPhase === 1) {
-              e.preventDefault();
               this.resetTimer();
+            } else if (this.currentPhase === 2) {
+              this.phase2?.resetTimer();
+            }
+            break;
+          case 'ArrowLeft':
+            e.preventDefault();
+            if (this.currentPhase === 2) {
+              this.phase2?.previousPair();
+            }
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            if (this.currentPhase === 2) {
+              this.phase2?.nextPair();
+            }
+            break;
+          case 'a':
+          case 'A':
+            e.preventDefault();
+            if (this.currentPhase === 2) {
+              if (e.shiftKey) {
+                this.phase2?.decreaseVoteA();
+              } else {
+                this.phase2?.voteA();
+              }
+            }
+            break;
+          case 'b':
+          case 'B':
+            e.preventDefault();
+            if (this.currentPhase === 2) {
+              if (e.shiftKey) {
+                this.phase2?.decreaseVoteB();
+              } else {
+                this.phase2?.voteB();
+              }
+            }
+            break;
+          case 'n':
+          case 'N':
+            e.preventDefault();
+            if (this.currentPhase === 2 && this.phase2?.timerState === 'discussion') {
+              this.phase2.nextRound();
             }
             break;
           case '1':
@@ -738,6 +846,13 @@ ${this.phase2.archetype || 'Not defined'}
             if (this.currentPhase === 1) {
               e.preventDefault();
               this.adjustVote('B', 1);
+            }
+            break;
+          case 'Delete':
+            // Ctrl+Delete or Cmd+Delete to clear local storage
+            if (e.ctrlKey || e.metaKey) {
+              e.preventDefault();
+              this.clearLocalStorage();
             }
             break;
         }
