@@ -192,11 +192,16 @@ document.addEventListener('alpine:init', () => {
         
         // Initialize Phase 2 functionality
         if (window.initializePhase2) {
+          console.log('Initializing Phase 2...');
           this.phase2 = window.initializePhase2();
+          console.log('Phase 2 initialized:', this.phase2);
           // Load Phase 2 state if it exists
           if (this.session.phase2) {
+            console.log('Loading Phase 2 saved state:', this.session.phase2);
             this.phase2.loadState(this.session.phase2);
           }
+        } else {
+          console.error('Phase 2 initialization function not found! Make sure phase2.js is loaded first.');
         }
         
         // Start auto-save if enabled

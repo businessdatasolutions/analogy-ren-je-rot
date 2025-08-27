@@ -177,7 +177,9 @@ window.createVotingSystem = function() {
     },
 
     voteA() {
+      console.log('Vote A clicked!', this.votes);
       this.votes.companyA++;
+      console.log('Vote A updated:', this.votes);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
@@ -188,7 +190,9 @@ window.createVotingSystem = function() {
     },
 
     voteB() {
+      console.log('Vote B clicked!', this.votes);
       this.votes.companyB++;
+      console.log('Vote B updated:', this.votes);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
