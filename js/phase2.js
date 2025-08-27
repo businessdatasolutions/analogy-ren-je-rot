@@ -131,8 +131,13 @@ window.createCompanyPairs = function() {
       if (this.canGoNext) {
         this.currentIndex++;
         
-        // Update session data
+        // Load votes for the new pair
         const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
+        if (app?.phase2?.votingSystem) {
+          app.phase2.votingSystem.loadVotesForCurrentPair();
+        }
+        
+        // Update session data
         if (app) {
           app.phase2.currentPairIndex = this.currentIndex;
           app.markUnsaved();
@@ -144,8 +149,13 @@ window.createCompanyPairs = function() {
       if (this.canGoPrev) {
         this.currentIndex--;
         
-        // Update session data
+        // Load votes for the new pair
         const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
+        if (app?.phase2?.votingSystem) {
+          app.phase2.votingSystem.loadVotesForCurrentPair();
+        }
+        
+        // Update session data
         if (app) {
           app.phase2.currentPairIndex = this.currentIndex;
           app.markUnsaved();
@@ -171,6 +181,10 @@ window.createCompanyPairs = function() {
 // Voting system for Phase 2
 window.createVotingSystem = function() {
   return {
+    // Store votes per pair: { 0: {companyA: 2, companyB: 1}, 1: {companyA: 0, companyB: 3}, ... }
+    pairVotes: {},
+    
+    // Current displayed votes for active pair
     votes: {
       companyA: 0,
       companyB: 0
@@ -178,41 +192,86 @@ window.createVotingSystem = function() {
 
     voteA() {
       console.log('Vote A clicked!', this.votes);
-      this.votes.companyA++;
-      console.log('Vote A updated:', this.votes);
+      const currentPairIndex = this.getCurrentPairIndex();
+      
+      // Ensure pair votes object exists
+      if (!this.pairVotes[currentPairIndex]) {
+        this.pairVotes[currentPairIndex] = { companyA: 0, companyB: 0 };
+      }
+      
+      // Update votes for current pair
+      this.pairVotes[currentPairIndex].companyA++;
+      this.votes.companyA = this.pairVotes[currentPairIndex].companyA;
+      
+      console.log('Vote A updated:', this.votes, 'All pair votes:', this.pairVotes);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
       if (app) {
-        app.phase2.votes.companyA = this.votes.companyA;
         app.markUnsaved();
       }
     },
 
     voteB() {
       console.log('Vote B clicked!', this.votes);
-      this.votes.companyB++;
-      console.log('Vote B updated:', this.votes);
+      const currentPairIndex = this.getCurrentPairIndex();
+      
+      // Ensure pair votes object exists
+      if (!this.pairVotes[currentPairIndex]) {
+        this.pairVotes[currentPairIndex] = { companyA: 0, companyB: 0 };
+      }
+      
+      // Update votes for current pair
+      this.pairVotes[currentPairIndex].companyB++;
+      this.votes.companyB = this.pairVotes[currentPairIndex].companyB;
+      
+      console.log('Vote B updated:', this.votes, 'All pair votes:', this.pairVotes);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
       if (app) {
-        app.phase2.votes.companyB = this.votes.companyB;
         app.markUnsaved();
       }
     },
 
     resetVotes() {
+      const currentPairIndex = this.getCurrentPairIndex();
+      
+      // Reset votes for current pair only
+      if (this.pairVotes[currentPairIndex]) {
+        this.pairVotes[currentPairIndex] = { companyA: 0, companyB: 0 };
+      }
       this.votes.companyA = 0;
       this.votes.companyB = 0;
+      
+      console.log('Votes reset for pair', currentPairIndex);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
       if (app) {
-        app.phase2.votes.companyA = 0;
-        app.phase2.votes.companyB = 0;
         app.markUnsaved();
       }
+    },
+    
+    // Helper method to get current pair index from company pairs
+    getCurrentPairIndex() {
+      const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
+      return app?.phase2?.companyPairs?.currentIndex || 0;
+    },
+    
+    // Method to load votes for current pair (called when navigating)
+    loadVotesForCurrentPair() {
+      const currentPairIndex = this.getCurrentPairIndex();
+      
+      if (this.pairVotes[currentPairIndex]) {
+        this.votes.companyA = this.pairVotes[currentPairIndex].companyA;
+        this.votes.companyB = this.pairVotes[currentPairIndex].companyB;
+      } else {
+        this.votes.companyA = 0;
+        this.votes.companyB = 0;
+      }
+      
+      console.log('Loaded votes for pair', currentPairIndex, ':', this.votes);
     },
 
     get totalVotes() {
@@ -304,9 +363,8 @@ window.initializePhase2 = function() {
     
     // Load saved state
     loadState(savedData) {
-      if (savedData.votes) {
-        this.votingSystem.votes.companyA = savedData.votes.companyA || 0;
-        this.votingSystem.votes.companyB = savedData.votes.companyB || 0;
+      if (savedData.pairVotes) {
+        this.votingSystem.pairVotes = savedData.pairVotes;
       }
       
       if (savedData.currentPairIndex !== undefined) {
@@ -316,11 +374,15 @@ window.initializePhase2 = function() {
       if (savedData.timerLeft !== undefined) {
         this.timer.timeLeft = savedData.timerLeft;
       }
+      
+      // Load votes for current pair after setting the index
+      this.votingSystem.loadVotesForCurrentPair();
     },
     
     // Get current state for saving
     getState() {
       return {
+        pairVotes: this.votingSystem.pairVotes,
         votes: {
           companyA: this.votingSystem.votes.companyA,
           companyB: this.votingSystem.votes.companyB
