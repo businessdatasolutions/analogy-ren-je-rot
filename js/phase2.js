@@ -232,8 +232,8 @@ window.createTimer = function(audioSystem = null) {
       this.reset();
       // Automatically advance to next pair
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
-      if (app?.phase2?.companyPairs?.canGoNext) {
-        app.phase2.nextPair();
+      if (app?.phase1?.companyPairs?.canGoNext) {
+        app.phase1.nextPair();
       }
     },
 
@@ -415,13 +415,13 @@ window.createCompanyPairs = function(strategicPairs = null) {
         
         // Load votes for the new pair
         const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
-        if (app?.phase2?.votingSystem) {
-          app.phase2.votingSystem.loadVotesForCurrentPair();
+        if (app?.phase1?.votingSystem) {
+          app.phase1.votingSystem.loadVotesForCurrentPair();
         }
         
         // Update session data
         if (app) {
-          app.phase2.currentPairIndex = this.currentIndex;
+          app.phase1.currentPairIndex = this.currentIndex;
           app.markUnsaved();
         }
       }
@@ -433,13 +433,13 @@ window.createCompanyPairs = function(strategicPairs = null) {
         
         // Load votes for the new pair
         const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
-        if (app?.phase2?.votingSystem) {
-          app.phase2.votingSystem.loadVotesForCurrentPair();
+        if (app?.phase1?.votingSystem) {
+          app.phase1.votingSystem.loadVotesForCurrentPair();
         }
         
         // Update session data
         if (app) {
-          app.phase2.currentPairIndex = this.currentIndex;
+          app.phase1.currentPairIndex = this.currentIndex;
           app.markUnsaved();
         }
       }
@@ -577,7 +577,7 @@ window.createVotingSystem = function() {
     // Helper method to get current pair index from company pairs
     getCurrentPairIndex() {
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
-      return app?.phase2?.companyPairs?.currentIndex || 0;
+      return app?.phase1?.companyPairs?.currentIndex || 0;
     },
     
     // Method to load votes for current pair (called when navigating)
