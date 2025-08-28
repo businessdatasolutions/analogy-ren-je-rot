@@ -18,7 +18,7 @@ Status: 3-Phase Application Complete with Minor Enhancements Remaining
 - `playwright.config.js` - Playwright test configuration with browser matrix and webserver setup ✅
 - `index.html` - Main application entry point with Alpine.js integration ✅
 - `js/core.js` - Session management, Alpine.js setup, and LocalForage integration ✅
-- `js/phase2.js` - Preference round functionality (timer, voting, strategic pairs) ✅
+- `js/phase1.js` - Phase 1 strategic preference round functionality (timer, voting, strategic pairs) ✅
 - `css/styles.css` - Custom styles beyond Tailwind CSS ✅
 - `data/strategic-pairs.json` - Strategic company pairs with level balancing (26 pairs, 20 dimensions) ✅
 - `tests/01-foundation.spec.js` - Foundation phase tests (Alpine.js, session management) ✅

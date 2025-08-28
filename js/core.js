@@ -133,7 +133,7 @@ document.addEventListener('alpine:init', () => {
     presentationMode: false,
     showGuidedPrompts: false,
     
-    // Phase 1 specific data - Strategic Preference Round (initialized from phase2.js)
+    // Phase 1 specific data - Strategic Preference Round (initialized from phase1.js)
     phase1: null,
     
     // Phase 2 specific data - Archetype Analysis
@@ -178,10 +178,10 @@ document.addEventListener('alpine:init', () => {
         this.timer.duration = this.session.settings.timerDuration;
         this.timer.remaining = this.timer.duration;
         
-        // Initialize Phase 1 functionality (strategic pairs from phase2.js)
-        if (window.initializePhase2) {
+        // Initialize Phase 1 functionality (strategic pairs from phase1.js)
+        if (window.initializePhase1) {
           try {
-            this.phase1 = await window.initializePhase2();
+            this.phase1 = await window.initializePhase1();
             // Load Phase 1 state if it exists
             if (this.session.phase1) {
               this.phase1.loadState(this.session.phase1);
@@ -191,7 +191,7 @@ document.addEventListener('alpine:init', () => {
             this.showError('Failed to load strategic pairs. Please check your connection and try again.');
           }
         } else {
-          console.error('Phase 2 initialization function not found! Make sure phase2.js is loaded first.');
+          console.error('Phase 1 initialization function not found! Make sure phase1.js is loaded first.');
         }
         
         // Start auto-save if enabled
@@ -270,7 +270,7 @@ document.addEventListener('alpine:init', () => {
       this.currentPhase = this.session.currentPhase;
       
       // Deep merge phase data to preserve nested arrays and objects
-      // Phase1 is initialized from phase2.js
+      // Phase1 is initialized from phase1.js
       if (this.session.phase2) {
         this.phase2 = this.deepMerge(this.phase2, this.session.phase2);
       }
@@ -285,7 +285,7 @@ document.addEventListener('alpine:init', () => {
       // Update session object from reactive phase data with deep copy
       this.session.currentPhase = this.currentPhase;
       
-      // Handle Phase 1 data (strategic pairs) - complex object from phase2.js
+      // Handle Phase 1 data (strategic pairs) - complex object from phase1.js
       if (this.phase1 && this.phase1.getState) {
         this.session.phase1 = this.phase1.getState();
       } else if (this.phase1) {
@@ -298,7 +298,7 @@ document.addEventListener('alpine:init', () => {
     },
     
     async loadCompanyPairs() {
-      // Strategic pairs are now loaded from strategic-pairs.json in phase2.js
+      // Strategic pairs are now loaded from strategic-pairs.json in phase1.js
       // This method is kept for compatibility but no longer loads company-pairs.json
       console.log('Company pairs loading handled by Phase 1 (strategic pairs) module');
     },
@@ -362,7 +362,7 @@ document.addEventListener('alpine:init', () => {
       }
     },
     
-    // Phase 1 methods are now handled by the strategic pairs module (phase2.js)
+    // Phase 1 methods are now handled by the strategic pairs module (phase1.js)
     
     getWinners() {
       // Get winners from strategic pairs results
@@ -563,7 +563,7 @@ document.addEventListener('alpine:init', () => {
           
           // Reset Phase 1 if it exists
           if (this.phase1) {
-            this.phase1 = await window.initializePhase2();
+            this.phase1 = await window.initializePhase1();
           }
           
           // Reset timer
@@ -588,7 +588,7 @@ document.addEventListener('alpine:init', () => {
         // Reset Phase 1 if it exists
         if (this.phase1) {
           try {
-            this.phase1 = await window.initializePhase2();
+            this.phase1 = await window.initializePhase1();
           } catch (error) {
             console.error('Error reinitializing Phase 1:', error);
           }

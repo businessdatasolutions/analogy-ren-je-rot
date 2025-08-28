@@ -610,8 +610,8 @@ window.createVotingSystem = function() {
   };
 };
 
-// Phase 2 initialization and integration
-window.initializePhase2 = async function() {
+// Phase 1 initialization and integration
+window.initializePhase1 = async function() {
   try {
     // Load strategic pairs
     const allStrategicPairs = await window.loadStrategicPairs();

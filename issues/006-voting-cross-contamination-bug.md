@@ -6,7 +6,7 @@
 **Resolved:** August 28, 2025  
 **Type:** Bug  
 **Component:** Phase 1 - Strategic Preference Round  
-**Files Affected:** `js/phase2.js`, `index.html`
+**Files Affected:** `js/phase1.js`, `index.html`
 
 ## Problem Description
 
@@ -143,7 +143,7 @@ The voting system was using incorrect references to access the application data:
 - But the actual application structure uses `app.phase1.*` (not `phase2`)
 
 **Fix Applied:**
-Updated all references in `js/phase2.js` from `phase2` to `phase1`:
+Updated all references in `js/phase1.js` from `phase2` to `phase1`:
 
 1. **Line 236**: `app?.phase2?.companyPairs?.canGoNext` → `app?.phase1?.companyPairs?.canGoNext`
 2. **Line 237**: `app.phase2.nextPair()` → `app.phase1.nextPair()`
@@ -168,6 +168,6 @@ Created test script `test-voting-fix.html` that confirms:
 - Vote storage is properly isolated in `pairVotes` object
 
 **Files Modified:**
-- `js/phase2.js` - Fixed all phase reference inconsistencies
+- `js/phase1.js` - Fixed all phase reference inconsistencies
 
 **Status:** RESOLVED - The voting bug has been completely fixed.
