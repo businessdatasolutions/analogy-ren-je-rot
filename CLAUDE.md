@@ -4,13 +4,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the "Het Ren-Je-Rot-Analogie-Verkenner-spel" project - a strategic workshop game designed to help management teams discover their strategic preferences through structured analogical reasoning.
+This is the "Het Ren-Je-Rot-Analogie-Verkenner-spel" project - a strategic workshop game specifically designed for Dutch management professionals working in strategy development. The application helps Dutch management teams discover their strategic preferences through structured analogical reasoning, with all interface elements and content delivered in professional Dutch language.
+
+**Target Audience:** Dutch management professionals, strategy consultants, and team leaders in Dutch corporate environments and consulting firms.
 
 The game consists of three phases:
 
 1. **Strategic Preference Round**: Physical positioning exercise using strategic company pairs to reveal team preferences
 2. **Archetype Analysis**: Pattern recognition to define the team's strategic archetype based on preferences
 3. **Strategic Translation**: Translation of insights into actionable strategic hypotheses and action plans
+
+## Target Audience & Language Requirements
+
+### Primary Audience
+**Dutch Management Professionals** working in strategic development roles including:
+- Strategy consultants and advisors
+- Corporate strategy department leaders
+- Management team facilitators
+- Organizational development professionals
+- Team leaders managing strategic initiatives
+
+### Language & Cultural Context
+- **Primary Language:** Professional Dutch (Nederlandse zakentaal)
+- **Target Region:** Netherlands and Dutch-speaking Belgium
+- **Business Context:** Dutch corporate culture with formal business communication
+- **Communication Style:** Professional "u" form throughout all interfaces
+- **Terminology:** Consistent Dutch business and strategy vocabulary
+
+### Development Language Requirements
+All development work must consider:
+- **UI Text:** All interface elements in professional Dutch
+- **Variable Names:** Can be in English for code maintainability
+- **Comments:** Preferably in English for international developer accessibility
+- **Documentation:** Dutch for user-facing, English for technical documentation
+- **Error Messages:** Professional Dutch with clear business language
 
 ## Development Approach: Phase-by-Phase with Playwright Testing
 
@@ -246,10 +273,20 @@ npx playwright test --reporter=html
 
 ## Key Concepts
 
-- **Strategic Archetype**: The collective strategic preference pattern identified through company pair choices
-- **Voorloper (Forerunner)**: The exemplar company chosen for deep analysis
-- **Verticale Relaties (Vertical Relations)**: The causal logic connecting specific factors to business success
-- **Strategic Hypotheses**: Testable "if...then..." statements for the organization's strategy
+### Dutch Strategic Workshop Terminology
+- **Strategic Archetype** / **Strategisch Archetype**: The collective strategic preference pattern identified through company pair choices
+- **Voorloper (Forerunner)** / **Voorloper**: The exemplar company chosen for deep analysis
+- **Verticale Relaties (Vertical Relations)** / **Verticale Relaties**: The causal logic connecting specific factors to business success
+- **Strategic Hypotheses** / **Strategische Hypotheses**: Testable "if...then..." statements for the organization's strategy
+- **Voorkeursronde (Preference Round)** / **Voorkeursronde**: Physical positioning exercise revealing strategic preferences
+- **Strategische Keuzes (Strategic Choices)** / **Strategische Keuzes**: The positioning decisions made during the preference round
+
+### Dutch Business Context Guidelines
+- **Formality Level**: Always use formal "u" form in all user-facing text
+- **Professional Tone**: Authoritative and clear language suitable for management audiences
+- **Business Vocabulary**: Use established Dutch business terminology consistently
+- **Cultural Sensitivity**: Reflect Dutch directness and clarity in communication style
+- **Workshop Context**: Language appropriate for professional Dutch meeting environments
 
 ## Quality Gates for Each Phase
 
@@ -344,6 +381,28 @@ Use these prefixes for commits:
 - Follow Alpine.js naming conventions (kebab-case for attributes)
 - Keep functions small and focused (max 20 lines)
 - Use meaningful variable names that describe purpose
+
+### Dutch Language Requirements for Development
+
+**UI Text Standards:**
+- All user-facing text must be in professional Dutch (Nederlandse zakentaal)
+- Use formal "u" form consistently throughout the application
+- Apply consistent Dutch business terminology across all phases
+- Ensure error messages and help text are in clear, professional Dutch
+- Maintain authoritative tone appropriate for management audiences
+
+**Code Language Guidelines:**
+- **JavaScript Variables/Functions:** English for maintainability (e.g., `currentPhase`, `startTimer`)
+- **HTML Text Content:** Professional Dutch (e.g., "Start Ronde", "Volgende Fase")
+- **CSS Classes:** English for consistency (e.g., `.control-panel`, `.timer-display`)
+- **Comments:** English for international developer accessibility
+- **Commit Messages:** English following conventional commit format
+
+**Terminology Consistency:**
+- Maintain a glossary of Dutch-English term pairs for consistency
+- Use standardized translations for strategic workshop concepts
+- Ensure terminology aligns with Dutch business culture and practices
+- Review all text with Dutch management professionals when possible
 
 ### Git Workflow Integration
 

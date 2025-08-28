@@ -10,7 +10,9 @@
 
 ## 1. Executive Summary
 
-This PRD defines the requirements for a web-based facilitator tool for the "Het Ren-Je-Rot-Analogie-Verkenner-spel" strategic workshop game. The application provides a structured interface to guide facilitators through the three phases of the game while capturing participant insights and generating actionable strategic outputs.
+This PRD defines the requirements for a web-based facilitator tool for the "Het Ren-Je-Rot-Analogie-Verkenner-spel" strategic workshop game, specifically designed for Dutch management professionals working in strategy development. The application provides a structured interface to guide Dutch-speaking facilitators through the three phases of the game while capturing participant insights and generating actionable strategic outputs.
+
+**Target Audience:** Dutch management professionals, strategy consultants, and team leaders working in strategic development roles within Dutch organizations and consulting firms.
 
 ## 2. Product Objectives
 
@@ -26,16 +28,44 @@ Create a user-friendly, frontend-only web application that enables facilitators 
 
 ## 3. Target Users
 
-### Primary User: Workshop Facilitator
-- **Profile:** Strategy consultants, internal trainers, team leaders
-- **Experience Level:** Basic to advanced computer skills
-- **Usage Context:** Leading 8-20 person workshops in meeting rooms with projectors
-- **Key Needs:** Simple controls, reliable timer, clear visual feedback, comprehensive data capture
+### Primary User: Dutch Workshop Facilitator
+- **Profile:** Dutch management professionals, strategy consultants, internal trainers, and team leaders working in strategic development
+- **Language:** Native Dutch speakers or professionals fluent in Dutch business terminology
+- **Professional Context:** Corporate strategy departments, management consulting firms, business schools, and organizational development teams
+- **Experience Level:** Basic to advanced computer skills, experienced in workshop facilitation
+- **Usage Context:** Leading 8-20 person strategic workshops in Dutch corporate meeting rooms with projectors
+- **Key Needs:** Professional Dutch interface, simple controls, reliable timer, clear visual feedback, comprehensive data capture
+- **Business Environment:** Dutch corporate culture, formal business communication ("u" form)
 
-### Secondary User: Participants (Indirect)
-- **Profile:** Management teams, strategy departments, project teams
-- **Interaction:** View screens, provide input, receive reports
-- **Key Needs:** Clear visuals, intuitive choices, engaging experience
+### Secondary User: Dutch Management Participants (Indirect)
+- **Profile:** Dutch management teams, strategy departments, project teams, and executive groups
+- **Language:** Dutch-speaking business professionals
+- **Professional Context:** Mid to senior management levels in Dutch organizations
+- **Interaction:** View screens, make strategic positioning choices, receive professional reports in Dutch
+- **Key Needs:** Clear Dutch visuals, intuitive choices, engaging strategic experience, professional terminology
+
+### 3.3 Target Market & Language Requirements
+
+**Primary Market:** Netherlands and Dutch-speaking regions of Belgium
+
+**Language Specification:**
+- **Primary Language:** Professional Dutch (Nederlandse zakentaal)
+- **Formality Level:** Formal business communication using "u" form
+- **Terminology:** Consistent Dutch business and strategy terminology
+- **Cultural Context:** Dutch business culture and workshop facilitation styles
+
+**Professional Context Requirements:**
+- **Industry Focus:** Management consulting, corporate strategy, organizational development
+- **Organization Types:** Dutch corporations, multinational companies with Dutch operations, Dutch consulting firms
+- **Professional Roles:** Strategy directors, management consultants, HR/OD professionals, team leaders
+- **Workshop Environment:** Professional Dutch corporate meeting environments
+
+**Language Guidelines:**
+- All interface text must be in professional Dutch
+- Strategic terminology should follow Dutch business conventions
+- Instructions should be clear and authoritative for business professionals  
+- Consistent use of formal address ("u") throughout the application
+- Professional business vocabulary appropriate for management-level audiences
 
 ## 4. Technical Architecture
 
@@ -197,7 +227,16 @@ VotingResult {
 - **Clarity:** Large fonts, high contrast, minimal clutter
 - **Efficiency:** Maximum 2 clicks to any function
 - **Accessibility:** WCAG 2.1 AA compliance
-- **Professional:** Business-appropriate color scheme and typography
+- **Professional:** Business-appropriate color scheme and typography for Dutch corporate environments
+- **Language:** All interface text in professional Dutch (Nederlandse zakentaal)
+- **Cultural Appropriateness:** Design suitable for Dutch business culture and formal workshop settings
+
+### 7.1.1 Dutch Language Requirements
+- **Text Language:** All UI elements, labels, instructions, and messages in professional Dutch
+- **Formality Level:** Formal business communication using "u" form throughout
+- **Terminology Consistency:** Standardized Dutch business and strategy terminology
+- **Professional Tone:** Authoritative and clear language appropriate for management audiences
+- **Business Context:** Language reflects Dutch corporate culture and strategic development practices
 
 ### 7.2 Layout System
 - **Desktop/Tablet:** Split view (control panel + presentation)
@@ -428,11 +467,14 @@ export default defineConfig({
 ## 12. Future Enhancements
 
 ### Version 2.0 Considerations
-- Multi-language support (English/Dutch toggle)
-- Company pair library with search
-- Advanced analytics and pattern recognition
-- Integration with presentation tools (PowerPoint export)
-- Collaborative features for remote workshops
+- **Enhanced Language Features:** Advanced Dutch business terminology support with context-sensitive help
+- **Secondary Language Support:** Optional English interface for international Dutch companies (Dutch remains primary)
+- **Dutch-Specific Features:** Integration with Dutch business databases and company information
+- **Company pair library with search:** Enhanced with Dutch market focus
+- **Advanced analytics and pattern recognition:** Tailored for Dutch business culture and decision-making patterns  
+- **Integration with presentation tools:** PowerPoint export with Dutch templates and professional formatting
+- **Collaborative features for remote workshops:** Optimized for Dutch virtual meeting platforms
+- **Regional Customization:** Support for Belgian Dutch business terminology variations
 
 ## 13. Testing Strategy & Implementation Details
 
