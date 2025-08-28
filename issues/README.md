@@ -9,14 +9,24 @@ Each issue follows this naming convention:
 
 ## Current Issues
 
-### High Priority
-- [001-control-mode-ui-optimization.md](./001-control-mode-ui-optimization.md) - UI improvements for control mode
+### ✅ Resolved Issues
+- [001-control-mode-ui-optimization.md](./001-control-mode-ui-optimization.md) - ✅ **RESOLVED** - UI improvements for control mode (Commit: `8f223bd`)
 
-### Medium Priority  
+### 🔄 Open Issues
+
+#### Medium Priority  
 - [002-dutch-language-consistency.md](./002-dutch-language-consistency.md) - Ensure professional Dutch throughout
 
-### Low Priority
+#### Low Priority
 - [003-codebase-cleanup.md](./003-codebase-cleanup.md) - Code cleanup and refactoring
+
+## Issue Status Summary
+
+| Issue | Status | Priority | Resolved Date | Commit |
+|-------|--------|----------|---------------|---------|
+| #1 | ✅ Resolved | High | 2025-08-28 | `8f223bd` |
+| #2 | 🔄 Open | Medium | - | - |
+| #3 | 🔄 Open | Low | - | - |
 
 ## How to Use
 

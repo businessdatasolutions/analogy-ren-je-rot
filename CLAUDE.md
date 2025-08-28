@@ -17,9 +17,9 @@ The game consists of four phases:
 
 This project is being built using a **test-driven, phase-by-phase approach** where each phase is thoroughly tested with Playwright before proceeding to the next. Each phase must pass all tests and quality gates before moving forward.
 
-## Current Status: Foundation Phase (Phase 1)
+## Current Status: Phase 2 Implementation (Active Development)
 
-Starting with minimal viable foundation and building incrementally with full test coverage for each component.
+Foundation phase complete with Phase 2 (Physical Positioning/Preference Round) actively being developed. Major UI improvements completed for control vs presentation mode optimization.
 
 ### Target File Structure (Modular Architecture)
 
@@ -33,15 +33,21 @@ Starting with minimal viable foundation and building incrementally with full tes
 ├── CLAUDE.md                 # This development guide
 ├── js/
 │   ├── core.js              # Session management & Alpine.js setup
-│   ├── phase1-preference.js # Preference round functionality
-│   ├── phase2-archetype.js  # Archetype analysis (Phase 3)
+│   ├── app.js               # Main application logic 
+│   ├── phase2.js            # Phase 2: Physical positioning/preference round
 │   ├── phase3-decomposition.js # Decomposition analysis (Phase 4)
 │   ├── phase4-translation.js # Strategic translation (Phase 5)
 │   └── utils.js             # Shared utilities and helpers
 ├── css/
-│   └── styles.css           # Custom styles beyond Tailwind CSS
+│   └── styles.css           # Custom styles beyond Tailwind CSS (includes control mode fixes)
 ├── data/
-│   └── company-pairs.json   # Extended company pair library
+│   ├── company-pairs.json   # Extended company pair library  
+│   └── strategic-pairs.json # Strategic company pair data
+├── issues/                  # GitHub issue tracking (markdown format)
+│   ├── 001-control-mode-ui-optimization.md
+│   ├── 002-dutch-language-consistency.md
+│   ├── 003-codebase-cleanup.md
+│   └── README.md
 ├── tests/
 │   ├── 01-foundation.spec.js          # Phase 1: Foundation tests
 │   ├── 02-preference-round.spec.js    # Phase 2: Preference round tests
@@ -68,7 +74,7 @@ Starting with minimal viable foundation and building incrementally with full tes
 
 ### Development Phases
 
-**Phase 1: Foundation & Core Infrastructure (Current)**
+**Phase 1: Foundation & Core Infrastructure (✅ Complete)**
 
 - ✅ Basic HTML structure with Alpine.js initialization
 - ✅ Session management (create, load, save)
@@ -76,13 +82,17 @@ Starting with minimal viable foundation and building incrementally with full tes
 - ✅ LocalForage integration
 - ✅ Comprehensive Playwright test coverage
 
-**Phase 2: Preference Round Implementation (Next)**
+**Phase 2: Physical Positioning/Preference Round (🚧 In Progress)**
 
-- Company pair display system
-- Countdown timer with visual indicators
-- Vote counting interface (+/- buttons)
-- Scorecard with round navigation
-- Keyboard shortcuts (Space, R, 1, 2)
+- ✅ Company pair display system with strategic dilemma presentation
+- ✅ Countdown timer with visual indicators and audio support
+- ✅ Vote counting interface with real-time display
+- ✅ **UI Mode Optimization**: Fixed control mode overlapping issues (Issue #1 ✅)
+- ✅ Presentation mode vs control mode conditional layouts
+- ✅ Timer circle responsive sizing and positioning
+- ✅ Strategic pairs data integration
+- 🔄 Additional timer features and round progression
+- 🔄 Enhanced voting mechanics and scorecard
 
 **Phase 3: Archetype Analysis Features**
 
@@ -168,23 +178,49 @@ npx playwright show-report
 3. **Refactor**: Improve code while maintaining test coverage
 4. **Quality Gate**: Ensure all tests pass before moving to next phase
 
-### Current Phase: Foundation (Phase 1)
+### Current Phase: Phase 2 Implementation
 
 ```bash
-# Test foundation functionality
-npx playwright test tests/01-foundation.spec.js
+# Test current functionality including control mode fixes
+npx playwright test tests/01-foundation.spec.js --headed
+
+# Test Phase 2 preference round features  
+npx playwright test tests/03-phase2-preference-round.spec.js --headed
+
+# Run all tests
+npx playwright test
 
 # Check test coverage
 npx playwright test --reporter=html
 ```
 
+### Recent Improvements & GitHub Issues
+
+**✅ Issue #1: Control Mode UI Optimization (RESOLVED)**
+- Fixed overlapping timer circle and modal elements in control mode
+- Implemented responsive timer sizing (32x32 in presentation, 20x20 in control)
+- Added conditional visibility for presentation-only overlays
+- Proper z-index management to prevent content blocking
+- Commit: `8f223bd` - "fix(phase2): resolve control mode UI overlapping issues"
+
+**🔄 Issue #2: Dutch Language Consistency (Open)**
+- Priority: Medium
+- Ensure all interface text is in professional Dutch
+- Review button labels, instructions, and terminology
+
+**🔄 Issue #3: Codebase Cleanup (Open)**  
+- Priority: Low
+- Remove unused code and files
+- Improve code organization and documentation
+
 ### Key Architecture Decisions
 
 - **No Backend Required**: All data stored in browser localStorage/IndexedDB
-- **Modular JavaScript**: Separate files for each phase (`js/phase1-*.js`)
+- **Modular JavaScript**: Separate files for each phase implementation
 - **CDN Dependencies**: Tailwind CSS, Alpine.js, LocalForage via CDN
 - **Test-Driven Development**: Playwright tests define expected behavior
 - **Progressive Enhancement**: Works without JavaScript for basic functionality
+- **Dual UI Modes**: Presentation mode for workshops, control mode for facilitators
 
 ## Development Guidelines
 
