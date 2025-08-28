@@ -345,6 +345,179 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
   });
 
+  test.describe('Strategic Level Distribution', () => {
+    test('selectRandomPairs ensures level diversity with 5 pairs', async ({ page }) => {
+      // Test the balanced selection algorithm
+      const result = await page.evaluate(async () => {
+        // Load strategic pairs data
+        const response = await fetch('data/strategic-pairs.json');
+        const data = await response.json();
+        const strategicPairs = data.strategic_pairs || data;
+        
+        // Test multiple selections to verify level diversity
+        const selections = [];
+        for (let i = 0; i < 10; i++) {
+          const selected = window.selectRandomPairs(strategicPairs, 5);
+          const levels = selected.map(pair => pair.niveau || 1);
+          const uniqueLevels = [...new Set(levels)];
+          selections.push({
+            totalPairs: selected.length,
+            levels: levels,
+            uniqueLevelCount: uniqueLevels.length,
+            hasAllFourLevels: uniqueLevels.length === 4
+          });
+        }
+        return selections;
+      });
+      
+      // Verify all selections have 5 pairs
+      result.forEach(selection => {
+        expect(selection.totalPairs).toBe(5);
+      });
+      
+      // Verify most selections have good level diversity (at least 3 different levels)
+      const goodDiversity = result.filter(s => s.uniqueLevelCount >= 3).length;
+      expect(goodDiversity).toBeGreaterThan(result.length * 0.7); // At least 70% should have 3+ levels
+      
+      // Verify some selections achieve perfect level distribution (all 4 levels)
+      const perfectDistribution = result.filter(s => s.hasAllFourLevels).length;
+      expect(perfectDistribution).toBeGreaterThan(0); // At least some should have all 4 levels
+    });
+
+    test('selectRandomPairs handles edge cases correctly', async ({ page }) => {
+      const result = await page.evaluate(async () => {
+        // Load strategic pairs data
+        const response = await fetch('data/strategic-pairs.json');
+        const data = await response.json();
+        const strategicPairs = data.strategic_pairs || data;
+        
+        const tests = {};
+        
+        // Test with fewer than 4 pairs requested
+        tests.smallSelection = window.selectRandomPairs(strategicPairs, 3);
+        
+        // Test with exact count equal to available pairs
+        tests.exactCount = window.selectRandomPairs(strategicPairs.slice(0, 5), 5);
+        
+        // Test with more pairs requested than available
+        tests.moreRequested = window.selectRandomPairs(strategicPairs.slice(0, 3), 5);
+        
+        // Test with empty array
+        tests.emptyArray = window.selectRandomPairs([], 5);
+        
+        return tests;
+      });
+      
+      // Small selection should work
+      expect(result.smallSelection.length).toBe(3);
+      
+      // Exact count should return all pairs
+      expect(result.exactCount.length).toBe(5);
+      
+      // More requested than available should return all available
+      expect(result.moreRequested.length).toBe(3);
+      
+      // Empty array should return empty array
+      expect(result.emptyArray.length).toBe(0);
+    });
+
+    test('strategic pairs have proper niveau categorization', async ({ page }) => {
+      const result = await page.evaluate(async () => {
+        // Load and validate strategic pairs data structure
+        const response = await fetch('data/strategic-pairs.json');
+        const data = await response.json();
+        const strategicPairs = data.strategic_pairs || data;
+        
+        const analysis = {
+          totalPairs: strategicPairs.length,
+          pairsByLevel: { 1: 0, 2: 0, 3: 0, 4: 0 },
+          pairsWithNiveau: 0,
+          pairsWithDimensie: 0,
+          samplePairs: []
+        };
+        
+        strategicPairs.forEach(pair => {
+          if (pair.niveau) {
+            analysis.pairsWithNiveau++;
+            analysis.pairsByLevel[pair.niveau]++;
+          }
+          if (pair.dimensie_nummer) {
+            analysis.pairsWithDimensie++;
+          }
+          
+          // Collect sample pairs from each level
+          if (analysis.samplePairs.length < 8) {
+            analysis.samplePairs.push({
+              companies: `${pair.companyA} vs ${pair.companyB}`,
+              niveau: pair.niveau,
+              dimensie: pair.dimensie_nummer,
+              contrast: pair.strategic_contrast
+            });
+          }
+        });
+        
+        return analysis;
+      });
+      
+      // Verify all pairs have niveau field
+      expect(result.pairsWithNiveau).toBe(result.totalPairs);
+      
+      // Verify all pairs have dimensie_nummer field  
+      expect(result.pairsWithDimensie).toBe(result.totalPairs);
+      
+      // Verify we have pairs at all 4 levels
+      expect(result.pairsByLevel[1]).toBeGreaterThan(0);
+      expect(result.pairsByLevel[2]).toBeGreaterThan(0);
+      expect(result.pairsByLevel[3]).toBeGreaterThan(0);
+      expect(result.pairsByLevel[4]).toBeGreaterThan(0);
+      
+      // Verify reasonable distribution (no level should be completely empty or dominate excessively)
+      const maxLevel = Math.max(...Object.values(result.pairsByLevel));
+      const minLevel = Math.min(...Object.values(result.pairsByLevel));
+      expect(minLevel).toBeGreaterThan(0); // All levels should have at least one pair
+      expect(maxLevel / minLevel).toBeLessThan(5); // Max should not be more than 5x min (allows for natural variation)
+      
+      console.log('Strategic pairs distribution:', result.pairsByLevel);
+      console.log('Sample pairs:', result.samplePairs);
+    });
+
+    test('level-balanced selection integrates properly with game flow', async ({ page }) => {
+      // Verify the selected pairs are properly integrated into the game
+      const gameData = await page.evaluate(() => {
+        // Access the game app data
+        const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
+        if (!app?.phase2?.selectedStrategicPairs) {
+          return null;
+        }
+        
+        const pairs = app.phase2.selectedStrategicPairs;
+        const levels = pairs.map(pair => pair.niveau || 1);
+        const uniqueLevels = [...new Set(levels)];
+        
+        return {
+          selectedCount: pairs.length,
+          levels: levels,
+          uniqueLevels: uniqueLevels,
+          hasLevelDiversity: uniqueLevels.length >= 3,
+          sampleContrasts: pairs.slice(0, 3).map(p => p.strategic_contrast)
+        };
+      });
+      
+      // Verify game has selected pairs
+      expect(gameData).not.toBeNull();
+      expect(gameData.selectedCount).toBeGreaterThan(0);
+      
+      // Verify level diversity in actual game selection
+      expect(gameData.hasLevelDiversity).toBe(true);
+      
+      // Verify strategic contrasts are present
+      gameData.sampleContrasts.forEach(contrast => {
+        expect(contrast).toBeTruthy();
+        expect(typeof contrast).toBe('string');
+      });
+    });
+  });
+
   test.describe('Responsive Design', () => {
     test('Phase 2 layout works on mobile viewport', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });

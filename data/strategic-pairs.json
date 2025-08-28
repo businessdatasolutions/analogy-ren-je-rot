@@ -4,6 +4,8 @@
       "companyA": "Android",
       "companyB": "Apple iOS",
       "strategic_contrast": "Platform vs. Geïntegreerd Product",
+      "niveau": 2,
+      "dimensie_nummer": 7,
       "distinguishing_element": "Controle over het ecosysteem",
       "dilemma_question": "Bouw je een open ecosysteem voor maximale schaal, of een perfect gecontroleerde totaaloplossing voor een premium ervaring?",
       "strategies": {
@@ -15,6 +17,8 @@
       "companyA": "Tesla",
       "companyB": "Toyota",
       "strategic_contrast": "Disruptieve Innovator vs. Operationele Excellentie",
+      "niveau": 3,
+      "dimensie_nummer": 13,
       "distinguishing_element": "De benadering van productontwikkeling",
       "dilemma_question": "Zet je de markt op zijn kop met radicale, software-gedreven vernieuwing, of win je door het bestaande productieproces continu te perfectioneren?",
       "strategies": {
@@ -26,6 +30,8 @@
       "companyA": "Airbnb",
       "companyB": "Hilton",
       "strategic_contrast": "Datagedreven Netwerk vs. Traditioneel Asset-model",
+      "niveau": 2,
+      "dimensie_nummer": 7,
       "distinguishing_element": "De basis van de bedrijfswaarde (bezit)",
       "dilemma_question": "Is je waarde gebaseerd op het bezit van fysieke middelen, of op de kracht van je data en het netwerk dat je faciliteert?",
       "strategies": {
@@ -37,6 +43,8 @@
       "companyA": "Figma",
       "companyB": "Adobe",
       "strategic_contrast": "Niche Specialist vs. Brede Generalist (Software)",
+      "niveau": 1,
+      "dimensie_nummer": 1,
       "distinguishing_element": "Focus van het productaanbod",
       "dilemma_question": "Domineer je één specifieke functie door die beter te doen dan wie dan ook, of bied je een brede, geïntegreerde suite aan oplossingen?",
       "strategies": {
@@ -48,6 +56,8 @@
       "companyA": "Netflix",
       "companyB": "Spotify",
       "strategic_contrast": "Verticale Integratie vs. Horizontale Specialisatie",
+      "niveau": 3,
+      "dimensie_nummer": 11,
       "distinguishing_element": "Mate van controle over de waardeketen",
       "dilemma_question": "Beheers je de hele keten zelf (van productie tot distributie), of ben je de allerbeste in één cruciale schakel van die keten?",
       "strategies": {
@@ -59,6 +69,8 @@
       "companyA": "Apple Health",
       "companyB": "Adyen/Stripe",
       "strategic_contrast": "Gesloten Data-Ecosysteem vs. Open API-Platform",
+      "niveau": 3,
+      "dimensie_nummer": 14,
       "distinguishing_element": "Toegankelijkheid van data en functionaliteit",
       "dilemma_question": "Is je data een afgeschermde vesting om je eigen producten te versterken, of zijn het open bouwblokken waarmee anderen waarde kunnen creëren?",
       "strategies": {
@@ -70,6 +82,8 @@
       "companyA": "YouTube",
       "companyB": "Bitcoin",
       "strategic_contrast": "Gecentraliseerd Netwerk vs. Gedecentraliseerd Protocol",
+      "niveau": 3,
+      "dimensie_nummer": 15,
       "distinguishing_element": "Structuur van autoriteit en eigendom",
       "dilemma_question": "Wordt het netwerk bestuurd vanuit één centraal punt, of door de gebruikers gezamenlijk zonder centrale autoriteit?",
       "strategies": {
@@ -81,6 +95,8 @@
       "companyA": "Amazon",
       "companyB": "OpenAI",
       "strategic_contrast": "AI als Efficiëntie-versneller vs. AI als Kernproduct",
+      "niveau": 3,
+      "dimensie_nummer": 16,
       "distinguishing_element": "De rol van AI in het verdienmodel",
       "dilemma_question": "Gebruik je AI om je bestaande business beter en sneller te maken, of *is* de intelligentie van de AI zelf het product dat je verkoopt?",
       "strategies": {
@@ -92,6 +108,8 @@
       "companyA": "Salesforce",
       "companyB": "Monday.com",
       "strategic_contrast": "Diep Geïntegreerd Platform vs. Flexibel Werk-framework",
+      "niveau": 2,
+      "dimensie_nummer": 7,
       "distinguishing_element": "Benadering van complexiteit en maatwerk",
       "dilemma_question": "Bied je een diepgaande, specialistische oplossing voor de hele onderneming, of een flexibel framework dat elk team zelf kan aanpassen?",
       "strategies": {
@@ -103,6 +121,8 @@
       "companyA": "Facebook",
       "companyB": "TikTok",
       "strategic_contrast": "Social Graph vs. Content Graph",
+      "niveau": 4,
+      "dimensie_nummer": 19,
       "distinguishing_element": "Het aanbevelingsalgoritme",
       "dilemma_question": "Is je netwerk gebaseerd op wie je kent (connecties), of op wat je leuk vindt (interesses)?",
       "strategies": {
@@ -114,6 +134,8 @@
       "companyA": "Urban Arrow",
       "companyB": "Gazelle",
       "strategic_contrast": "Niche Specialist vs. Brede Generalist (Fysiek Product)",
+      "niveau": 1,
+      "dimensie_nummer": 1,
       "distinguishing_element": "Breedte van het assortiment",
       "dilemma_question": "Focus je op het perfect oplossen van één specifiek probleem voor een kleine groep, of bied je een betrouwbare oplossing voor bijna iedereen?",
       "strategies": {
@@ -125,6 +147,8 @@
       "companyA": "Apple",
       "companyB": "Samsung",
       "strategic_contrast": "Verticale Ecosysteem-integratie vs. Horizontale Productdiversificatie",
+      "niveau": 3,
+      "dimensie_nummer": 11,
       "distinguishing_element": "Controle over de waardeketen",
       "dilemma_question": "Creëer je waarde door totale controle over een gesloten ecosysteem, of door excellent te zijn in productie en keuze te bieden binnen een open ecosysteem?",
       "strategies": {
@@ -135,7 +159,9 @@
     {
       "companyA": "Google",
       "companyB": "Microsoft",
-      "strategic_contrast": "Consumentgedreven Datamodel vs. Enterprisegedreven Platformmodel",
+      "strategic_contrast": "Indirect (Data/Advertenties) vs. Direct (Verkoop/Abonnement) Inkomstenmodel",
+      "niveau": 2,
+      "dimensie_nummer": 8,
       "distinguishing_element": "De primaire bron van inkomsten",
       "dilemma_question": "Is je businessmodel gebouwd op het monetariseren van data van gratis consumentendiensten, of op het verkopen van productiviteits- en platformabonnementen aan bedrijven?",
       "strategies": {
@@ -147,6 +173,8 @@
       "companyA": "Amazon",
       "companyB": "Alibaba",
       "strategic_contrast": "Logistiek-gedreven Retailer vs. Platform-gedreven Marktplaats",
+      "niveau": 2,
+      "dimensie_nummer": 7,
       "distinguishing_element": "Het beheer van voorraad (inventory)",
       "dilemma_question": "Ben je een retailer die een gigantisch logistiek netwerk beheert om zelf te verkopen, of ben je een 'asset-light' platform dat transacties tussen anderen faciliteert?",
       "strategies": {
@@ -158,6 +186,8 @@
       "companyA": "Netflix",
       "companyB": "Disney",
       "strategic_contrast": "Datagedreven Contentcreatie vs. IP-gedreven Franchisebouw",
+      "niveau": 2,
+      "dimensie_nummer": 9,
       "distinguishing_element": "De oorsprong van de contentstrategie",
       "dilemma_question": "Creëer je nieuwe hits op basis van data en kijkgedrag, of exploiteer je bestaand, iconisch intellectueel eigendom via een synergetisch vliegwiel?",
       "strategies": {
@@ -169,6 +199,8 @@
       "companyA": "Spotify",
       "companyB": "Apple Music",
       "strategic_contrast": "Pure-Play Specialist vs. Ecosysteem-component",
+      "niveau": 2,
+      "dimensie_nummer": 10,
       "distinguishing_element": "Het strategische doel van de dienst",
       "dilemma_question": "Is deze dienst je kernactiviteit die zelfstandig winstgevend moet zijn, of is het een feature om je duurdere kernproduct (hardware) aantrekkelijker te maken?",
       "strategies": {
@@ -180,6 +212,8 @@
       "companyA": "Uber",
       "companyB": "Lyft",
       "strategic_contrast": "Globale Alles-App Aggregator vs. Gefocuste Marktspeler",
+      "niveau": 1,
+      "dimensie_nummer": 2,
       "distinguishing_element": "De strategische scope",
       "dilemma_question": "Streef je naar wereldwijde dominantie door te diversifiëren naar alle aanverwante markten, of focus je op het winnen van één specifieke dienst in één regio?",
       "strategies": {
@@ -191,6 +225,8 @@
       "companyA": "Airbnb",
       "companyB": "Booking.com",
       "strategic_contrast": "Community-gedreven Merk vs. Transactie-gedreven Aggregator",
+      "niveau": 2,
+      "dimensie_nummer": 5,
       "distinguishing_element": "De kern van de waardepropositie",
       "dilemma_question": "Bouw je een merk rond community, vertrouwen en unieke ervaringen, of bouw je een efficiënte machine gericht op conversie en transactiegemak?",
       "strategies": {
@@ -202,6 +238,8 @@
       "companyA": "Instagram",
       "companyB": "Snapchat",
       "strategic_contrast": "Publieke Etalage (Broadcast) vs. Private Communicatie (Messaging)",
+      "niveau": 4,
+      "dimensie_nummer": 19,
       "distinguishing_element": "De permanentie van content",
       "dilemma_question": "Is je platform een publieke etalage voor een gepolijst en permanent archief, of een kanaal voor snelle, tijdelijke en intieme communicatie?",
       "strategies": {
@@ -213,6 +251,8 @@
       "companyA": "LEGO",
       "companyB": "Nintendo",
       "strategic_contrast": "Open Innovatie (Co-creatie) vs. Gesloten Innovatie (Gecontroleerde Perfectie)",
+      "niveau": 3,
+      "dimensie_nummer": 12,
       "distinguishing_element": "De bron van productideeën en innovatie",
       "dilemma_question": "Vertrouw je op de creativiteit van je eigen team binnen een gecontroleerde omgeving, of stel je je open voor de collectieve intelligentie van je community en de buitenwereld?",
       "strategies": {
@@ -224,11 +264,78 @@
       "companyA": "Fairphone",
       "companyB": "TOMS Shoes",
       "strategic_contrast": "Systeemverandering vs. Directe Hulpverlening",
+      "niveau": 3,
+      "dimensie_nummer": 17,
       "distinguishing_element": "De aanpak van het maatschappelijke probleem",
       "dilemma_question": "Probeer je de symptomen van een probleem direct te verlichten met een tastbare oplossing, of richt je je op het veranderen van het onderliggende, complexe systeem dat het probleem veroorzaakt?",
       "strategies": {
         "companyA": "Verandert hele industrie. Duurzame materialen, repareerbaar.",
         "companyB": "Direct verlichten van symptoom. 'One for One'-model."
+      }
+    },
+    {
+      "companyA": "Shopify",
+      "companyB": "ASML",
+      "strategic_contrast": "Lage Toetredingsdrempels vs. Hoge Toetredingsdrempels (Moat)",
+      "niveau": 1,
+      "dimensie_nummer": 4,
+      "distinguishing_element": "Hoe makkelijk is het voor anderen om onze markt te betreden",
+      "dilemma_question": "Maak je het makkelijk voor anderen om in jouw markt te komen en concurreren op toegankelijkheid, of bouw je bewust hoge barrières om je positie te beschermen?",
+      "strategies": {
+        "companyA": "Lage drempel: iedereen kan een webshop starten. Concurreert op gebruiksvriendelijkheid en lage kosten.",
+        "companyB": "Hoge drempel: complexe lithografie technologie die decennia ontwikkel- en kapitaalinvestering vereist."
+      }
+    },
+    {
+      "companyA": "Ryanair",
+      "companyB": "Emirates",
+      "strategic_contrast": "Kostenleiderschap vs. Differentiatie",
+      "niveau": 2,
+      "dimensie_nummer": 6,
+      "distinguishing_element": "Hoe concurreren we op prijs",
+      "dilemma_question": "Win je door de laagste kosten en prijzen aan te bieden, of door premium kwaliteit en service waarvoor klanten bereid zijn meer te betalen?",
+      "strategies": {
+        "companyA": "Ultralage kosten. Geen franje, efficiënte operaties, kosten doorrekenen voor alles extra.",
+        "companyB": "Premium ervaring. Luxe service, comfort en prestige rechtvaardigen hogere prijzen."
+      }
+    },
+    {
+      "companyA": "ING",
+      "companyB": "Spotify",
+      "strategic_contrast": "Hiërarchisch (Command & Control) vs. Agile (Autonomy & Alignment)",
+      "niveau": 4,
+      "dimensie_nummer": 18,
+      "distinguishing_element": "Hoe is het bedrijf georganiseerd",
+      "dilemma_question": "Stuur je vanuit de top met duidelijke hiërarchie en controle, of geef je autonomie aan teams die zich afstemmen op gemeenschappelijke doelen?",
+      "strategies": {
+        "companyA": "Traditionele hiërarchische bankstructuur met duidelijke managementlagen en centraal bestuur.",
+        "companyB": "Agile squads en tribes model met autonome teams die snel kunnen experimenteren en itereren."
+      }
+    },
+    {
+      "companyA": "Apple",
+      "companyB": "Buffer",
+      "strategic_contrast": "Cultuur van Geheimhouding vs. Cultuur van Radicale Transparantie",
+      "niveau": 4,
+      "dimensie_nummer": 19,
+      "distinguishing_element": "Wat is de onderliggende cultuur die gedrag stuurt",
+      "dilemma_question": "Houd je strategische informatie geheim om concurrentievoordelen te behouden, of deel je openlijk om vertrouwen en betrokkenheid te creëren?",
+      "strategies": {
+        "companyA": "Extreme geheimhouding. Productontwikkeling achter gesloten deuren, strikte NDA's, 'need to know' basis.",
+        "companyB": "Radicale transparantie. Salarissen openbaar, besluitvorming transparant, openheid over uitdagingen."
+      }
+    },
+    {
+      "companyA": "Mailchimp",
+      "companyB": "Uber",
+      "strategic_contrast": "Bootstrapped (Eigen Geld) vs. VC-gefinancierd (Extern Kapitaal)",
+      "niveau": 4,
+      "dimensie_nummer": 20,
+      "distinguishing_element": "Hoe financieren we onze groei",
+      "dilemma_question": "Groei je organisch met eigen middelen en behoud je volledige controle, of haal je extern kapitaal op voor snellere schaal maar met gedeelde controle?",
+      "strategies": {
+        "companyA": "Volledig zelfgefinancierd. Organische groei, volledige controle, focus op winstgevendheid vanaf dag één.",
+        "companyB": "Venture capital gedreven. Snelle internationale expansie, marktdominantie voor winstgevendheid."
       }
     }
   ]

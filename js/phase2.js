@@ -274,14 +274,86 @@ window.loadStrategicPairs = async function() {
   }
 };
 
-// Random pair selection utility
+/**
+ * Strategic pair selection with level balancing
+ * Ensures representation from all framework levels when selecting 4+ pairs
+ * @param {Array} allPairs - All available strategic pairs
+ * @param {number} count - Number of pairs to select (default: 5)
+ * @returns {Array} Selected strategic pairs with balanced level distribution
+ */
 window.selectRandomPairs = function(allPairs, count = 5) {
   if (allPairs.length <= count) {
     return [...allPairs]; // Return all pairs if we have fewer than requested
   }
   
-  const shuffled = [...allPairs].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+  // If selecting fewer than 4 pairs, use simple random selection
+  if (count < 4) {
+    const shuffled = [...allPairs].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+  }
+  
+  // Group pairs by strategic level (niveau)
+  const pairsByLevel = {
+    1: [], // Niveau 1: Waar concurreren we?
+    2: [], // Niveau 2: Hoe winnen we?
+    3: [], // Niveau 3: Hoe leveren we?
+    4: []  // Niveau 4: Hoe organiseren en financieren we?
+  };
+  
+  // Categorize pairs by level
+  allPairs.forEach(pair => {
+    const level = pair.niveau || 1; // Default to level 1 if not specified
+    if (pairsByLevel[level]) {
+      pairsByLevel[level].push(pair);
+    }
+  });
+  
+  // Get available levels that have pairs
+  const availableLevels = Object.keys(pairsByLevel).filter(level => pairsByLevel[level].length > 0);
+  
+  // If we have 4 or more levels available, ensure one from each level
+  const selectedPairs = [];
+  const remainingSlots = count;
+  
+  if (availableLevels.length >= 4 && count >= 4) {
+    // Select one random pair from each of the first 4 levels
+    availableLevels.slice(0, 4).forEach(level => {
+      const levelPairs = pairsByLevel[level];
+      const randomIndex = Math.floor(Math.random() * levelPairs.length);
+      selectedPairs.push(levelPairs[randomIndex]);
+    });
+    
+    // Remove selected pairs from the pool for remaining slots
+    const remainingPairs = allPairs.filter(pair => !selectedPairs.includes(pair));
+    
+    // Fill remaining slots with random selection from all remaining pairs
+    const additionalCount = count - 4;
+    if (additionalCount > 0 && remainingPairs.length > 0) {
+      const shuffledRemaining = [...remainingPairs].sort(() => Math.random() - 0.5);
+      selectedPairs.push(...shuffledRemaining.slice(0, additionalCount));
+    }
+  } else {
+    // Fallback: If we don't have enough levels, use balanced selection from available levels
+    const levelsToUse = Math.min(availableLevels.length, count);
+    
+    // Select one from each available level first
+    availableLevels.slice(0, levelsToUse).forEach(level => {
+      const levelPairs = pairsByLevel[level];
+      const randomIndex = Math.floor(Math.random() * levelPairs.length);
+      selectedPairs.push(levelPairs[randomIndex]);
+    });
+    
+    // Fill remaining slots randomly
+    const remainingPairs = allPairs.filter(pair => !selectedPairs.includes(pair));
+    const additionalCount = count - selectedPairs.length;
+    if (additionalCount > 0 && remainingPairs.length > 0) {
+      const shuffledRemaining = [...remainingPairs].sort(() => Math.random() - 0.5);
+      selectedPairs.push(...shuffledRemaining.slice(0, additionalCount));
+    }
+  }
+  
+  // Final shuffle to randomize the order of selected pairs
+  return selectedPairs.sort(() => Math.random() - 0.5);
 };
 
 // Company pairs management
