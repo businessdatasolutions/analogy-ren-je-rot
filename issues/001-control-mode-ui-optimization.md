@@ -3,7 +3,7 @@
 **Status:** ✅ **RESOLVED**  
 **Priority:** High  
 **Labels:** enhancement, UI/UX  
-**Resolved in:** Commit `8f223bd` (2025-08-28)  
+**Resolved in:** Commit `cc23a24` (2025-08-28)  
 
 ## Problem ✅ SOLVED
 
