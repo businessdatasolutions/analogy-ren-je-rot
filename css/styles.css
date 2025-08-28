@@ -7,9 +7,84 @@
     transition: stroke-dashoffset 1s linear;
 }
 
-/* Smooth transitions for modals */
+/* Smooth transitions for modals and components */
 [x-show] {
     transition: opacity 0.25s ease-out;
+}
+
+/* Phase transition animations */
+.phase-content {
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.phase-fade-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.phase-fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.phase-fade-leave {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.phase-fade-leave-active {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+/* Celebration screen animations */
+.celebration-screen {
+    animation: celebrationFadeIn 0.8s ease-out;
+}
+
+@keyframes celebrationFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Winner card animations */
+.winner-card {
+    animation: slideInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.winner-card:nth-child(1) { animation-delay: 0.1s; }
+.winner-card:nth-child(2) { animation-delay: 0.2s; }
+.winner-card:nth-child(3) { animation-delay: 0.3s; }
+.winner-card:nth-child(4) { animation-delay: 0.4s; }
+.winner-card:nth-child(5) { animation-delay: 0.5s; }
+.winner-card:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Navigation button transitions */
+.nav-button {
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Custom scrollbars for better UX */

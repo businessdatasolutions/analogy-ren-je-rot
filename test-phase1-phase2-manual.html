@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1→2 Transition Manual Test</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+            margin: 20px; 
+            background: #f8fafc; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+        }
+        .panel { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
+        }
+        .full-width { grid-column: 1 / -1; }
+        h1, h2 { color: #1e293b; margin-top: 0; }
+        .test-step { 
+            background: #f1f5f9; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            border-left: 4px solid #3b82f6; 
+        }
+        .result { 
+            margin: 10px 0; 
+            padding: 12px; 
+            border-radius: 6px; 
+            font-family: monospace;
+        }
+        .pass { 
+            background: #dcfce7; 
+            color: #166534; 
+            border: 1px solid #bbf7d0; 
+        }
+        .fail { 
+            background: #fef2f2; 
+            color: #991b1b; 
+            border: 1px solid #fecaca; 
+        }
+        .info { 
+            background: #eff6ff; 
+            color: #1e40af; 
+            border: 1px solid #bfdbfe; 
+        }
+        button { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            background: #3b82f6; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 500;
+        }
+        button:hover { background: #2563eb; }
+        button.danger { background: #dc2626; }
+        button.danger:hover { background: #b91c1c; }
+        button.success { background: #16a34a; }
+        button.success:hover { background: #15803d; }
+        iframe { 
+            width: 100%; 
+            height: 600px; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 8px; 
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .status-card {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .big-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .checklist input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Phase 1 → Phase 2 Transition Manual Test Suite</h1>
+    
+    <div class="container">
+        <!-- Application Preview -->
+        <div class="panel full-width">
+            <h2>Application Under Test</h2>
+            <iframe src="index.html" id="appFrame"></iframe>
+        </div>
+        
+        <!-- Test Controls -->
+        <div class="panel">
+            <h2>Test Controls</h2>
+            
+            <button onclick="refreshApp()">🔄 Refresh App</button>
+            <button onclick="clearData()" class="danger">🗑️ Clear Data</button>
+            <button onclick="runAllTests()" class="success">🚀 Run All Tests</button>
+            
+            <div class="test-step">
+                <strong>Quick Setup:</strong><br>
+                <button onclick="setupBasicVotes()">Add 3 Sample Votes</button>
+                <button onclick="setupCompletePhase()">Complete Phase 1</button>
+                <button onclick="goToPhase2()">Go to Phase 2</button>
+            </div>
+        </div>
+        
+        <!-- Test Status -->
+        <div class="panel">
+            <h2>Phase Status Monitor</h2>
+            <div class="status-grid" id="statusGrid">
+                <div class="status-card">
+                    <div class="big-number" id="currentPhase">-</div>
+                    <div>Current Phase</div>
+                </div>
+                <div class="status-card">
+                    <div class="big-number" id="voteCount">-</div>
+                    <div>Total Votes</div>
+                </div>
+                <div class="status-card">
+                    <div class="big-number" id="winnerCount">-</div>
+                    <div>Winners</div>
+                </div>
+                <div class="status-card">
+                    <div class="big-number" id="completionPercent">-</div>
+                    <div>Completion %</div>
+                </div>
+            </div>
+            
+            <button onclick="updateStatus()">🔍 Refresh Status</button>
+            <div id="statusDetails"></div>
+        </div>
+        
+        <!-- Test Results -->
+        <div class="panel full-width">
+            <h2>Test Results</h2>
+            <div id="testResults"></div>
+        </div>
+        
+        <!-- Manual Test Steps -->
+        <div class="panel full-width">
+            <h2>Manual Testing Checklist</h2>
+            
+            <h3>🎯 Phase 1: Winner Calculation Tests</h3>
+            <ul class="checklist">
+                <li><input type="checkbox" id="test1"> Vote on 3 company pairs with different vote counts</li>
+                <li><input type="checkbox" id="test2"> Verify getWinners() returns winners sorted by votes</li>
+                <li><input type="checkbox" id="test3"> Check winner objects have name, votes, strategicContrast</li>
+                <li><input type="checkbox" id="test4"> Test tie scenario (equal votes A/B)</li>
+                <li><input type="checkbox" id="test5"> Test zero votes scenario</li>
+            </ul>
+            
+            <h3>📊 Phase Completion Tests</h3>
+            <ul class="checklist">
+                <li><input type="checkbox" id="test6"> isPhaseComplete() returns false with no votes</li>
+                <li><input type="checkbox" id="test7"> isPhaseComplete() returns false with partial votes</li>
+                <li><input type="checkbox" id="test8"> isPhaseComplete() returns true when all pairs voted</li>
+                <li><input type="checkbox" id="test9"> getCompletionStatus() shows accurate percentage</li>
+                <li><input type="checkbox" id="test10"> Celebration screen appears in presentation mode</li>
+            </ul>
+            
+            <h3>🔄 Data Transfer Tests</h3>
+            <ul class="checklist">
+                <li><input type="checkbox" id="test11"> Navigate to Phase 2 triggers data transfer</li>
+                <li><input type="checkbox" id="test12"> phase2.winnersFromPhase1 contains winner data</li>
+                <li><input type="checkbox" id="test13"> Suggested patterns are generated</li>
+                <li><input type="checkbox" id="test14"> Data persists after browser refresh</li>
+                <li><input type="checkbox" id="test15"> Data persists after phase switching</li>
+            </ul>
+            
+            <h3>⚡ Performance & UX Tests</h3>
+            <ul class="checklist">
+                <li><input type="checkbox" id="test16"> Phase transition takes &lt; 2 seconds</li>
+                <li><input type="checkbox" id="test17"> No console errors during transition</li>
+                <li><input type="checkbox" id="test18"> UI remains responsive during transition</li>
+                <li><input type="checkbox" id="test19"> Celebration animations work smoothly</li>
+                <li><input type="checkbox" id="test20"> Works in presentation and control modes</li>
+            </ul>
+            
+            <div style="margin-top: 20px;">
+                <button onclick="checkAllBoxes()">✅ Check All</button>
+                <button onclick="uncheckAllBoxes()">❌ Uncheck All</button>
+                <button onclick="generateReport()" class="success">📋 Generate Test Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getAppWindow() {
+            return document.getElementById('appFrame').contentWindow;
+        }
+        
+        function displayResult(testName, result, details = '') {
+            const resultsDiv = document.getElementById('testResults');
+            const isPass = result;
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${isPass ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `
+                <strong>${testName}:</strong> ${isPass ? 'PASS ✅' : 'FAIL ❌'} 
+                ${details ? '<br><small>' + details + '</small>' : ''}
+            `;
+            resultsDiv.appendChild(resultDiv);
+        }
+        
+        function refreshApp() {
+            document.getElementById('appFrame').src = document.getElementById('appFrame').src;
+            setTimeout(() => {
+                displayResult('App Refresh', true, 'Application reloaded successfully');
+                updateStatus();
+            }, 2000);
+        }
+        
+        function clearData() {
+            try {
+                const appWindow = getAppWindow();
+                if (appWindow.localforage) {
+                    appWindow.localforage.clear();
+                    displayResult('Clear Data', true, 'All stored data cleared');
+                    refreshApp();
+                } else {
+                    displayResult('Clear Data', false, 'LocalForage not available');
+                }
+            } catch (error) {
+                displayResult('Clear Data', false, error.message);
+            }
+        }
+        
+        function updateStatus() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (!app) {
+                    document.getElementById('statusDetails').innerHTML = 
+                        '<div class="result fail">❌ App not loaded or not accessible</div>';
+                    return;
+                }
+                
+                // Update status cards
+                document.getElementById('currentPhase').textContent = app.currentPhase || '-';
+                
+                const winners = app.phase1?.getWinners?.() || [];
+                document.getElementById('winnerCount').textContent = winners.length;
+                
+                const totalVotes = winners.reduce((sum, w) => sum + w.votes, 0);
+                document.getElementById('voteCount').textContent = totalVotes;
+                
+                const status = app.phase1?.getCompletionStatus?.() || {};
+                document.getElementById('completionPercent').textContent = status.completionPercentage || '-';
+                
+                // Detailed status
+                const details = `
+                    <div class="result info">
+                        <strong>Phase ${app.currentPhase} Status:</strong><br>
+                        • Phase Complete: ${status.isComplete || false}<br>
+                        • Voted Pairs: ${status.votedPairs || 0} / ${status.totalPairs || 0}<br>
+                        • Winners: ${winners.length}<br>
+                        • Presentation Mode: ${app.presentationMode}<br>
+                        • Phase 2 Winners: ${app.phase2?.winnersFromPhase1?.length || 0}
+                    </div>
+                `;
+                document.getElementById('statusDetails').innerHTML = details;
+                
+            } catch (error) {
+                document.getElementById('statusDetails').innerHTML = 
+                    `<div class="result fail">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        function setupBasicVotes() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (!app || !app.phase1) {
+                    displayResult('Setup Basic Votes', false, 'Phase 1 not available');
+                    return;
+                }
+                
+                // Add some votes programmatically
+                app.phase1.votingSystem.pairVotes = {
+                    '0': { companyA: 3, companyB: 1 },
+                    '1': { companyA: 0, companyB: 2 },
+                    '2': { companyA: 4, companyB: 0 }
+                };
+                
+                displayResult('Setup Basic Votes', true, 'Added votes to 3 pairs');
+                updateStatus();
+                
+            } catch (error) {
+                displayResult('Setup Basic Votes', false, error.message);
+            }
+        }
+        
+        function setupCompletePhase() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (!app || !app.phase1) {
+                    displayResult('Setup Complete Phase', false, 'Phase 1 not available');
+                    return;
+                }
+                
+                // Add votes to all pairs
+                const totalPairs = app.phase1.companyPairs?.pairs?.length || 26;
+                const votes = {};
+                
+                for (let i = 0; i < totalPairs; i++) {
+                    votes[i] = { 
+                        companyA: Math.floor(Math.random() * 5) + 1, 
+                        companyB: Math.floor(Math.random() * 5) + 1 
+                    };
+                }
+                
+                app.phase1.votingSystem.pairVotes = votes;
+                
+                displayResult('Setup Complete Phase', true, `Added votes to all ${totalPairs} pairs`);
+                updateStatus();
+                
+            } catch (error) {
+                displayResult('Setup Complete Phase', false, error.message);
+            }
+        }
+        
+        function goToPhase2() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (app) {
+                    app.setCurrentPhase(2);
+                    displayResult('Go to Phase 2', true, 'Navigated to Phase 2');
+                    setTimeout(updateStatus, 500);
+                } else {
+                    displayResult('Go to Phase 2', false, 'App not accessible');
+                }
+                
+            } catch (error) {
+                displayResult('Go to Phase 2', false, error.message);
+            }
+        }
+        
+        function runAllTests() {
+            document.getElementById('testResults').innerHTML = '';
+            
+            setTimeout(() => testWinnerCalculation(), 500);
+            setTimeout(() => testPhaseCompletion(), 1000);
+            setTimeout(() => testDataTransfer(), 1500);
+            setTimeout(() => testPerformance(), 2000);
+        }
+        
+        function testWinnerCalculation() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (!app || !app.phase1) {
+                    displayResult('Winner Calculation', false, 'Phase 1 not available');
+                    return;
+                }
+                
+                setupBasicVotes(); // Ensure we have votes
+                
+                const winners = app.phase1.getWinners();
+                const isValid = Array.isArray(winners);
+                const hasWinners = winners.length > 0;
+                const hasCorrectStructure = winners.every(w => 
+                    w.name && typeof w.votes === 'number' && w.pairIndex !== undefined
+                );
+                
+                displayResult('Winner Calculation', isValid && hasWinners && hasCorrectStructure, 
+                    `Found ${winners.length} winners with correct structure`);
+                    
+            } catch (error) {
+                displayResult('Winner Calculation', false, error.message);
+            }
+        }
+        
+        function testPhaseCompletion() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                const isComplete = app.phase1.isPhaseComplete();
+                const status = app.phase1.getCompletionStatus();
+                
+                displayResult('Phase Completion', typeof isComplete === 'boolean' && !!status, 
+                    `Complete: ${isComplete}, Progress: ${status.completionPercentage}%`);
+                    
+            } catch (error) {
+                displayResult('Phase Completion', false, error.message);
+            }
+        }
+        
+        function testDataTransfer() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                // Ensure we're on Phase 2
+                app.setCurrentPhase(2);
+                
+                setTimeout(() => {
+                    const winners = app.phase2?.winnersFromPhase1;
+                    const patterns = app.phase2?.suggestedPatterns;
+                    
+                    const hasWinners = Array.isArray(winners) && winners.length > 0;
+                    const hasPatterns = typeof patterns === 'string' && patterns.length > 0;
+                    
+                    displayResult('Data Transfer', hasWinners, 
+                        `Winners transferred: ${winners?.length || 0}, Patterns: ${hasPatterns}`);
+                }, 500);
+                
+            } catch (error) {
+                displayResult('Data Transfer', false, error.message);
+            }
+        }
+        
+        function testPerformance() {
+            try {
+                const startTime = Date.now();
+                
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                // Test phase transition speed
+                app.setCurrentPhase(1);
+                setTimeout(() => {
+                    app.setCurrentPhase(2);
+                    const transitionTime = Date.now() - startTime;
+                    
+                    displayResult('Performance', transitionTime < 2000, 
+                        `Transition took ${transitionTime}ms (target: <2000ms)`);
+                }, 100);
+                
+            } catch (error) {
+                displayResult('Performance', false, error.message);
+            }
+        }
+        
+        function checkAllBoxes() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = true);
+        }
+        
+        function uncheckAllBoxes() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+        }
+        
+        function generateReport() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const total = checkboxes.length;
+            const passed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percentage = Math.round((passed / total) * 100);
+            
+            const report = `
+                <div class="result ${percentage === 100 ? 'pass' : percentage >= 80 ? 'info' : 'fail'}">
+                    <h3>📋 Test Report Summary</h3>
+                    <strong>Overall Progress: ${passed}/${total} tests passed (${percentage}%)</strong><br><br>
+                    
+                    <strong>Test Categories:</strong><br>
+                    • Winner Calculation: ${getCheckedCount(1, 5)}/5<br>
+                    • Phase Completion: ${getCheckedCount(6, 10)}/5<br>
+                    • Data Transfer: ${getCheckedCount(11, 15)}/5<br>
+                    • Performance & UX: ${getCheckedCount(16, 20)}/5<br><br>
+                    
+                    <strong>Status:</strong> ${percentage === 100 ? '✅ ALL TESTS PASSED' : 
+                                             percentage >= 80 ? '⚠️ MOSTLY COMPLETE' : 
+                                             '❌ NEEDS WORK'}<br><br>
+                    
+                    Generated: ${new Date().toLocaleString()}
+                </div>
+            `;
+            
+            document.getElementById('testResults').innerHTML = report;
+        }
+        
+        function getCheckedCount(start, end) {
+            let count = 0;
+            for (let i = start; i <= end; i++) {
+                if (document.getElementById(`test${i}`)?.checked) count++;
+            }
+            return count;
+        }
+        
+        // Auto-update status every 5 seconds
+        setInterval(updateStatus, 5000);
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                displayResult('Manual Test Interface Ready', true, 'Use the controls above to test Phase 1→2 transition');
+                updateStatus();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

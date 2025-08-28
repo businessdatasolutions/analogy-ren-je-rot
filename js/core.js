@@ -140,7 +140,9 @@ document.addEventListener('alpine:init', () => {
     phase2: {
       archetype: '',
       patterns: [],
-      keywords: []
+      keywords: [],
+      winnersFromPhase1: [], // Winners handed off from Phase 1
+      suggestedPatterns: []   // Auto-suggested patterns based on winners
     },
     
     // Phase 3 specific data - Strategic Translation
@@ -357,9 +359,35 @@ document.addEventListener('alpine:init', () => {
     // Phase Navigation
     setCurrentPhase(phase) {
       if (phase >= 1 && phase <= 3) {
+        const previousPhase = this.currentPhase;
         this.currentPhase = phase;
+        
+        // Handle phase transition logic
+        if (previousPhase !== phase) {
+          this.handlePhaseTransition(previousPhase, phase);
+        }
+        
         this.markUnsaved();
       }
+    },
+
+    // Handle logic when transitioning between phases
+    handlePhaseTransition(fromPhase, toPhase) {
+      console.log(`Phase transition: ${fromPhase} → ${toPhase}`);
+      
+      // Transition from Phase 1 to Phase 2
+      if (fromPhase === 1 && toPhase === 2) {
+        this.transferWinnersToPhase2();
+      }
+      
+      // Transition from Phase 2 to Phase 3
+      if (fromPhase === 2 && toPhase === 3) {
+        // Could add archetype → hypothesis handoff logic here
+        console.log('Transitioning to Phase 3: Strategic Translation');
+      }
+      
+      // Any general transition logic
+      console.log(`Phase ${toPhase} activated with data from Phase ${fromPhase}`);
     },
     
     // Phase 1 methods are now handled by the strategic pairs module (phase1.js)
@@ -370,6 +398,77 @@ document.addEventListener('alpine:init', () => {
         return this.phase1.getWinners();
       }
       return [];
+    },
+
+    // Transfer winners from Phase 1 to Phase 2 and generate suggested patterns
+    transferWinnersToPhase2() {
+      const winners = this.getWinners();
+      
+      if (winners.length === 0) {
+        return false; // No winners to transfer
+      }
+
+      // Store winners in Phase 2
+      this.phase2.winnersFromPhase1 = winners;
+
+      // Generate suggested patterns based on strategic contrasts
+      const strategicContrasts = [...new Set(winners.map(w => w.strategicContrast).filter(Boolean))];
+      const companyNames = winners.map(w => w.name).slice(0, 5); // Top 5 winners
+
+      // Create suggested patterns
+      this.phase2.suggestedPatterns = [
+        // From strategic contrasts
+        ...strategicContrasts,
+        // Common themes based on winner analysis
+        this.generatePatternSuggestions(winners)
+      ].filter(Boolean).join(', ');
+
+      // Auto-populate patterns field if empty
+      if (!this.phase2.patterns || this.phase2.patterns.length === 0) {
+        this.phase2.patterns = this.phase2.suggestedPatterns;
+      }
+
+      console.log('Winners transferred to Phase 2:', {
+        winners: winners.length,
+        patterns: this.phase2.suggestedPatterns,
+        topWinners: companyNames
+      });
+
+      return true;
+    },
+
+    // Generate pattern suggestions based on winner analysis
+    generatePatternSuggestions(winners) {
+      const patterns = [];
+      
+      // Analyze winner names for common themes
+      const winnerNames = winners.map(w => w.name.toLowerCase());
+      
+      // Tech companies
+      const techTerms = ['google', 'apple', 'microsoft', 'amazon', 'netflix', 'spotify', 'uber', 'airbnb', 'tesla'];
+      if (winnerNames.some(name => techTerms.some(term => name.includes(term)))) {
+        patterns.push('digitale transformatie');
+      }
+      
+      // Premium/luxury brands
+      const premiumTerms = ['apple', 'tesla', 'mercedes', 'bmw', 'nike', 'starbucks'];
+      if (winnerNames.some(name => premiumTerms.some(term => name.includes(term)))) {
+        patterns.push('premium positionering');
+      }
+      
+      // Platform/ecosystem companies
+      const platformTerms = ['google', 'amazon', 'apple', 'microsoft', 'uber', 'airbnb'];
+      if (winnerNames.some(name => platformTerms.some(term => name.includes(term)))) {
+        patterns.push('platform strategie');
+      }
+      
+      // Customer-centric companies
+      const customerTerms = ['amazon', 'netflix', 'spotify', 'uber', 'airbnb', 'starbucks'];
+      if (winnerNames.some(name => customerTerms.some(term => name.includes(term)))) {
+        patterns.push('klantgerichtheid');
+      }
+
+      return patterns.join(', ');
     },
     
     // Timer Methods
@@ -759,4 +858,19 @@ ${this.phase2.archetype || 'Not defined'}
       alert(message);
     }
   }));
+  
+  // Expose app data for testing purposes
+  document.addEventListener('alpine:init', () => {
+    // Wait for Alpine to be fully initialized
+    setTimeout(() => {
+      const bodyEl = document.querySelector('body[x-data]');
+      if (bodyEl && Alpine.$data) {
+        try {
+          window.app = Alpine.$data(bodyEl);
+        } catch (error) {
+          console.warn('Could not expose window.app for testing:', error);
+        }
+      }
+    }, 100);
+  });
 });

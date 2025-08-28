@@ -43,9 +43,11 @@ All development work must consider:
 
 This project is being built using a **test-driven, phase-by-phase approach** where each phase is thoroughly tested with Playwright before proceeding to the next. Each phase must pass all tests and quality gates before moving forward.
 
-## Current Status: Complete 3-Phase Application
+## Current Status: 3-Phase Application (Critical Bug in Phase 2)
 
-All three phases have been implemented with comprehensive strategic pairs integration. The application has been restructured to focus on the core strategic workshop experience.
+**Status:** Phase 1 is 95% complete, Phase 2 has critical display bug, Phase 3 is complete.
+
+**CRITICAL ISSUE:** Phase 2 presentation display shows wrong content (Decomposition Analysis from old 4-phase model instead of Archetype Analysis). This makes the application unusable for Phase 2 workshops.
 
 ### Target File Structure (Modular Architecture)
 
@@ -59,7 +61,7 @@ All three phases have been implemented with comprehensive strategic pairs integr
 ├── CLAUDE.md                 # This development guide
 ├── js/
 │   ├── core.js              # Session management & Alpine.js setup
-│   └── phase2.js            # Strategic pairs module (used for Phase 1)
+│   └── phase1.js            # Phase 1 strategic pairs module (renamed from phase2.js)
 ├── css/
 │   └── styles.css           # Custom styles beyond Tailwind CSS (includes control mode fixes)
 ├── data/
@@ -89,9 +91,9 @@ All three phases have been implemented with comprehensive strategic pairs integr
 - **Testing**: Playwright for comprehensive cross-browser testing
 - **Export**: JSON and Markdown report generation
 
-### Development Phases
+### 3-Phase Development Structure
 
-**Phase 1: Strategic Preference Round (✅ Complete)**
+**Phase 1: Strategic Preference Round (⚠️ 95% Complete)**
 
 - ✅ Strategic company pairs with 4-level framework integration
 - ✅ Physical positioning timer system with audio support
@@ -100,50 +102,32 @@ All three phases have been implemented with comprehensive strategic pairs integr
 - ✅ Presentation vs control mode optimization
 - ✅ Timer circle responsive sizing and positioning
 - ✅ Complete strategic pairs data (26 pairs, 20 dimensions)
+- ✅ Winner calculation and phase completion detection
+- ⚠️ Minor transition and testing issues remain
 
-**Phase 2: Archetype Analysis (✅ Complete)**
+**Phase 2: Archetype Analysis (🚨 Critical Display Bug)**
 
-- ✅ Pattern keyword input and analysis
-- ✅ Archetype template system
-- ✅ Results summary from strategic preferences
-- ✅ Strategic archetype definition interface
+- ✅ Control panel: Pattern keyword input and archetype definition
+- ✅ Archetype template system with Dutch translations needed
+- ✅ Winner data transfer from Phase 1
+- 🚨 **CRITICAL BUG**: Presentation display shows wrong content (Decomposition instead of Archetype)
+- ❌ Proper presentation view for archetype analysis missing
 
 **Phase 3: Strategic Translation (✅ Complete)**
 
-- ✅ Strategic hypothesis builder with templates
-- ✅ Action item management system
+- ✅ Strategic hypothesis builder with IF-THEN templates
+- ✅ Action item management system with CRUD operations
 - ✅ Session summary and progress tracking
+- ✅ Export functionality (JSON and Markdown)
 - ✅ Complete workflow integration
-- Archetype templates system
-- Guided discussion prompts
 
-**Phase 4: Decomposition Analysis**
+**Core Features (✅ Complete)**
 
-- Forerunner selection interface
-- Positive/negative analogy forms
-- Causal relationship mapper
-- Inline editing capabilities
-
-**Phase 5: Strategic Translation**
-
-- IF-THEN hypothesis builder
-- Hypothesis templates system
-- Action item tracker with CRUD
-- Priority and confidence scoring
-
-**Phase 6: Export & Reporting**
-
-- JSON export functionality
-- Markdown report generator
-- Export modal interface
-- File download mechanisms
-
-**Phase 7: Integration & Polish**
-
-- Presentation mode toggle
-- Auto-save functionality
-- Settings modal enhancements
-- Accessibility improvements
+- ✅ Session management and data persistence
+- ✅ Presentation mode toggle
+- ✅ Auto-save functionality
+- ✅ Browser storage with LocalForage
+- ✅ Responsive design for facilitator and presentation modes
 
 ## Development Commands
 
@@ -194,21 +178,30 @@ npx playwright show-report
 3. **Refactor**: Improve code while maintaining test coverage
 4. **Quality Gate**: Ensure all tests pass before moving to next phase
 
-### Current Phase: Phase 2 Implementation
+### Current Priority: Fix Critical Phase 2 Bug
 
 ```bash
-# Test current functionality including control mode fixes
+# Start development server
+python -m http.server 8000
+
+# Test foundation and Phase 1 functionality
 npx playwright test tests/01-foundation.spec.js --headed
 
-# Test Phase 2 preference round features  
+# Test Phase 1 preference round (NOTE: file named phase2 but contains Phase 1 tests)
 npx playwright test tests/03-phase2-preference-round.spec.js --headed
 
-# Run all tests
+# Run all tests (many will fail due to Dutch UI text changes)
 npx playwright test
 
-# Check test coverage
+# Generate test report
 npx playwright test --reporter=html
 ```
+
+### Immediate Development Tasks
+1. **CRITICAL**: Fix Phase 2 presentation display (see task 9.0 in tasks file)
+2. **HIGH**: Complete Dutch language translations (templates, UI text)
+3. **HIGH**: Enhance winner data structure with strategic context
+4. **MEDIUM**: Update tests to match Dutch interface text
 
 ### Recent Improvements & GitHub Issues
 
@@ -219,15 +212,23 @@ npx playwright test --reporter=html
 - Proper z-index management to prevent content blocking
 - Commit: `8f223bd` - "fix(phase2): resolve control mode UI overlapping issues"
 
-**🔄 Issue #2: Dutch Language Consistency (Open)**
-- Priority: Medium
-- Ensure all interface text is in professional Dutch
-- Review button labels, instructions, and terminology
+**🚨 Issue #2: Critical Phase 2 Display Bug (CRITICAL)**
+- Priority: URGENT - Application breaking
+- Phase 2 shows Decomposition content instead of Archetype Analysis
+- Presentation mode unusable for Phase 2 workshops
+- Must fix before any other development
 
-**🔄 Issue #3: Codebase Cleanup (Open)**  
-- Priority: Low
-- Remove unused code and files
-- Improve code organization and documentation
+**🔄 Issue #3: Dutch Language Consistency (HIGH PRIORITY)**
+- Priority: High (after fixing critical bug)
+- Archetype templates still in English
+- Missing facilitator guides for Phase 2 & 3
+- Some UI elements need Dutch translation
+
+**🔄 Issue #4: Winner Data Enhancement (MEDIUM)**  
+- Priority: Medium
+- Add strategic context to winners (dilemma questions, strategies)
+- Remove duplicate winner displays
+- Improve Phase 2 strategic context
 
 ### Key Architecture Decisions
 
@@ -273,13 +274,13 @@ npx playwright test --reporter=html
 
 ## Key Concepts
 
-### Dutch Strategic Workshop Terminology
-- **Strategic Archetype** / **Strategisch Archetype**: The collective strategic preference pattern identified through company pair choices
-- **Voorloper (Forerunner)** / **Voorloper**: The exemplar company chosen for deep analysis
-- **Verticale Relaties (Vertical Relations)** / **Verticale Relaties**: The causal logic connecting specific factors to business success
-- **Strategic Hypotheses** / **Strategische Hypotheses**: Testable "if...then..." statements for the organization's strategy
-- **Voorkeursronde (Preference Round)** / **Voorkeursronde**: Physical positioning exercise revealing strategic preferences
-- **Strategische Keuzes (Strategic Choices)** / **Strategische Keuzes**: The positioning decisions made during the preference round
+### Dutch Strategic Workshop Terminology (3-Phase Model)
+- **Strategic Archetype** / **Strategisch Archetype**: The collective strategic preference pattern identified through company pair choices in Phase 2
+- **Strategic Hypotheses** / **Strategische Hypotheses**: Testable "if...then..." statements developed in Phase 3
+- **Voorkeursronde (Preference Round)** / **Voorkeursronde**: Physical positioning exercise in Phase 1 revealing strategic preferences
+- **Strategische Keuzes (Strategic Choices)** / **Strategische Keuzes**: The positioning decisions made during Phase 1
+- **Patroon Herkenning**: Pattern recognition process in Phase 2 to identify strategic themes
+- **Archetype Analyse**: Process of defining strategic archetype based on winning companies and patterns
 
 ### Dutch Business Context Guidelines
 - **Formality Level**: Always use formal "u" form in all user-facing text

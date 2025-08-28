@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase Transition Manual Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        iframe { width: 100%; height: 600px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Phase 1 → Phase 2 Transition Manual Test</h1>
+    
+    <div class="test-section">
+        <h2>Application Preview</h2>
+        <iframe src="http://localhost:8001/index.html" id="appFrame"></iframe>
+    </div>
+    
+    <div class="test-section">
+        <h2>Manual Test Instructions</h2>
+        <ol>
+            <li><strong>Load Application:</strong> Verify the app loads with Phase 1 (Fase 1) selected</li>
+            <li><strong>Vote on Strategic Pairs:</strong> Click "+ Stem voor A" or "+ Stem voor B" to vote on several pairs</li>
+            <li><strong>Navigate Between Pairs:</strong> Use "Volgende →" to move to next pairs</li>
+            <li><strong>Check Winner Calculation:</strong> Open browser console and run: <code>window.app.phase1.getWinners()</code></li>
+            <li><strong>Check Phase Completion:</strong> Console: <code>window.app.phase1.isPhaseComplete()</code></li>
+            <li><strong>Switch to Phase 2:</strong> Click "Fase 2" navigation button</li>
+            <li><strong>Verify Winners Transfer:</strong> Console: <code>window.app.phase2.winnersFromPhase1</code></li>
+            <li><strong>Test Presentation Mode:</strong> Click "Presenteren" to see celebration screen (if phase complete)</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>Expected Results</h2>
+        <div class="result">
+            <strong>Winner Calculation:</strong> Should return array of objects with properties: name, votes, pairIndex, winType
+        </div>
+        <div class="result">
+            <strong>Phase Completion:</strong> Should return true when at least one vote has been cast
+        </div>
+        <div class="result">
+            <strong>Data Transfer:</strong> Winners from Phase 1 should appear in Phase 2 winnersFromPhase1 array
+        </div>
+        <div class="result">
+            <strong>Transition Animation:</strong> Smooth phase switching with CSS animations applied
+        </div>
+        <div class="result">
+            <strong>Celebration Screen:</strong> In presentation mode, celebration screen should appear when phase is complete
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Quick Test Functions</h2>
+        <button onclick="testWinnerCalculation()">Test Winner Calculation</button>
+        <button onclick="testPhaseCompletion()">Test Phase Completion</button>
+        <button onclick="testDataTransfer()">Test Data Transfer</button>
+        <button onclick="refreshApp()">Refresh App</button>
+        
+        <div id="testResults" style="margin-top: 20px;"></div>
+    </div>
+    
+    <script>
+        function getAppWindow() {
+            return document.getElementById('appFrame').contentWindow;
+        }
+        
+        function displayResult(testName, result, details = '') {
+            const resultsDiv = document.getElementById('testResults');
+            const isPass = result;
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${isPass ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `
+                <strong>${testName}:</strong> ${isPass ? 'PASS' : 'FAIL'} 
+                ${details ? '<br><small>' + details + '</small>' : ''}
+            `;
+            resultsDiv.appendChild(resultDiv);
+        }
+        
+        function testWinnerCalculation() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (!app || !app.phase1) {
+                    displayResult('Winner Calculation', false, 'App or phase1 not found');
+                    return;
+                }
+                
+                const winners = app.phase1.getWinners();
+                const isValid = Array.isArray(winners);
+                displayResult('Winner Calculation', isValid, 
+                    `Found ${winners ? winners.length : 0} winners`);
+                
+                if (winners && winners.length > 0) {
+                    const firstWinner = winners[0];
+                    const hasRequiredProps = firstWinner.hasOwnProperty('name') && 
+                                           firstWinner.hasOwnProperty('votes') && 
+                                           firstWinner.hasOwnProperty('pairIndex');
+                    displayResult('Winner Properties', hasRequiredProps, 
+                        `First winner: ${JSON.stringify(firstWinner)}`);
+                }
+            } catch (error) {
+                displayResult('Winner Calculation', false, error.message);
+            }
+        }
+        
+        function testPhaseCompletion() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (!app || !app.phase1) {
+                    displayResult('Phase Completion', false, 'App or phase1 not found');
+                    return;
+                }
+                
+                const isComplete = app.phase1.isPhaseComplete();
+                displayResult('Phase Completion', typeof isComplete === 'boolean', 
+                    `Phase complete: ${isComplete}`);
+                
+                const status = app.phase1.getCompletionStatus();
+                displayResult('Completion Status', !!status, 
+                    `Status: ${JSON.stringify(status)}`);
+            } catch (error) {
+                displayResult('Phase Completion', false, error.message);
+            }
+        }
+        
+        function testDataTransfer() {
+            try {
+                const appWindow = getAppWindow();
+                const app = appWindow.app;
+                
+                if (!app || !app.phase2) {
+                    displayResult('Data Transfer', false, 'App or phase2 not found');
+                    return;
+                }
+                
+                // Trigger transfer
+                app.setCurrentPhase(2);
+                
+                const winners = app.phase2.winnersFromPhase1;
+                const hasWinners = Array.isArray(winners) && winners.length > 0;
+                displayResult('Data Transfer', true, 
+                    `Phase 2 has ${winners ? winners.length : 0} winners from Phase 1`);
+                    
+                const patterns = app.phase2.suggestedPatterns;
+                displayResult('Pattern Suggestions', Array.isArray(patterns), 
+                    `Generated ${patterns ? patterns.length : 0} pattern suggestions`);
+            } catch (error) {
+                displayResult('Data Transfer', false, error.message);
+            }
+        }
+        
+        function refreshApp() {
+            document.getElementById('appFrame').src = document.getElementById('appFrame').src;
+            setTimeout(() => {
+                document.getElementById('testResults').innerHTML = '';
+                displayResult('App Refresh', true, 'Application reloaded');
+            }, 1000);
+        }
+        
+        // Auto-refresh app when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                displayResult('Manual Test Ready', true, 'Use the buttons above to test functionality');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -6,7 +6,7 @@ test.describe('Phase 1: Strategic Preference Round Tests', () => {
     await page.waitForSelector('[x-show="!loading"]', { state: 'visible' });
     
     // Navigate to Phase 1 (should be default)
-    await page.click('nav button:has-text("Phase 1")');
+    await page.click('nav button:has-text("Fase 1")');
     await page.waitForTimeout(500);
   });
 

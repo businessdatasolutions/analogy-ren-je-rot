@@ -18,6 +18,9 @@ Each issue follows this naming convention:
 
 ### 🔄 Open Issues
 
+#### High Priority
+- [007-phase-transition-ux-design.md](./007-phase-transition-ux-design.md) - **CRITICAL** Phase transition UX design and implementation
+
 #### Medium Priority  
 - [005-url-query-parameters.md](./005-url-query-parameters.md) - URL parameters for session setup
 
@@ -34,6 +37,7 @@ Each issue follows this naming convention:
 | #4 | ✅ Resolved | High | 2025-08-28 | `cc23a24` |
 | #5 | 🔄 Open | Medium | - | - |
 | #6 | ✅ Resolved | High | 2025-08-28 | `fe188e2` |
+| #7 | 🔄 Open | High | - | - |
 
 ## How to Use
 

@@ -766,6 +766,107 @@ window.initializePhase1 = async function() {
         percentageA: this.votingSystem.percentageA,
         percentageB: this.votingSystem.percentageB
       };
+    },
+
+    // Calculate winners from all voted pairs
+    getWinners() {
+      const winners = [];
+      const pairVotes = this.votingSystem.pairVotes;
+      
+      // Check each pair that was voted on
+      for (let pairIndex in pairVotes) {
+        const votes = pairVotes[pairIndex];
+        const pair = this.companyPairs.pairs[parseInt(pairIndex)];
+        
+        if (pair && votes && (votes.companyA > 0 || votes.companyB > 0)) {
+          // Determine winner of this pair
+          if (votes.companyA > votes.companyB) {
+            winners.push({
+              name: pair.companyA,
+              votes: votes.companyA,
+              pairIndex: parseInt(pairIndex),
+              winType: 'clear', // clear win
+              strategicContrast: pair.strategicContrast || pair.category,
+              description: pair.companyADescription
+            });
+          } else if (votes.companyB > votes.companyA) {
+            winners.push({
+              name: pair.companyB,
+              votes: votes.companyB,
+              pairIndex: parseInt(pairIndex),
+              winType: 'clear', // clear win
+              strategicContrast: pair.strategicContrast || pair.category,
+              description: pair.companyBDescription
+            });
+          } else if (votes.companyA === votes.companyB && votes.companyA > 0) {
+            // Handle ties - add both companies as tied winners
+            winners.push({
+              name: pair.companyA,
+              votes: votes.companyA,
+              pairIndex: parseInt(pairIndex),
+              winType: 'tied',
+              strategicContrast: pair.strategicContrast || pair.category,
+              description: pair.companyADescription
+            });
+            winners.push({
+              name: pair.companyB,
+              votes: votes.companyB,
+              pairIndex: parseInt(pairIndex),
+              winType: 'tied',
+              strategicContrast: pair.strategicContrast || pair.category,
+              description: pair.companyBDescription
+            });
+          }
+        }
+      }
+      
+      // Sort winners by vote count (descending)
+      return winners.sort((a, b) => {
+        if (b.votes !== a.votes) {
+          return b.votes - a.votes;
+        }
+        // If same votes, sort alphabetically for consistency
+        return a.name.localeCompare(b.name);
+      });
+    },
+
+    // Check if Phase 1 is complete (all pairs have been voted on)
+    isPhaseComplete() {
+      const totalPairs = this.companyPairs.pairs.length;
+      const votedPairs = Object.keys(this.votingSystem.pairVotes).length;
+      
+      // Phase is complete if:
+      // 1. All pairs have been voted on (have entries in pairVotes)
+      // 2. Each voted pair has at least one vote
+      if (votedPairs < totalPairs) {
+        return false;
+      }
+      
+      // Check that each pair actually has votes
+      for (let i = 0; i < totalPairs; i++) {
+        const votes = this.votingSystem.pairVotes[i];
+        if (!votes || (votes.companyA === 0 && votes.companyB === 0)) {
+          return false;
+        }
+      }
+      
+      return true;
+    },
+
+    // Get completion status with details
+    getCompletionStatus() {
+      const totalPairs = this.companyPairs.pairs.length;
+      const votedPairs = Object.keys(this.votingSystem.pairVotes).length;
+      const winners = this.getWinners();
+      
+      return {
+        isComplete: this.isPhaseComplete(),
+        totalPairs: totalPairs,
+        votedPairs: votedPairs,
+        completionPercentage: Math.round((votedPairs / totalPairs) * 100),
+        totalWinners: winners.length,
+        winners: winners
+      };
     }
   };
   } catch (error) {
@@ -805,6 +906,58 @@ window.initializePhase1 = async function() {
           totalVotes: this.votingSystem.totalVotes,
           percentageA: this.votingSystem.percentageA,
           percentageB: this.votingSystem.percentageB
+        };
+      },
+      
+      // Winner calculation for fallback object
+      getWinners() {
+        const winners = [];
+        const pairVotes = this.votingSystem.pairVotes;
+        
+        for (let pairIndex in pairVotes) {
+          const votes = pairVotes[pairIndex];
+          const pair = this.companyPairs.pairs[parseInt(pairIndex)];
+          
+          if (pair && votes && (votes.companyA > 0 || votes.companyB > 0)) {
+            if (votes.companyA > votes.companyB) {
+              winners.push({
+                name: pair.companyA,
+                votes: votes.companyA,
+                pairIndex: parseInt(pairIndex),
+                winType: 'clear'
+              });
+            } else if (votes.companyB > votes.companyA) {
+              winners.push({
+                name: pair.companyB,
+                votes: votes.companyB,
+                pairIndex: parseInt(pairIndex),
+                winType: 'clear'
+              });
+            }
+          }
+        }
+        
+        return winners.sort((a, b) => b.votes - a.votes);
+      },
+      
+      isPhaseComplete() {
+        const totalPairs = this.companyPairs.pairs.length;
+        const votedPairs = Object.keys(this.votingSystem.pairVotes).length;
+        return votedPairs >= totalPairs;
+      },
+      
+      getCompletionStatus() {
+        const totalPairs = this.companyPairs.pairs.length;
+        const votedPairs = Object.keys(this.votingSystem.pairVotes).length;
+        const winners = this.getWinners();
+        
+        return {
+          isComplete: this.isPhaseComplete(),
+          totalPairs: totalPairs,
+          votedPairs: votedPairs,
+          completionPercentage: Math.round((votedPairs / totalPairs) * 100),
+          totalWinners: winners.length,
+          winners: winners
         };
       }
     };
