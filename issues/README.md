@@ -11,13 +11,14 @@ Each issue follows this naming convention:
 
 ### ✅ Resolved Issues
 - [001-control-mode-ui-optimization.md](./001-control-mode-ui-optimization.md) - ✅ **RESOLVED** - UI improvements for control mode (Commit: `cc23a24`)
+- [002-dutch-language-consistency.md](./002-dutch-language-consistency.md) - ✅ **RESOLVED** - Complete Dutch translation implemented (Commit: `7dac205`)
 - [003-codebase-cleanup.md](./003-codebase-cleanup.md) - ✅ **RESOLVED** - Major cleanup during 3-phase migration (Commit: `cc23a24`)
 - [004-strategic-level-integration.md](./004-strategic-level-integration.md) - ✅ **RESOLVED** - Strategic pairs fully integrated (Commit: `cc23a24`)
+- [006-voting-cross-contamination-bug.md](./006-voting-cross-contamination-bug.md) - ✅ **RESOLVED** - Critical voting bug fix (Commit: `fe188e2`)
 
 ### 🔄 Open Issues
 
 #### Medium Priority  
-- [002-dutch-language-consistency.md](./002-dutch-language-consistency.md) - Ensure professional Dutch throughout
 - [005-url-query-parameters.md](./005-url-query-parameters.md) - URL parameters for session setup
 
 ### ✅ Recently Fixed
@@ -28,10 +29,11 @@ Each issue follows this naming convention:
 | Issue | Status | Priority | Resolved Date | Commit |
 |-------|--------|----------|---------------|---------|
 | #1 | ✅ Resolved | High | 2025-08-28 | `cc23a24` |
-| #2 | 🔄 Open | Medium | - | - |
+| #2 | ✅ Resolved | Medium | 2025-08-28 | `7dac205` |
 | #3 | ✅ Resolved | Low | 2025-08-28 | `cc23a24` |
 | #4 | ✅ Resolved | High | 2025-08-28 | `cc23a24` |
 | #5 | 🔄 Open | Medium | - | - |
+| #6 | ✅ Resolved | High | 2025-08-28 | `fe188e2` |
 
 ## How to Use
 
