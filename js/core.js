@@ -75,18 +75,18 @@ const generateSessionId = () => {
 const phases = [
   {
     id: 1,
-    title: 'Strategic Preference Round',
-    description: 'Physical positioning exercise with strategic company pairs'
+    title: 'Strategische Voorkeursronde',
+    description: 'Fysieke positioneringsoefening met strategische bedrijfsparen'
   },
   {
     id: 2,
-    title: 'Archetype Analysis',
-    description: 'Analyze patterns in preferences and define strategic archetype'
+    title: 'Archetype-analyse',
+    description: 'Analyseer patronen in voorkeuren en definieer strategisch archetype'
   },
   {
     id: 3,
-    title: 'Strategic Translation',
-    description: 'Transform insights into actionable hypotheses and next steps'
+    title: 'Strategische Vertaling',
+    description: 'Transformeer inzichten naar uitvoerbare hypothesen en volgende stappen'
   }
 ];
 
@@ -119,7 +119,7 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('gameApp', () => ({
     // App state
     loading: true,
-    saveStatus: 'saved',
+    saveStatus: 'opgeslagen',
     autoSaveTimer: null,
     
     // Session data
@@ -254,13 +254,13 @@ document.addEventListener('alpine:init', () => {
         // Verify the save worked
         const verification = await localforage.getItem('current-session');
         if (verification && verification.id === this.session.id) {
-          this.saveStatus = 'saved';
+          this.saveStatus = 'opgeslagen';
         } else {
           throw new Error('Save verification failed');
         }
       } catch (error) {
         console.error('Failed to save session:', error);
-        this.saveStatus = 'error';
+        this.saveStatus = 'fout';
         throw error; // Re-throw to let callers know it failed
       }
     },
@@ -309,14 +309,14 @@ document.addEventListener('alpine:init', () => {
       }
       
       this.autoSaveTimer = setInterval(async () => {
-        if (this.saveStatus !== 'saved') {
+        if (this.saveStatus !== 'opgeslagen') {
           await this.saveSession();
         }
       }, this.session.settings.autoSaveInterval);
     },
     
     markUnsaved() {
-      this.saveStatus = 'saving...';
+      this.saveStatus = 'opslaan...';
     },
     
     // Format time in MM:SS format
@@ -553,7 +553,7 @@ document.addEventListener('alpine:init', () => {
 
     // Local Storage Management
     async clearLocalStorage() {
-      if (confirm('Are you sure you want to clear all local storage? This will delete all saved sessions and cannot be undone.')) {
+      if (confirm('Weet u zeker dat u alle lokale opslag wilt wissen? Dit zal alle opgeslagen sessies verwijderen en kan niet ongedaan worden gemaakt.')) {
         try {
           await localforage.clear();
           
@@ -571,16 +571,16 @@ document.addEventListener('alpine:init', () => {
           this.timer.remaining = this.timer.duration;
           this.resetTimer();
           
-          alert('Local storage has been cleared. Starting with a fresh session.');
+          alert('Lokale opslag is gewist. Starten met een nieuwe sessie.');
         } catch (error) {
           console.error('Error clearing local storage:', error);
-          alert('Error clearing local storage: ' + error.message);
+          alert('Fout bij het wissen van lokale opslag: ' + error.message);
         }
       }
     },
 
     async resetCurrentSession() {
-      if (confirm('Are you sure you want to reset the current session? All current progress will be lost.')) {
+      if (confirm('Weet u zeker dat u de huidige sessie wilt herstellen? Alle huidige voortgang gaat verloren.')) {
         // Reset current session to default state
         this.session = createDefaultSession();
         this.currentPhase = 1;
@@ -599,7 +599,7 @@ document.addEventListener('alpine:init', () => {
         this.timer.remaining = this.timer.duration;
         this.resetTimer();
         
-        alert('Session has been reset.');
+        alert('Sessie is hersteld.');
       }
     },
     

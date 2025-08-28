@@ -250,7 +250,7 @@ window.loadStrategicPairs = async function() {
   try {
     const response = await fetch('data/strategic-pairs.json');
     if (!response.ok) {
-      throw new Error(`Failed to load strategic pairs: ${response.statusText}`);
+      throw new Error(`Kan strategische paren niet laden: ${response.statusText}`);
     }
     const data = await response.json();
     // Handle the actual structure with strategic_pairs wrapper

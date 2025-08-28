@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analogy Game Facilitator - Het Ren-Je-Rot-Analogie-Verkenner-spel</title>
+    <title>Strategie Sprint - Strategische Workshop Facilitator</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -79,7 +79,7 @@
     <div x-show="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
         <div class="text-center">
             <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
-            <p class="text-gray-600">Loading Analogy Game Facilitator...</p>
+            <p class="text-gray-600">Laden Strategie Sprint...</p>
         </div>
     </div>
 
@@ -93,7 +93,7 @@
                     <!-- Logo & Title -->
                     <div class="flex items-center space-x-4">
                         <div class="flex-shrink-0">
-                            <h1 class="text-xl font-bold text-gray-900">Analogy Game Facilitator</h1>
+                            <h1 class="text-xl font-bold text-gray-900">Strategie Sprint</h1>
                             <p class="text-sm text-gray-500">Het Ren-Je-Rot-Analogie-Verkenner-spel</p>
                         </div>
                     </div>
@@ -101,8 +101,8 @@
                     <!-- Session Info & Controls -->
                     <div class="flex items-center space-x-4">
                         <div class="text-right text-sm">
-                            <p class="font-medium text-gray-900" x-text="session.teamName || 'New Session'"></p>
-                            <p class="text-gray-500" x-text="session.facilitator || 'No Facilitator'"></p>
+                            <p class="font-medium text-gray-900" x-text="session.teamName || 'Nieuwe Sessie'"></p>
+                            <p class="text-gray-500" x-text="session.facilitator || 'Geen Facilitator'"></p>
                         </div>
                         
                         <!-- Phase Navigation -->
@@ -112,7 +112,7 @@
                                     @click="setCurrentPhase(index + 1)"
                                     :class="currentPhase === (index + 1) ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
                                     class="px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                                    x-text="'Phase ' + (index + 1)"
+                                    x-text="'Fase ' + (index + 1)"
                                 ></button>
                             </template>
                         </nav>
@@ -122,18 +122,18 @@
                             <button @click="presentationMode = !presentationMode" 
                                     :class="presentationMode ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'"
                                     class="px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors">
-                                <span x-show="!presentationMode">Present</span>
-                                <span x-show="presentationMode">Control</span>
+                                <span x-show="!presentationMode">Presenteren</span>
+                                <span x-show="presentationMode">Beheer</span>
                             </button>
                             
                             <button @click="showSessionModal = true" 
                                     class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
-                                Settings
+                                Instellingen
                             </button>
                             
                             <button @click="exportSession()" 
                                     class="px-3 py-2 bg-primary-600 text-white rounded-md text-sm font-medium hover:bg-primary-700 transition-colors">
-                                Export
+                                Exporteren
                             </button>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                             <!-- Header with Status -->
                             <div class="flex justify-between items-start mb-4">
                                 <div>
-                                    <h3 class="font-semibold text-lg text-gray-800">Strategic Choice Round</h3>
+                                    <h3 class="font-semibold text-lg text-gray-800">Strategische Keuze Ronde</h3>
                                     <div class="flex items-center space-x-3 mt-1">
                                         <!-- Current Status Indicator -->
                                         <div class="flex items-center space-x-2">
@@ -178,7 +178,7 @@
                                         
                                         <!-- Round Progress -->
                                         <div class="text-sm text-gray-500">
-                                            Round <span x-text="(phase1?.currentPairIndex || 0) + 1"></span> of <span x-text="phase1?.companyPairs?.pairs?.length || 5"></span>
+                                            Ronde <span x-text="(phase1?.currentPairIndex || 0) + 1"></span> van <span x-text="phase1?.companyPairs?.pairs?.length || 5"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -208,21 +208,21 @@
                                 <div class="text-center">
                                     <!-- Ready State -->
                                     <div x-show="phase1?.timerState === 'ready'" class="space-y-2">
-                                        <div class="text-3xl font-bold text-gray-600">Ready to Start</div>
-                                        <div class="text-sm text-gray-500">Click "Start Round" when participants are ready</div>
+                                        <div class="text-3xl font-bold text-gray-600">Klaar om te Starten</div>
+                                        <div class="text-sm text-gray-500">Klik "Start Ronde" wanneer deelnemers klaar zijn</div>
                                     </div>
                                     
                                     <!-- Announcement State -->
                                     <div x-show="phase1?.timerState === 'announcement'" class="space-y-2">
-                                        <div class="text-5xl font-bold text-green-600 animate-pulse">Ready? GO!</div>
-                                        <div class="text-sm text-green-700">Participants get ready to move...</div>
+                                        <div class="text-5xl font-bold text-green-600 animate-pulse">Klaar? START!</div>
+                                        <div class="text-sm text-green-700">Deelnemers bereiden zich voor om te bewegen...</div>
                                     </div>
                                     
                                     <!-- Countdown State -->
                                     <div x-show="phase1?.timerState === 'countdown'" class="space-y-2"
                                          :class="(phase1?.timerLeft || 10) <= 3 ? 'text-red-600' : 'text-blue-600'">
                                         <div class="text-7xl font-bold tabular-nums" x-text="phase1?.timerLeft || 10"></div>
-                                        <div class="text-lg font-medium">seconds to choose position</div>
+                                        <div class="text-lg font-medium">seconden om positie te kiezen</div>
                                         <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
                                             <div class="bg-current h-2 rounded-full transition-all duration-1000"
                                                  :style="`width: ${((10 - (phase1?.timerLeft || 10)) / 10) * 100}%`"></div>
@@ -231,15 +231,15 @@
                                     
                                     <!-- Completed State -->
                                     <div x-show="phase1?.timerState === 'completed'" class="space-y-2">
-                                        <div class="text-4xl font-bold text-red-600 animate-bounce">TIME'S UP!</div>
-                                        <div class="text-sm text-red-700">Transitioning to discussion...</div>
+                                        <div class="text-4xl font-bold text-red-600 animate-bounce">TIJD IS OM!</div>
+                                        <div class="text-sm text-red-700">Overgaan naar discussie...</div>
                                     </div>
                                     
                                     <!-- Discussion State -->
                                     <div x-show="phase1?.timerState === 'discussion'" class="space-y-2">
-                                        <div class="text-2xl font-semibold text-purple-600">💬 Discussion & Reflection</div>
-                                        <div class="text-sm text-purple-700">Facilitate discussion about the strategic choice</div>
-                                        <div class="text-xs text-gray-500 mt-2">Click "Next Round" to continue to the next company pair</div>
+                                        <div class="text-2xl font-semibold text-purple-600">💬 Discussie & Reflectie</div>
+                                        <div class="text-sm text-purple-700">Faciliteer discussie over de strategische keuze</div>
+                                        <div class="text-xs text-gray-500 mt-2">Klik "Volgende Ronde" om door te gaan naar het volgende bedrijfspaar</div>
                                     </div>
                                 </div>
                             </div>
@@ -250,35 +250,35 @@
                                 <button @click="phase1?.startTimer()" 
                                         x-show="phase1?.timerState === 'ready'"
                                         class="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold text-base hover:bg-green-700 shadow-lg transition-all transform hover:scale-105">
-                                    🚀 Start Round
+                                    🚀 Start Ronde
                                 </button>
                                 
                                 <!-- Next Round Button (Discussion Phase) -->
                                 <button @click="phase1?.nextRound()" 
                                         x-show="phase1?.timerState === 'discussion'"
                                         class="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold text-base hover:bg-purple-700 shadow-lg transition-all transform hover:scale-105">
-                                    ➡️ Next Round
+                                    ➡️ Volgende Ronde
                                 </button>
                                 
                                 <!-- Pause Button (Countdown Phase) -->
                                 <button @click="phase1?.pauseTimer()" 
                                         x-show="phase1?.timerState === 'countdown' && !phase1?.timer?.isPaused"
                                         class="px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 shadow-md transition-colors">
-                                    ⏸️ Pause
+                                    ⏸️ Pauzeren
                                 </button>
                                 
                                 <!-- Resume Button (Paused) -->
                                 <button @click="phase1?.startTimer()" 
                                         x-show="phase1?.timer?.isPaused"
                                         class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 shadow-md transition-colors">
-                                    ▶️ Resume
+                                    ▶️ Hervatten
                                 </button>
                                 
                                 <!-- Reset Button (Emergency/Admin) -->
                                 <button @click="phase1?.resetTimer()" 
                                         class="px-3 py-1 bg-gray-400 text-gray-700 rounded font-medium text-sm hover:bg-gray-500 hover:text-white transition-colors"
                                         title="Reset timer (emergency use)">
-                                    🔄 Reset
+                                    🔄 Herstellen
                                 </button>
                             </div>
                         </div>
@@ -286,7 +286,7 @@
                         <!-- Company Pair Navigation & Progress -->
                         <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
                             <div class="flex justify-between items-center mb-3">
-                                <h3 class="font-semibold text-gray-800">Strategic Company Pairs</h3>
+                                <h3 class="font-semibold text-gray-800">Strategische Bedrijfsparen</h3>
                                 <div class="text-sm font-medium text-indigo-600">
                                     <span x-text="phase1?.pairCounter || '1 / 5'"></span>
                                 </div>
@@ -296,10 +296,10 @@
                             <div class="bg-white rounded-lg p-3 mb-3 border shadow-sm">
                                 <div class="flex items-center justify-between">
                                     <div class="flex-1">
-                                        <div class="text-sm font-medium text-gray-800 mb-1" x-text="phase1?.currentPair?.category || 'Strategic Dilemma'"></div>
+                                        <div class="text-sm font-medium text-gray-800 mb-1" x-text="phase1?.currentPair?.category || 'Strategisch Dilemma'"></div>
                                         <div class="flex items-center space-x-2 text-sm text-gray-600">
                                             <span class="font-medium text-blue-600" x-text="phase1?.currentPair?.companyA || 'Company A'"></span>
-                                            <span class="text-gray-400">vs</span>
+                                            <span class="text-gray-400">versus</span>
                                             <span class="font-medium text-green-600" x-text="phase1?.currentPair?.companyB || 'Company B'"></span>
                                         </div>
                                     </div>
@@ -311,7 +311,7 @@
                                 <button @click="phase1?.previousPair()" 
                                         :disabled="!phase1?.companyPairs?.canGoPrev"
                                         class="px-3 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                                    ← Previous
+                                    ← Vorige
                                 </button>
                                 
                                 <!-- Progress Dots -->
@@ -327,14 +327,14 @@
                                 <button @click="phase1?.nextPair()" 
                                         :disabled="!phase1?.companyPairs?.canGoNext"
                                         class="px-3 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                                    Next →
+                                    Volgende →
                                 </button>
                             </div>
                         </div>
                         
                         <!-- Voting & Statistics Dashboard -->
                         <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
-                            <h3 class="font-semibold text-gray-800 mb-3">Vote Tracking & Results</h3>
+                            <h3 class="font-semibold text-gray-800 mb-3">Stemregistratie & Resultaten</h3>
                             
                             <!-- Vote Buttons -->
                             <div class="space-y-3 mb-4">
@@ -346,7 +346,7 @@
                                     <div class="flex items-center space-x-2">
                                         <button @click="phase1?.voteA()" 
                                                 class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
-                                            + Vote for A
+                                            + Stem voor A
                                         </button>
                                         <button @click="phase1?.decreaseVoteA()" 
                                                 class="px-2 py-2 bg-blue-400 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors text-xs"
@@ -365,7 +365,7 @@
                                     <div class="flex items-center space-x-2">
                                         <button @click="phase1?.voteB()" 
                                                 class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
-                                            + Vote for B
+                                            + Stem voor B
                                         </button>
                                         <button @click="phase1?.decreaseVoteB()" 
                                                 class="px-2 py-2 bg-green-400 text-white rounded-lg font-medium hover:bg-green-500 transition-colors text-xs"
@@ -380,8 +380,8 @@
                             <!-- Visual Vote Distribution -->
                             <div x-show="(phase1?.votes?.companyA || 0) + (phase1?.votes?.companyB || 0) > 0" class="mb-4">
                                 <div class="text-xs text-gray-600 mb-2 flex justify-between">
-                                    <span>Vote Distribution</span>
-                                    <span class="font-medium">Total: <span x-text="phase1?.votingSystem?.totalVotes || 0"></span></span>
+                                    <span>Stemverdeling</span>
+                                    <span class="font-medium">Totaal: <span x-text="phase1?.votingSystem?.totalVotes || 0"></span></span>
                                 </div>
                                 <div class="flex rounded-full overflow-hidden h-4 bg-gray-200">
                                     <div class="bg-blue-500 transition-all duration-500 flex items-center justify-center text-white text-xs font-medium"
@@ -396,42 +396,42 @@
                             <!-- Reset Button -->
                             <button @click="phase1?.resetVotes()" 
                                     class="w-full px-3 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors text-sm">
-                                🔄 Reset Current Pair Votes
+                                🔄 Herstel Stemmen Huidige Paar
                             </button>
                         </div>
                         
                         <!-- Facilitator Instructions -->
                         <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-4 border border-yellow-200">
-                            <h3 class="font-semibold text-gray-800 mb-2">💡 Facilitator Guide</h3>
+                            <h3 class="font-semibold text-gray-800 mb-2">💡 Facilitator Gids</h3>
                             <div class="text-sm space-y-2">
                                 <div x-show="phase1?.timerState === 'ready'" class="text-gray-700">
-                                    <strong>Ready Phase:</strong> Explain the strategic dilemma to participants, then click "Start Round"
+                                    <strong>Voorbereidingsfase:</strong> Leg het strategische dilemma uit aan deelnemers, klik dan "Start Ronde"
                                 </div>
                                 <div x-show="phase1?.timerState === 'announcement'" class="text-green-700">
-                                    <strong>Announcement:</strong> Participants prepare to move to their chosen side
+                                    <strong>Aankondiging:</strong> Deelnemers bereiden zich voor om naar hun gekozen kant te bewegen
                                 </div>
                                 <div x-show="phase1?.timerState === 'countdown'" class="text-blue-700">
-                                    <strong>Countdown:</strong> Participants choose their position (left/right) based on preference
+                                    <strong>Aftelling:</strong> Deelnemers kiezen hun positie (links/rechts) op basis van voorkeur
                                 </div>
                                 <div x-show="phase1?.timerState === 'completed'" class="text-red-700">
-                                    <strong>Time's Up:</strong> Count participants on each side and record votes
+                                    <strong>Tijd Verstreken:</strong> Tel deelnemers aan elke kant en registreer stemmen
                                 </div>
                                 <div x-show="phase1?.timerState === 'discussion'" class="text-purple-700">
-                                    <strong>Discussion:</strong> Facilitate reflection on the strategic choice and reasoning
+                                    <strong>Discussie:</strong> Faciliteer reflectie op de strategische keuze en redenering
                                 </div>
                             </div>
                             
                             <!-- Keyboard Shortcuts -->
                             <div class="mt-3 pt-3 border-t border-yellow-200">
-                                <div class="text-xs text-gray-600 mb-1">Keyboard Shortcuts:</div>
+                                <div class="text-xs text-gray-600 mb-1">Sneltoetsen:</div>
                                 <div class="grid grid-cols-2 gap-1 text-xs">
-                                    <div><kbd class="bg-gray-200 px-1 rounded">Space</kbd> Start/Pause</div>
-                                    <div><kbd class="bg-gray-200 px-1 rounded">R</kbd> Reset Timer</div>
-                                    <div><kbd class="bg-gray-200 px-1 rounded">←/→</kbd> Navigate Pairs</div>
-                                    <div><kbd class="bg-gray-200 px-1 rounded">A/B</kbd> Vote A/B</div>
-                                    <div><kbd class="bg-gray-200 px-1 rounded">Shift+A/B</kbd> Decrease Votes</div>
-                                    <div><kbd class="bg-gray-200 px-1 rounded">N</kbd> Next Round</div>
-                                    <div><kbd class="bg-gray-200 px-1 rounded">Ctrl+Del</kbd> Clear Storage</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">Space</kbd> Start/Pauzeer</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">R</kbd> Timer Herstellen</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">←/→</kbd> Navigeer Paren</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">A/B</kbd> Stem A/B</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">Shift+A/B</kbd> Verminder Stemmen</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">N</kbd> Volgende Ronde</div>
+                                    <div><kbd class="bg-gray-200 px-1 rounded">Ctrl+Del</kbd> Opslag Wissen</div>
                                 </div>
                             </div>
                         </div>
@@ -441,49 +441,49 @@
                     <div x-show="currentPhase === 2" class="space-y-4">
                         <!-- Strategic Archetype Definition -->
                         <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-200">
-                            <h3 class="font-semibold text-lg text-gray-800 mb-4">Strategic Archetype Definition</h3>
+                            <h3 class="font-semibold text-lg text-gray-800 mb-4">Strategisch Archetype Definitie</h3>
                             
                             <!-- Pattern Keywords -->
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Pattern Keywords</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Patroon Sleutelwoorden</label>
                                 <input type="text" x-model="phase2.patterns" 
                                        class="w-full p-3 border border-gray-300 rounded-lg text-sm"
-                                       placeholder="e.g., digital transformation, platform, customer-centric"
+                                       placeholder="bijv., digitale transformatie, platform, klantgericht"
                                        @input="markUnsaved()">
-                                <p class="text-xs text-gray-500 mt-1">Comma-separated keywords that capture the strategic patterns</p>
+                                <p class="text-xs text-gray-500 mt-1">Kommagescheiden woorden die de strategische patronen vastleggen</p>
                             </div>
                             
                             <!-- Archetype Description -->
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Archetype Description</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Archetype Beschrijving</label>
                                 <textarea x-model="phase2.archetype" 
                                           class="w-full p-3 border border-gray-300 rounded-lg text-sm" 
                                           rows="3"
-                                          placeholder="Describe the strategic archetype that emerges from the preference patterns..."
+                                          placeholder="Beschrijf het strategisch archetype dat voortkomt uit de voorkeurspatronen..."
                                           @input="markUnsaved()"></textarea>
                             </div>
                             
                             <!-- Archetype Templates -->
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Archetype Templates</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Archetype Sjablonen</label>
                                 <select @change="applyArchetypeTemplate($event.target.value)" 
                                         class="w-full p-3 border border-gray-300 rounded-lg text-sm">
-                                    <option value="">Choose a template...</option>
+                                    <option value="">Kies een sjabloon...</option>
                                     <option value="disruptor">Disruptor</option>
                                     <option value="premium">Premium</option>
                                     <option value="platform">Platform</option>
-                                    <option value="integrated">Integrated</option>
-                                    <option value="customer">Customer-Centric</option>
+                                    <option value="integrated">Geïntegreerd</option>
+                                    <option value="customer">Klantgericht</option>
                                 </select>
-                                <p class="text-xs text-gray-500 mt-1">Select a template to populate common archetype patterns</p>
+                                <p class="text-xs text-gray-500 mt-1">Selecteer een sjabloon om veelvoorkomende archetype patronen in te vullen</p>
                             </div>
                         </div>
                         
                         <!-- Results Summary -->
                         <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-4 border border-green-200">
-                            <h3 class="font-semibold text-gray-800 mb-3">🏆 Phase 1 Results Summary</h3>
+                            <h3 class="font-semibold text-gray-800 mb-3">🏆 Fase 1 Resultaten Samenvatting</h3>
                             <div class="bg-white rounded-lg p-3 border shadow-sm">
-                                <div class="text-sm text-gray-600 mb-2">Winning Companies:</div>
+                                <div class="text-sm text-gray-600 mb-2">Winnende Bedrijven:</div>
                                 <div class="flex flex-wrap gap-2" x-show="getWinners().length > 0">
                                     <template x-for="winner in getWinners()" :key="winner">
                                         <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium"
@@ -491,7 +491,7 @@
                                     </template>
                                 </div>
                                 <div x-show="getWinners().length === 0" class="text-xs text-gray-500 italic">
-                                    No results from Phase 1 yet
+                                    Nog geen resultaten van Fase 1
                                 </div>
                             </div>
                         </div>
@@ -500,19 +500,19 @@
                     <!-- Phase 3: Strategic Translation Controls -->
                     <div x-show="currentPhase === 3" class="space-y-4">
                         <div class="bg-gray-50 rounded-lg p-4">
-                            <h3 class="font-medium mb-2">Strategic Hypotheses</h3>
+                            <h3 class="font-medium mb-2">Strategische Hypotheses</h3>
                             <button @click="addHypothesis()" 
                                     class="w-full px-3 py-2 bg-primary-600 text-white rounded text-sm hover:bg-primary-700 mb-3">
-                                + Add New Hypothesis
+                                + Nieuwe Hypothese Toevoegen
                             </button>
                             
                             <div class="space-y-2 text-xs">
                                 <template x-for="(hypothesis, index) in phase3.hypotheses" :key="index">
                                     <div class="flex justify-between items-center py-2 px-3 bg-white rounded border">
                                         <div class="flex-1">
-                                            <span class="font-medium" x-text="'Hypothesis ' + (index + 1)"></span>
+                                            <span class="font-medium" x-text="'Hypothese ' + (index + 1)"></span>
                                             <p class="text-gray-600 mt-1 text-xs" 
-                                               x-text="hypothesis.statement ? (hypothesis.statement.substring(0, 50) + '...') : 'Not defined'"></p>
+                                               x-text="hypothesis.statement ? (hypothesis.statement.substring(0, 50) + '...') : 'Niet gedefinieerd'"></p>
                                         </div>
                                         <button @click="removeHypothesis(index)" 
                                                 class="text-red-500 hover:text-red-700 ml-2">✕</button>
@@ -521,20 +521,20 @@
                             </div>
                             
                             <div x-show="phase3.hypotheses.length === 0" class="text-center py-4 text-gray-500 text-xs">
-                                No hypotheses created yet
+                                Nog geen hypotheses aangemaakt
                             </div>
                         </div>
                         
                         <div class="bg-gray-50 rounded-lg p-4">
-                            <h3 class="font-medium mb-2">Hypothesis Templates</h3>
+                            <h3 class="font-medium mb-2">Hypothese Sjablonen</h3>
                             <select @change="applyHypothesisTemplate($event.target.value)" 
                                     class="w-full p-2 border border-gray-300 rounded text-sm mb-2">
-                                <option value="">Choose a template...</option>
-                                <option value="platform">Platform Strategy</option>
-                                <option value="premium">Premium Positioning</option>
-                                <option value="ecosystem">Ecosystem Building</option>
-                                <option value="innovation">Innovation Focus</option>
-                                <option value="customer">Customer-Centric</option>
+                                <option value="">Kies een sjabloon...</option>
+                                <option value="platform">Platform Strategie</option>
+                                <option value="premium">Premium Positionering</option>
+                                <option value="ecosystem">Ecosysteem Opbouw</option>
+                                <option value="innovation">Innovatie Focus</option>
+                                <option value="customer">Klantgericht</option>
                             </select>
                         </div>
                         
@@ -587,8 +587,8 @@
                 <!-- Save Status -->
                 <div class="p-4 border-t border-gray-200 bg-gray-50">
                     <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-600">Auto-save</span>
-                        <span :class="saveStatus === 'saved' ? 'text-green-600' : 'text-yellow-600'" 
+                        <span class="text-gray-600">Auto-opslaan</span>
+                        <span :class="saveStatus === 'opgeslagen' ? 'text-green-600' : 'text-yellow-600'" 
                               x-text="saveStatus"></span>
                     </div>
                 </div>
@@ -611,14 +611,14 @@
                          x-show="presentationMode && (phase1?.timerState === 'countdown' || phase1?.timerState === 'announcement')">
                         <div class="flex items-center bg-blue-900 text-white px-6 py-3 rounded-full shadow-lg">
                             <span class="text-2xl mr-3">←</span>
-                            <span class="font-bold text-lg">Go LEFT for</span>
+                            <span class="font-bold text-lg">Ga LINKS voor</span>
                         </div>
                     </div>
                     
                     <div class="absolute top-8 right-8 z-20" 
                          x-show="presentationMode && (phase1?.timerState === 'countdown' || phase1?.timerState === 'announcement')">
                         <div class="flex items-center bg-green-900 text-white px-6 py-3 rounded-full shadow-lg">
-                            <span class="font-bold text-lg">Go RIGHT for</span>
+                            <span class="font-bold text-lg">Ga RECHTS voor</span>
                             <span class="text-2xl ml-3">→</span>
                         </div>
                     </div>
@@ -782,7 +782,7 @@
                                    'text-gray-600': phase1?.timerState !== 'announcement',
                                    'text-yellow-800': phase1?.timerState === 'announcement'
                                }">
-                                Round <span x-text="phase1?.pairCounter || '1 / 5'"></span> - <span x-text="phase1?.currentPair?.category || 'Strategic Dilemma'"></span>
+                                Ronde <span x-text="phase1?.pairCounter || '1 / 5'"></span> - <span x-text="phase1?.currentPair?.category || 'Strategisch Dilemma'"></span>
                             </p>
                         </div>
                         
@@ -804,19 +804,19 @@
                         <!-- Instructions based on timer state -->
                         <div class="text-center">
                             <div x-show="phase1?.timerState === 'ready'" class="text-gray-600">
-                                <p class="font-semibold">Get ready to make your choice physically by moving left or right!</p>
+                                <p class="font-semibold">Maak u klaar om uw keuze fysiek te maken door naar links of rechts te bewegen!</p>
                             </div>
                             <div x-show="phase1?.timerState === 'announcement'" class="text-yellow-900">
-                                <p class="font-black text-lg animate-bounce">🏃‍♂️ MOVE TO YOUR POSITION NOW! 🏃‍♀️</p>
+                                <p class="font-black text-lg animate-bounce">🏃‍♂️ KIES UW POSITIE! 🏃‍♀️</p>
                             </div>
                             <div x-show="phase1?.timerState === 'countdown'" class="text-blue-700">
-                                <p class="font-bold">Choose your side and stay there until time runs out!</p>
+                                <p class="font-bold">Kies uw kant en blijf daar totdat de tijd om is!</p>
                             </div>
                             <div x-show="phase1?.timerState === 'completed'" class="text-red-700">
-                                <p class="font-bold">⏰ Time's up! Stay in position for counting.</p>
+                                <p class="font-bold">⏰ Tijd is om! Blijf op positie voor de telling.</p>
                             </div>
                             <div x-show="phase1?.timerState === 'discussion'" class="text-purple-700">
-                                <p class="font-bold">💬 Discuss your choice with others nearby!</p>
+                                <p class="font-bold">💬 Bespreek uw keuze met anderen in de buurt!</p>
                             </div>
                         </div>
                     </div>
@@ -1101,26 +1101,26 @@
          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
          @click.away="showSessionModal = false">
         <div class="bg-white rounded-lg p-6 w-96 max-w-90vw">
-            <h2 class="text-xl font-bold mb-4">Session Settings</h2>
+            <h2 class="text-xl font-bold mb-4">Sessie Instellingen</h2>
             
             <form @submit.prevent="saveSessionSettings">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Team Name</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Team Naam</label>
                         <input type="text" x-model="session.teamName" 
                                class="w-full p-2 border border-gray-300 rounded-md text-sm"
-                               placeholder="Enter team name">
+                               placeholder="Voer team naam in">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Facilitator</label>
                         <input type="text" x-model="session.facilitator" 
                                class="w-full p-2 border border-gray-300 rounded-md text-sm"
-                               placeholder="Enter facilitator name">
+                               placeholder="Voer facilitator naam in">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Timer Duration (seconds)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Timer Duur (seconden)</label>
                         <input type="number" x-model="timer.duration" min="5" max="60"
                                class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
@@ -1129,37 +1129,37 @@
                 <div class="flex space-x-2 mt-6">
                     <button type="submit" 
                             class="flex-1 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">
-                        Save
+                        Opslaan
                     </button>
                     <button type="button" @click="showSessionModal = false" 
                             class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                        Cancel
+                        Annuleren
                     </button>
                 </div>
             </form>
             
             <!-- Local Storage Management Section -->
             <div class="mt-6 pt-6 border-t border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">Data Management</h3>
-                <p class="text-sm text-gray-600 mb-4">Manage your local session data:</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Data Beheer</h3>
+                <p class="text-sm text-gray-600 mb-4">Beheer uw lokale sessiegegevens:</p>
                 
                 <div class="space-y-2">
                     <!-- Reset Current Session -->
                     <button @click="resetCurrentSession()" 
                             class="w-full px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors">
-                        🔄 Reset Current Session
+                        🔄 Huidige Sessie Herstellen
                     </button>
                     
                     <!-- Clear All Local Storage -->
                     <button @click="clearLocalStorage()" 
                             class="w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
-                        🗑️ Clear All Local Storage
+                        🗑️ Alle Lokale Opslag Wissen
                     </button>
                 </div>
                 
                 <div class="text-xs text-gray-500 mt-3">
-                    <p><strong>Reset Session:</strong> Starts fresh without affecting other saved sessions</p>
-                    <p><strong>Clear Storage:</strong> Deletes all saved sessions and data permanently</p>
+                    <p><strong>Sessie Herstellen:</strong> Start opnieuw zonder andere opgeslagen sessies te beïnvloeden</p>
+                    <p><strong>Opslag Wissen:</strong> Verwijdert alle opgeslagen sessies en data permanent</p>
                 </div>
             </div>
         </div>
@@ -1170,8 +1170,8 @@
          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
          @click.away="showExportModal = false">
         <div class="bg-white rounded-lg p-6 w-96 max-w-90vw">
-            <h2 class="text-xl font-bold mb-4">Export Session</h2>
-            <p class="text-gray-600 text-sm mb-6">Choose the format for your session export:</p>
+            <h2 class="text-xl font-bold mb-4">Sessie Exporteren</h2>
+            <p class="text-gray-600 text-sm mb-6">Kies het formaat voor uw sessie export:</p>
             
             <div class="space-y-3">
                 <!-- JSON Export -->
@@ -1183,7 +1183,7 @@
                         </div>
                         <div>
                             <h3 class="font-medium text-gray-900">JSON Data</h3>
-                            <p class="text-gray-500 text-xs">Complete session data for backup and analysis</p>
+                            <p class="text-gray-500 text-xs">Volledige sessiegegevens voor backup en analyse</p>
                         </div>
                     </div>
                 </button>
@@ -1196,8 +1196,8 @@
                             <span class="text-green-600 font-bold text-sm">MD</span>
                         </div>
                         <div>
-                            <h3 class="font-medium text-gray-900">Markdown Report</h3>
-                            <p class="text-gray-500 text-xs">Formatted report for sharing and documentation</p>
+                            <h3 class="font-medium text-gray-900">Markdown Rapport</h3>
+                            <p class="text-gray-500 text-xs">Geformatteerd rapport voor delen en documentatie</p>
                         </div>
                     </div>
                 </button>
@@ -1210,8 +1210,8 @@
                             <span class="text-gray-400 font-bold text-sm">📧</span>
                         </div>
                         <div>
-                            <h3 class="font-medium text-gray-500">Email Summary</h3>
-                            <p class="text-gray-400 text-xs">Coming soon - Send summary via email</p>
+                            <h3 class="font-medium text-gray-500">E-mail Samenvatting</h3>
+                            <p class="text-gray-400 text-xs">Binnenkort beschikbaar - Verstuur samenvatting per e-mail</p>
                         </div>
                     </div>
                 </button>
@@ -1220,7 +1220,7 @@
             <div class="mt-6">
                 <button @click="showExportModal = false" 
                         class="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                    Cancel
+                    Annuleren
                 </button>
             </div>
         </div>
