@@ -28,18 +28,17 @@ test.describe('Foundation Phase Tests', () => {
     await expect(page.locator('header p').first()).toContainText('Het Ren-Je-Rot-Analogie-Verkenner-spel');
   });
 
-  test('phase navigation renders all 4 phases', async ({ page }) => {
+  test('phase navigation renders all 3 phases', async ({ page }) => {
     await page.waitForSelector('nav', { state: 'visible' });
     
-    // Should have 4 phase buttons
+    // Should have 3 phase buttons
     const phaseButtons = page.locator('nav button[x-text*="Phase"]');
-    await expect(phaseButtons).toHaveCount(4);
+    await expect(phaseButtons).toHaveCount(3);
     
     // Check each phase button text
     await expect(phaseButtons.nth(0)).toContainText('Phase 1');
     await expect(phaseButtons.nth(1)).toContainText('Phase 2');
     await expect(phaseButtons.nth(2)).toContainText('Phase 3');
-    await expect(phaseButtons.nth(3)).toContainText('Phase 4');
   });
 
   test('phase navigation is functional', async ({ page }) => {
@@ -130,10 +129,10 @@ test.describe('Foundation Phase Tests', () => {
     const phase1Controls = page.locator('[x-show="currentPhase === 1"]').first();
     await expect(phase1Controls).toBeVisible();
     
-    // Should show timer controls
-    await expect(page.locator('button', { hasText: 'Start' })).toBeVisible();
-    await expect(page.locator('button', { hasText: 'Pause' })).toBeVisible();
-    await expect(page.locator('button', { hasText: 'Reset' })).toBeVisible();
+    // Should show timer controls (only Start Round and Reset are visible in ready state)
+    await expect(page.locator('button', { hasText: 'Start Round' })).toBeVisible();
+    await expect(page.locator('button[title="Reset timer (emergency use)"]')).toBeVisible();
+    // Note: Pause button only appears during countdown phase
     
     // Navigate to Phase 2 and check controls change
     await page.locator('nav button', { hasText: 'Phase 2' }).click();
@@ -150,7 +149,7 @@ test.describe('Foundation Phase Tests', () => {
     await expect(phase1Content).toBeVisible();
     
     // Navigate to different phases and verify content changes
-    for (let phase = 2; phase <= 4; phase++) {
+    for (let phase = 2; phase <= 3; phase++) {
       await page.locator('nav button', { hasText: `Phase ${phase}` }).click();
       
       const currentPhaseContent = page.locator(`section [x-show="currentPhase === ${phase}"]`);

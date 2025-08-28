@@ -10,7 +10,7 @@
 
 ## 1. Executive Summary
 
-This PRD defines the requirements for a web-based facilitator tool for the "Het Ren-Je-Rot-Analogie-Verkenner-spel" strategic workshop game. The application provides a structured interface to guide facilitators through the four phases of the game while capturing participant insights and generating actionable strategic outputs.
+This PRD defines the requirements for a web-based facilitator tool for the "Het Ren-Je-Rot-Analogie-Verkenner-spel" strategic workshop game. The application provides a structured interface to guide facilitators through the three phases of the game while capturing participant insights and generating actionable strategic outputs.
 
 ## 2. Product Objectives
 
@@ -171,44 +171,25 @@ VotingResult {
 - **Validation:** Ensures 2-3 sentence limit
 - **Preview Mode:** Large text display for team review
 
-### 6.3 Phase 3: Decomposition Analysis
+### 6.3 Phase 3: Strategic Translation
 
-#### 6.3.1 Forerunner Selection
-- **Winner Grid:** Select from Phase 1 winners
-- **Company Profile:** Detailed view with business model info
-- **Confirmation:** Clear selection with change option
-
-#### 6.3.2 Analogy Analysis Forms
-- **Positive Analogies:** Structured form with business model, customer problems, go-to-market fields
-- **Negative Analogies:** Market differences, unique assets, cultural factors
-- **Guided Prompts:** Context-specific questions for each field
-- **Rich Text Support:** Formatting for detailed responses
-
-#### 6.3.3 Causal Relationship Mapper
-- **Factor List:** Add/remove success factors (premises)
-- **Relationship Builder:** Connect factors to outcomes
-- **Visual Diagram:** Simple flowchart of causal logic
-- **Core Factor Identification:** Highlight primary success drivers
-
-### 6.4 Phase 4: Translation to Strategy
-
-#### 6.4.1 Hypothesis Builder
+#### 6.3.1 Hypothesis Builder
 - **If-Then Structure:** Enforced format for strategic hypotheses
-- **Template System:** Common hypothesis patterns
+- **Template System:** Common hypothesis patterns (Platform, Premium, Ecosystem, Innovation, Customer-Centric)
 - **Validation:** Ensures clear premise and conclusion
-- **Prioritization:** Drag-and-drop ranking of hypotheses
+- **Prioritization:** Ranking of hypotheses by importance
 
-#### 6.4.2 Action Item Tracker
+#### 6.3.2 Action Item Tracker
 - **Task Definition:** What needs to be done
 - **Owner Assignment:** Who is responsible
-- **Timeline:** Deadline setting
-- **Success Criteria:** How to measure completion
+- **Priority Setting:** High, Medium, Low priority levels
+- **Status Tracking:** Planned, In Progress, Complete status
 
-#### 6.4.3 Session Summary
+#### 6.3.3 Session Summary
+- **Progress Overview:** Archetype defined, hypotheses created, actions planned
 - **Report Generation:** Comprehensive session overview
-- **Export Options:** PDF, Markdown, JSON formats
-- **Email Integration:** Browser mailto for easy sharing
-- **Print Optimization:** Formatted for A4 printing
+- **Export Options:** JSON, Markdown formats
+- **Session Completion:** Final review and next steps
 
 ## 7. User Interface Design
 
@@ -303,104 +284,27 @@ This application will be built using a phase-by-phase approach where each phase 
 **Test Files:**
 - `tests/02-preference-round.spec.js`
 
-### Phase 3: Archetype Analysis Features
-**Duration:** 2-3 days  
-**Focus:** Pattern recognition and archetype definition
+### Current Status: Complete 3-Phase Application
+**Status:** ✅ Complete  
+**Focus:** All phases implemented with strategic pairs integration
 
-**Implementation:**
-- Winners summary display from Phase 1
-- Pattern keyword input system (comma-separated)
-- Archetype templates with selection
-- Guided discussion prompts
-- Presentation view for patterns
+**Implementation Complete:**
+- **Phase 1:** Strategic preference round with strategic pairs (26 pairs, 4 strategic levels)
+- **Phase 2:** Archetype analysis with pattern recognition and templates
+- **Phase 3:** Strategic translation with hypothesis building and action planning
+- **Core Features:** Session management, data persistence, presentation mode
+- **Export:** JSON and markdown report generation
 
-**Testing Requirements:**
-- Winners correctly extracted from Phase 1
-- Keyword input parses comma-separated values
-- Pattern visualization displays correctly
-- Archetype templates populate properly
-- Guided prompts toggle functionality
-- Data flows correctly to presentation view
+**Testing Coverage:**
+- Foundation tests: Session management and core functionality
+- Strategic pairs integration: Level balancing and pair selection
+- Phase transitions and data persistence
+- End-to-end workflow validation
 
 **Test Files:**
-- `tests/03-archetype-analysis.spec.js`
-
-### Phase 4: Decomposition Analysis
-**Duration:** 3-4 days  
-**Focus:** Deep analysis of forerunner company
-
-**Implementation:**
-- Forerunner selection from Phase 1 winners
-- Positive/negative analogy forms
-- Causal relationship mapper
-- Inline editing capabilities
-- Guided questions panel
-
-**Testing Requirements:**
-- Forerunner selection populates from winners
-- Analogy CRUD operations work correctly
-- Causal relationship creation/editing functions
-- Strength indicators update properly
-- Inline editing saves automatically
-- Data validation prevents empty entries
-
-**Test Files:**
-- `tests/04-decomposition.spec.js`
-
-### Phase 5: Strategic Translation
-**Duration:** 3-4 days  
-**Focus:** Hypothesis building and action planning
-
-**Implementation:**
-- IF-THEN hypothesis builder
-- Hypothesis templates system
-- Action item tracker with CRUD
-- Priority and confidence scoring
-- Session summary dashboard
-
-**Testing Requirements:**
-- Hypothesis creation with templates works
-- IF-THEN structure is enforced
-- Action item CRUD operations function
-- Priority/confidence updates save
-- Summary calculations are accurate
-- Template application works correctly
-
-**Test Files:**
-- `tests/05-translation.spec.js`
-
-### Phase 6: Export & Reporting
-**Duration:** 2-3 days  
-**Focus:** Data export and report generation
-
-**Implementation:**
-- JSON export functionality
-- Markdown report generator
-- Export modal interface
-- File download mechanisms
-- Report formatting and structure
-
-**Testing Requirements:**
-- JSON export contains all session data
-- Markdown format is correct and readable
-- File downloads trigger properly
-- Export modal interactions work
-- Report includes all phases correctly
-- Export handles empty/partial data gracefully
-
-**Test Files:**
-- `tests/06-export.spec.js`
-
-### Phase 7: Integration & Polish
-**Duration:** 2-3 days  
-**Focus:** Full integration and user experience
-
-**Implementation:**
-- Presentation mode toggle
-- Auto-save functionality
-- Settings modal enhancements
-- Accessibility improvements
-- Responsive design refinements
+- `tests/01-foundation.spec.js`
+- `tests/02-session-management.spec.js` 
+- `tests/03-phase2-preference-round.spec.js`
 
 **Testing Requirements:**
 - End-to-end workflow completion

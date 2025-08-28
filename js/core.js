@@ -38,26 +38,21 @@ const createDefaultSession = () => ({
   participants: null,
   currentPhase: 1,
   phase1: {
-    currentRound: 0,
-    companyPairs: [],
-    results: [],
-    winners: []
-  },
-  phase2: {
     votes: { companyA: 0, companyB: 0 },
     currentPairIndex: 0,
-    timerLeft: 120,
+    timerLeft: 10,
+    timerState: 'ready',
     totalVotes: 0,
     percentageA: 0,
-    percentageB: 0
+    percentageB: 0,
+    results: []
+  },
+  phase2: {
+    archetype: '',
+    patterns: [],
+    keywords: []
   },
   phase3: {
-    forerunner: '',
-    positiveAnalogies: [],
-    negativeAnalogies: [],
-    causalRelations: []
-  },
-  phase4: {
     hypotheses: [],
     actionItems: []
   },
@@ -80,21 +75,16 @@ const generateSessionId = () => {
 const phases = [
   {
     id: 1,
-    title: 'Preference Round',
-    description: 'Vote on company pairs to identify preferences and establish winners'
+    title: 'Strategic Preference Round',
+    description: 'Physical positioning exercise with strategic company pairs'
   },
   {
     id: 2,
     title: 'Archetype Analysis',
-    description: 'Analyze patterns in winning companies and define strategic archetype'
+    description: 'Analyze patterns in preferences and define strategic archetype'
   },
   {
     id: 3,
-    title: 'Decomposition Analysis',
-    description: 'Deep dive into forerunner company with analogies and causal mapping'
-  },
-  {
-    id: 4,
     title: 'Strategic Translation',
     description: 'Transform insights into actionable hypotheses and next steps'
   }
@@ -143,31 +133,18 @@ document.addEventListener('alpine:init', () => {
     presentationMode: false,
     showGuidedPrompts: false,
     
-    // Phase 1 specific data
-    phase1: {
-      currentRound: 0,
-      companyPairs: defaultCompanyPairs,
-      results: Array(defaultCompanyPairs.length).fill().map(() => ({ 
-        votesA: 0, 
-        votesB: 0, 
-        winner: null,
-        duration: 30 
-      }))
+    // Phase 1 specific data - Strategic Preference Round (initialized from phase2.js)
+    phase1: null,
+    
+    // Phase 2 specific data - Archetype Analysis
+    phase2: {
+      archetype: '',
+      patterns: [],
+      keywords: []
     },
     
-    // Phase 2 specific data - initialized from phase2.js
-    phase2: null,
-    
-    // Phase 3 specific data
+    // Phase 3 specific data - Strategic Translation
     phase3: {
-      forerunner: '',
-      positiveAnalogies: [],
-      negativeAnalogies: [],
-      causalRelations: []
-    },
-    
-    // Phase 4 specific data
-    phase4: {
       hypotheses: [],
       actionItems: []
     },
@@ -201,13 +178,13 @@ document.addEventListener('alpine:init', () => {
         this.timer.duration = this.session.settings.timerDuration;
         this.timer.remaining = this.timer.duration;
         
-        // Initialize Phase 2 functionality
+        // Initialize Phase 1 functionality (strategic pairs from phase2.js)
         if (window.initializePhase2) {
           try {
-            this.phase2 = await window.initializePhase2();
-            // Load Phase 2 state if it exists
-            if (this.session.phase2) {
-              this.phase2.loadState(this.session.phase2);
+            this.phase1 = await window.initializePhase2();
+            // Load Phase 1 state if it exists
+            if (this.session.phase1) {
+              this.phase1.loadState(this.session.phase1);
             }
           } catch (error) {
             console.error('Failed to initialize Phase 2:', error);
@@ -293,17 +270,12 @@ document.addEventListener('alpine:init', () => {
       this.currentPhase = this.session.currentPhase;
       
       // Deep merge phase data to preserve nested arrays and objects
-      if (this.session.phase1) {
-        this.phase1 = this.deepMerge(this.phase1, this.session.phase1);
-      }
+      // Phase1 is initialized from phase2.js
       if (this.session.phase2) {
         this.phase2 = this.deepMerge(this.phase2, this.session.phase2);
       }
       if (this.session.phase3) {
         this.phase3 = this.deepMerge(this.phase3, this.session.phase3);
-      }
-      if (this.session.phase4) {
-        this.phase4 = this.deepMerge(this.phase4, this.session.phase4);
       }
       
       this.timer.duration = this.session.settings.timerDuration;
@@ -312,51 +284,23 @@ document.addEventListener('alpine:init', () => {
     updateSessionFromPhaseData() {
       // Update session object from reactive phase data with deep copy
       this.session.currentPhase = this.currentPhase;
-      this.session.phase1 = JSON.parse(JSON.stringify(this.phase1));
       
-      // Handle Phase 2 data differently since it's a complex object
-      if (this.phase2 && this.phase2.getState) {
-        this.session.phase2 = this.phase2.getState();
-      } else if (this.phase2) {
-        this.session.phase2 = JSON.parse(JSON.stringify(this.phase2));
+      // Handle Phase 1 data (strategic pairs) - complex object from phase2.js
+      if (this.phase1 && this.phase1.getState) {
+        this.session.phase1 = this.phase1.getState();
+      } else if (this.phase1) {
+        this.session.phase1 = JSON.parse(JSON.stringify(this.phase1));
       }
       
+      this.session.phase2 = JSON.parse(JSON.stringify(this.phase2));
       this.session.phase3 = JSON.parse(JSON.stringify(this.phase3));
-      this.session.phase4 = JSON.parse(JSON.stringify(this.phase4));
       this.session.settings.timerDuration = this.timer.duration;
     },
     
     async loadCompanyPairs() {
-      try {
-        const response = await fetch('./data/company-pairs.json');
-        if (response.ok) {
-          const data = await response.json();
-          this.phase1.companyPairs = data.companyPairs || defaultCompanyPairs;
-          
-          // Only initialize results if they don't exist or are empty
-          if (!this.phase1.results || this.phase1.results.length !== this.phase1.companyPairs.length) {
-            this.phase1.results = Array(this.phase1.companyPairs.length).fill().map(() => ({ 
-              votesA: 0, 
-              votesB: 0, 
-              winner: null,
-              duration: 30 
-            }));
-          }
-        }
-      } catch (error) {
-        console.warn('Could not load company pairs from file, using defaults');
-        this.phase1.companyPairs = defaultCompanyPairs;
-        
-        // Only initialize results if they don't exist
-        if (!this.phase1.results || this.phase1.results.length === 0) {
-          this.phase1.results = Array(this.phase1.companyPairs.length).fill().map(() => ({ 
-            votesA: 0, 
-            votesB: 0, 
-            winner: null,
-            duration: 30 
-          }));
-        }
-      }
+      // Strategic pairs are now loaded from strategic-pairs.json in phase2.js
+      // This method is kept for compatibility but no longer loads company-pairs.json
+      console.log('Company pairs loading handled by Phase 1 (strategic pairs) module');
     },
     
     startAutoSave() {
@@ -412,55 +356,20 @@ document.addEventListener('alpine:init', () => {
     
     // Phase Navigation
     setCurrentPhase(phase) {
-      if (phase >= 1 && phase <= 4) {
+      if (phase >= 1 && phase <= 3) {
         this.currentPhase = phase;
         this.markUnsaved();
       }
     },
     
-    // Phase 1: Preference Round Methods
-    previousRound() {
-      if (this.phase1.currentRound > 0) {
-        this.phase1.currentRound--;
-        this.resetTimer();
-        this.markUnsaved();
-      }
-    },
-    
-    nextRound() {
-      if (this.phase1.currentRound < this.phase1.companyPairs.length - 1) {
-        this.phase1.currentRound++;
-        this.resetTimer();
-        this.markUnsaved();
-      }
-    },
-    
-    adjustVote(company, delta) {
-      const roundIndex = this.phase1.currentRound;
-      const result = this.phase1.results[roundIndex];
-      
-      if (company === 'A') {
-        result.votesA = Math.max(0, result.votesA + delta);
-      } else if (company === 'B') {
-        result.votesB = Math.max(0, result.votesB + delta);
-      }
-      
-      // Determine winner
-      if (result.votesA > result.votesB) {
-        result.winner = this.phase1.companyPairs[roundIndex].companyA.name;
-      } else if (result.votesB > result.votesA) {
-        result.winner = this.phase1.companyPairs[roundIndex].companyB.name;
-      } else {
-        result.winner = null;
-      }
-      
-      this.markUnsaved();
-    },
+    // Phase 1 methods are now handled by the strategic pairs module (phase2.js)
     
     getWinners() {
-      return this.phase1.results
-        .map(result => result.winner)
-        .filter(winner => winner !== null);
+      // Get winners from strategic pairs results
+      if (this.phase1 && this.phase1.getWinners) {
+        return this.phase1.getWinners();
+      }
+      return [];
     },
     
     // Timer Methods
@@ -564,9 +473,9 @@ document.addEventListener('alpine:init', () => {
       this.markUnsaved();
     },
     
-    // Phase 4: Translation Methods
+    // Phase 3: Strategic Translation Methods
     addHypothesis() {
-      this.phase4.hypotheses.push({
+      this.phase3.hypotheses.push({
         premise: '',
         conclusion: '',
         statement: '',
@@ -577,7 +486,7 @@ document.addEventListener('alpine:init', () => {
     },
     
     removeHypothesis(index) {
-      this.phase4.hypotheses.splice(index, 1);
+      this.phase3.hypotheses.splice(index, 1);
       this.markUnsaved();
     },
     
@@ -615,7 +524,7 @@ document.addEventListener('alpine:init', () => {
     },
     
     addActionItem() {
-      this.phase4.actionItems.push({
+      this.phase3.actionItems.push({
         task: '',
         owner: '',
         deadline: '',
@@ -626,7 +535,7 @@ document.addEventListener('alpine:init', () => {
     },
     
     removeActionItem(index) {
-      this.phase4.actionItems.splice(index, 1);
+      this.phase3.actionItems.splice(index, 1);
       this.markUnsaved();
     },
     
@@ -652,9 +561,9 @@ document.addEventListener('alpine:init', () => {
           this.session = createDefaultSession();
           this.currentPhase = 1;
           
-          // Reset Phase 2 if it exists
-          if (this.phase2) {
-            this.phase2 = await window.initializePhase2();
+          // Reset Phase 1 if it exists
+          if (this.phase1) {
+            this.phase1 = await window.initializePhase2();
           }
           
           // Reset timer
@@ -676,12 +585,12 @@ document.addEventListener('alpine:init', () => {
         this.session = createDefaultSession();
         this.currentPhase = 1;
         
-        // Reset Phase 2 if it exists
-        if (this.phase2) {
+        // Reset Phase 1 if it exists
+        if (this.phase1) {
           try {
-            this.phase2 = await window.initializePhase2();
+            this.phase1 = await window.initializePhase2();
           } catch (error) {
-            console.error('Error reinitializing Phase 2:', error);
+            console.error('Error reinitializing Phase 1:', error);
           }
         }
         
@@ -764,17 +673,11 @@ ${this.phase2.archetype || 'Not defined'}
           case ' ': // Spacebar - Start/Pause Timer
             e.preventDefault();
             if (this.currentPhase === 1) {
-              if (this.timer.running) {
-                this.pauseTimer();
-              } else {
-                this.startTimer();
-              }
-            } else if (this.currentPhase === 2) {
-              // Phase 2: Start/Pause timer
-              if (this.phase2?.timerState === 'ready') {
-                this.phase2.startTimer();
-              } else if (this.phase2?.timerState === 'countdown') {
-                this.phase2.pauseTimer();
+              // Phase 1: Strategic pairs timer
+              if (this.phase1?.timerState === 'ready') {
+                this.phase1.startTimer();
+              } else if (this.phase1?.timerState === 'countdown') {
+                this.phase1.pauseTimer();
               }
             }
             break;
@@ -782,62 +685,60 @@ ${this.phase2.archetype || 'Not defined'}
           case 'R':
             e.preventDefault();
             if (this.currentPhase === 1) {
-              this.resetTimer();
-            } else if (this.currentPhase === 2) {
-              this.phase2?.resetTimer();
+              this.phase1?.resetTimer();
             }
             break;
           case 'ArrowLeft':
             e.preventDefault();
-            if (this.currentPhase === 2) {
-              this.phase2?.previousPair();
+            if (this.currentPhase === 1) {
+              this.phase1?.previousPair();
             }
             break;
           case 'ArrowRight':
             e.preventDefault();
-            if (this.currentPhase === 2) {
-              this.phase2?.nextPair();
+            if (this.currentPhase === 1) {
+              this.phase1?.nextPair();
             }
             break;
           case 'a':
           case 'A':
             e.preventDefault();
-            if (this.currentPhase === 2) {
+            if (this.currentPhase === 1) {
               if (e.shiftKey) {
-                this.phase2?.decreaseVoteA();
+                this.phase1?.decreaseVoteA();
               } else {
-                this.phase2?.voteA();
+                this.phase1?.voteA();
               }
             }
             break;
           case 'b':
           case 'B':
             e.preventDefault();
-            if (this.currentPhase === 2) {
+            if (this.currentPhase === 1) {
               if (e.shiftKey) {
-                this.phase2?.decreaseVoteB();
+                this.phase1?.decreaseVoteB();
               } else {
-                this.phase2?.voteB();
+                this.phase1?.voteB();
               }
             }
             break;
           case 'n':
           case 'N':
             e.preventDefault();
-            if (this.currentPhase === 2 && this.phase2?.timerState === 'discussion') {
-              this.phase2.nextRound();
+            if (this.currentPhase === 1 && this.phase1?.timerState === 'discussion') {
+              this.phase1.nextRound();
             }
             break;
           case '1':
-            if (this.currentPhase === 1) {
+            if (this.currentPhase === 1 && this.phase1?.voteA) {
               e.preventDefault();
-              this.adjustVote('A', 1);
+              this.phase1.voteA();
             }
             break;
           case '2':
-            if (this.currentPhase === 1) {
+            if (this.currentPhase === 1 && this.phase1?.voteB) {
               e.preventDefault();
-              this.adjustVote('B', 1);
+              this.phase1.voteB();
             }
             break;
           case 'Delete':

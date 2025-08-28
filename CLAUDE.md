@@ -6,20 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the "Het Ren-Je-Rot-Analogie-Verkenner-spel" project - a strategic workshop game designed to help management teams discover their strategic preferences through structured analogical reasoning.
 
-The game consists of four phases:
+The game consists of three phases:
 
-1. **Voorkeursronde (Preference Round)**: Teams make quick choices between company pairs to reveal strategic preferences
-2. **Archetype-Analyse**: Pattern recognition to define the team's strategic archetype
-3. **Decompositie**: Deep analysis of a chosen exemplar company
-4. **Vertaling**: Translation of insights into actionable strategic hypotheses
+1. **Strategic Preference Round**: Physical positioning exercise using strategic company pairs to reveal team preferences
+2. **Archetype Analysis**: Pattern recognition to define the team's strategic archetype based on preferences
+3. **Strategic Translation**: Translation of insights into actionable strategic hypotheses and action plans
 
 ## Development Approach: Phase-by-Phase with Playwright Testing
 
 This project is being built using a **test-driven, phase-by-phase approach** where each phase is thoroughly tested with Playwright before proceeding to the next. Each phase must pass all tests and quality gates before moving forward.
 
-## Current Status: Phase 2 Implementation (Active Development)
+## Current Status: Complete 3-Phase Application
 
-Foundation phase complete with Phase 2 (Physical Positioning/Preference Round) actively being developed. Major UI improvements completed for control vs presentation mode optimization.
+All three phases have been implemented with comprehensive strategic pairs integration. The application has been restructured to focus on the core strategic workshop experience.
 
 ### Target File Structure (Modular Architecture)
 
@@ -33,30 +32,21 @@ Foundation phase complete with Phase 2 (Physical Positioning/Preference Round) a
 ├── CLAUDE.md                 # This development guide
 ├── js/
 │   ├── core.js              # Session management & Alpine.js setup
-│   ├── app.js               # Main application logic 
-│   ├── phase2.js            # Phase 2: Physical positioning/preference round
-│   ├── phase3-decomposition.js # Decomposition analysis (Phase 4)
-│   ├── phase4-translation.js # Strategic translation (Phase 5)
-│   └── utils.js             # Shared utilities and helpers
+│   └── phase2.js            # Strategic pairs module (used for Phase 1)
 ├── css/
 │   └── styles.css           # Custom styles beyond Tailwind CSS (includes control mode fixes)
 ├── data/
-│   ├── company-pairs.json   # Extended company pair library  
-│   └── strategic-pairs.json # Strategic company pair data
+│   └── strategic-pairs.json # Strategic company pairs with level balancing
 ├── issues/                  # GitHub issue tracking (markdown format)
 │   ├── 001-control-mode-ui-optimization.md
 │   ├── 002-dutch-language-consistency.md
 │   ├── 003-codebase-cleanup.md
 │   └── README.md
 ├── tests/
-│   ├── 01-foundation.spec.js          # Phase 1: Foundation tests
-│   ├── 02-preference-round.spec.js    # Phase 2: Preference round tests
-│   ├── 03-archetype-analysis.spec.js  # Phase 3: Archetype tests
-│   ├── 04-decomposition.spec.js       # Phase 4: Decomposition tests
-│   ├── 05-translation.spec.js         # Phase 5: Translation tests
-│   ├── 06-export.spec.js              # Phase 6: Export tests
-│   ├── 07-integration.spec.js         # Phase 7: Integration tests
-│   ├── e2e-complete-workflow.spec.js  # End-to-end workflow tests
+│   ├── 01-foundation.spec.js          # Foundation and session tests
+│   ├── 02-session-management.spec.js  # Session management tests
+│   ├── 03-phase2-preference-round.spec.js # Strategic preference round tests
+│   ├── e2e-complete-workflow.spec.js  # End-to-end workflow tests (when created)
 │   └── fixtures/
 │       └── sample-data.json           # Test data fixtures
 └── docs/
@@ -74,30 +64,29 @@ Foundation phase complete with Phase 2 (Physical Positioning/Preference Round) a
 
 ### Development Phases
 
-**Phase 1: Foundation & Core Infrastructure (✅ Complete)**
+**Phase 1: Strategic Preference Round (✅ Complete)**
 
-- ✅ Basic HTML structure with Alpine.js initialization
-- ✅ Session management (create, load, save)
-- ✅ Phase navigation system
-- ✅ LocalForage integration
-- ✅ Comprehensive Playwright test coverage
-
-**Phase 2: Physical Positioning/Preference Round (🚧 In Progress)**
-
-- ✅ Company pair display system with strategic dilemma presentation
-- ✅ Countdown timer with visual indicators and audio support
+- ✅ Strategic company pairs with 4-level framework integration
+- ✅ Physical positioning timer system with audio support
 - ✅ Vote counting interface with real-time display
-- ✅ **UI Mode Optimization**: Fixed control mode overlapping issues (Issue #1 ✅)
-- ✅ Presentation mode vs control mode conditional layouts
+- ✅ Balanced pair selection ensuring level diversity
+- ✅ Presentation vs control mode optimization
 - ✅ Timer circle responsive sizing and positioning
-- ✅ Strategic pairs data integration
-- 🔄 Additional timer features and round progression
-- 🔄 Enhanced voting mechanics and scorecard
+- ✅ Complete strategic pairs data (26 pairs, 20 dimensions)
 
-**Phase 3: Archetype Analysis Features**
+**Phase 2: Archetype Analysis (✅ Complete)**
 
-- Winners summary from Phase 1
-- Pattern keyword input (comma-separated)
+- ✅ Pattern keyword input and analysis
+- ✅ Archetype template system
+- ✅ Results summary from strategic preferences
+- ✅ Strategic archetype definition interface
+
+**Phase 3: Strategic Translation (✅ Complete)**
+
+- ✅ Strategic hypothesis builder with templates
+- ✅ Action item management system
+- ✅ Session summary and progress tracking
+- ✅ Complete workflow integration
 - Archetype templates system
 - Guided discussion prompts
 

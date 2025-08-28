@@ -1,45 +1,47 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Phase 2: Preference Round Tests', () => {
+test.describe('Phase 1: Strategic Preference Round Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('[x-show="!loading"]', { state: 'visible' });
     
-    // Navigate to Phase 2
-    await page.click('nav button:has-text("Phase 2")');
+    // Navigate to Phase 1 (should be default)
+    await page.click('nav button:has-text("Phase 1")');
     await page.waitForTimeout(500);
   });
 
   test.describe('Timer System', () => {
-    test('timer displays default 2 minutes for voting rounds', async ({ page }) => {
-      // Check initial timer display
-      const timerDisplay = page.locator('[x-text="formatTime(phase2?.timer?.timeLeft || 120)"]');
-      await expect(timerDisplay).toContainText('2:00');
+    test('timer displays default 10 seconds for strategic rounds', async ({ page }) => {
+      // Check initial timer display shows ready state
+      const timerState = page.locator('[x-show="phase1?.timerState === \'ready\'"]');
+      await expect(timerState).toBeVisible();
       
       // Check timer controls are present
-      await expect(page.locator('button:has-text("Start Timer")')).toBeVisible();
-      await expect(page.locator('button:has-text("Pause")')).toBeVisible();
+      await expect(page.locator('button:has-text("Start Round")')).toBeVisible();
       await expect(page.locator('button:has-text("Reset")')).toBeVisible();
     });
 
     test('timer can be started and counts down', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Start Timer")');
-      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      const startButton = page.locator('button:has-text("Start Round")');
       
       await startButton.click();
       
-      // Wait a moment and check timer decreases
-      await page.waitForTimeout(1100);
-      await expect(timerDisplay).toContainText('1:59');
+      // Wait for announcement phase to complete and countdown to start
+      await page.waitForTimeout(2500); // 2s announcement + 0.5s buffer
       
-      // Check start button is disabled during countdown
-      await expect(startButton).toBeDisabled();
+      // Check that countdown state is visible
+      const countdownState = page.locator('[x-show="phase1?.timerState === \'countdown\'"]');
+      await expect(countdownState).toBeVisible();
+      
+      // Check that timer shows a number (should be counting down from 10)
+      const timerNumber = page.locator('[x-text="phase1?.timerLeft || 10"]');
+      await expect(timerNumber).toBeVisible();
     });
 
     test('timer can be paused and resumed', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Start Timer")');
+      const startButton = page.locator('button:has-text("Start Round")');
       const pauseButton = page.locator('button:has-text("Pause")');
-      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      const timerDisplay = page.locator('[x-text="phase1?.timerLeft || 10"]');
       
       // Start timer
       await startButton.click();
@@ -60,9 +62,9 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('timer can be reset to original time', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Start Timer")');
+      const startButton = page.locator('button:has-text("Start Round")');
       const resetButton = page.locator('button:has-text("Reset")');
-      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      const timerDisplay = page.locator('[x-text="phase1?.timerLeft || 10"]');
       
       // Start timer and let it run
       await startButton.click();
@@ -70,7 +72,7 @@ test.describe('Phase 2: Preference Round Tests', () => {
       
       // Reset timer
       await resetButton.click();
-      await expect(timerDisplay).toContainText('2:00');
+      await expect(timerDisplay).toContainText('10');
       await expect(startButton).toBeEnabled();
     });
 
@@ -81,17 +83,17 @@ test.describe('Phase 2: Preference Round Tests', () => {
         app.timer.timeLeft = 2; // 2 seconds
       });
       
-      const startButton = page.locator('button:has-text("Start Timer")');
-      const timerDisplay = page.locator('[x-text="formatTime(timer.timeLeft)"]');
+      const startButton = page.locator('button:has-text("Start Round")');
+      const timerDisplay = page.locator('[x-text="phase1?.timerLeft || 10"]');
       
       await startButton.click();
       
       // Wait for timer to complete
       await page.waitForTimeout(3000);
-      await expect(timerDisplay).toContainText('0:00');
+      await expect(timerDisplay).toContainText('0');
       
-      // Check timer completion indicators
-      await expect(page.locator('.timer-completed')).toBeVisible();
+      // Check timer completion indicators  
+      await expect(page.locator('[x-show="phase1?.timerState === \'completed\'"]')).toBeVisible();
     });
   });
 
@@ -115,7 +117,7 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('displays pair counter showing current position', async ({ page }) => {
-      const pairCounter = page.locator('[x-text="pairCounter"]');
+      const pairCounter = page.locator('[x-text="phase1?.pairCounter || \'1 / 5\'"]');
       await expect(pairCounter).toBeVisible();
       
       // Should show format like "1 / 10"
@@ -124,8 +126,8 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('can navigate to next company pair', async ({ page }) => {
-      const nextButton = page.locator('button:has-text("Next Pair")');
-      const pairCounter = page.locator('[x-text="pairCounter"]');
+      const nextButton = page.locator('button:has-text("Next →")');
+      const pairCounter = page.locator('[x-text="phase1?.pairCounter || \'1 / 5\'"]');
       
       // Get initial pair info
       const initialCounter = await pairCounter.textContent();
@@ -146,9 +148,9 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('can navigate to previous company pair', async ({ page }) => {
-      const nextButton = page.locator('button:has-text("Next Pair")');
+      const nextButton = page.locator('button:has-text("Next →")');
       const prevButton = page.locator('button:has-text("Previous Pair")');
-      const pairCounter = page.locator('[x-text="pairCounter"]');
+      const pairCounter = page.locator('[x-text="phase1?.pairCounter || \'1 / 5\'"]');
       
       // Go to next pair first
       if (await nextButton.isEnabled()) {
@@ -181,7 +183,7 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('can vote for Company A', async ({ page }) => {
-      const voteAButton = page.locator('button:has-text("Vote A")');
+      const voteAButton = page.locator('button:has-text("+ Vote for A")');
       const votesA = page.locator('[x-text="phase2.votes.companyA"]');
       
       await voteAButton.click();
@@ -191,7 +193,7 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('can vote for Company B', async ({ page }) => {
-      const voteBButton = page.locator('button:has-text("Vote B")');
+      const voteBButton = page.locator('button:has-text("+ Vote for B")');
       const votesB = page.locator('[x-text="phase2.votes.companyB"]');
       
       await voteBButton.click();
@@ -201,8 +203,8 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('vote counts accumulate correctly', async ({ page }) => {
-      const voteAButton = page.locator('button:has-text("Vote A")');
-      const voteBButton = page.locator('button:has-text("Vote B")');
+      const voteAButton = page.locator('button:has-text("+ Vote for A")');
+      const voteBButton = page.locator('button:has-text("+ Vote for B")');
       const votesA = page.locator('[x-text="phase2.votes.companyA"]');
       const votesB = page.locator('[x-text="phase2.votes.companyB"]');
       
@@ -221,9 +223,9 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
 
     test('can reset vote counts', async ({ page }) => {
-      const voteAButton = page.locator('button:has-text("Vote A")');
-      const voteBButton = page.locator('button:has-text("Vote B")');
-      const resetButton = page.locator('button:has-text("Reset Votes")');
+      const voteAButton = page.locator('button:has-text("+ Vote for A")');
+      const voteBButton = page.locator('button:has-text("+ Vote for B")');
+      const resetButton = page.locator('button:has-text("Reset Current Pair Votes")');
       const votesA = page.locator('[x-text="phase2.votes.companyA"]');
       const votesB = page.locator('[x-text="phase2.votes.companyB"]');
       
@@ -243,8 +245,8 @@ test.describe('Phase 2: Preference Round Tests', () => {
 
   test.describe('Data Persistence', () => {
     test('vote data persists across page refresh', async ({ page }) => {
-      const voteAButton = page.locator('button:has-text("Vote A")');
-      const voteBButton = page.locator('button:has-text("Vote B")');
+      const voteAButton = page.locator('button:has-text("+ Vote for A")');
+      const voteBButton = page.locator('button:has-text("+ Vote for B")');
       
       // Add votes
       await voteAButton.click();
@@ -258,20 +260,20 @@ test.describe('Phase 2: Preference Round Tests', () => {
       await page.reload();
       await page.waitForSelector('[x-show="!loading"]', { state: 'visible' });
       
-      // Navigate back to Phase 2
-      await page.click('nav button:has-text("Phase 2")');
+      // Navigate back to Phase 1
+      await page.click('nav button:has-text("Phase 1")');
       
       // Check votes persisted
-      const votesA = page.locator('[x-text="phase2.votes.companyA"]');
-      const votesB = page.locator('[x-text="phase2.votes.companyB"]');
+      const votesA = page.locator('[x-text="phase1?.votes?.companyA || 0"]');
+      const votesB = page.locator('[x-text="phase1?.votes?.companyB || 0"]');
       
       await expect(votesA).toContainText('2');
       await expect(votesB).toContainText('1');
     });
 
     test('current pair position persists across page refresh', async ({ page }) => {
-      const nextButton = page.locator('button:has-text("Next Pair")');
-      const pairCounter = page.locator('[x-text="pairCounter"]');
+      const nextButton = page.locator('button:has-text("Next →")');
+      const pairCounter = page.locator('[x-text="phase1?.pairCounter || \'1 / 5\'"]');
       
       // Navigate to next pair if possible
       if (await nextButton.isEnabled()) {
@@ -286,7 +288,7 @@ test.describe('Phase 2: Preference Round Tests', () => {
         // Refresh page
         await page.reload();
         await page.waitForSelector('[x-show="!loading"]', { state: 'visible' });
-        await page.click('nav button:has-text("Phase 2")');
+        await page.click('nav button:has-text("Phase 1")');
         
         // Check position persisted
         await expect(pairCounter).toContainText(pairPosition);
@@ -294,24 +296,24 @@ test.describe('Phase 2: Preference Round Tests', () => {
     });
   });
 
-  test.describe('Phase 2 Integration', () => {
-    test('Phase 2 data updates session object', async ({ page }) => {
-      const voteAButton = page.locator('button:has-text("Vote A")');
+  test.describe('Phase 1 Integration', () => {
+    test('Phase 1 data updates session object', async ({ page }) => {
+      const voteAButton = page.locator('button:has-text("+ Vote for A")');
       
       await voteAButton.click();
       await page.waitForTimeout(1000);
       
-      // Check session data includes Phase 2 votes
+      // Check session data includes Phase 1 votes
       const sessionData = await page.evaluate(() => {
         const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
-        return app.session.phase2;
+        return app.session.phase1;
       });
       
-      expect(sessionData.votes.companyA).toBeGreaterThan(0);
+      expect(sessionData.votes?.companyA || 0).toBeGreaterThan(0);
     });
 
     test('auto-save triggers on vote changes', async ({ page }) => {
-      const voteAButton = page.locator('button:has-text("Vote A")');
+      const voteAButton = page.locator('button:has-text("+ Vote for A")');
       const saveStatus = page.locator('[x-text="saveStatus"]');
       
       // Check initial save status
@@ -327,21 +329,21 @@ test.describe('Phase 2: Preference Round Tests', () => {
       await expect(saveStatus).toContainText('saved');
     });
 
-    test('Phase 2 completion allows navigation to Phase 3', async ({ page }) => {
+    test('Phase 1 completion allows navigation to Phase 2', async ({ page }) => {
       // Complete some voting activity
-      const voteAButton = page.locator('button:has-text("Vote A")');
+      const voteAButton = page.locator('button:has-text("+ Vote for A")');
       await voteAButton.click();
       
       // Navigate through all pairs (simulate completion)
-      const nextButton = page.locator('button:has-text("Next Pair")');
+      const nextButton = page.locator('button:has-text("Next →")');
       while (await nextButton.isEnabled()) {
         await nextButton.click();
         await page.waitForTimeout(200);
       }
       
-      // Check Phase 3 becomes accessible
-      const phase3Button = page.locator('nav button:has-text("Phase 3")');
-      await expect(phase3Button).not.toHaveClass(/opacity-50/);
+      // Check Phase 2 becomes accessible
+      const phase2Button = page.locator('nav button:has-text("Phase 2")');
+      await expect(phase2Button).not.toHaveClass(/opacity-50/);
     });
   });
 
