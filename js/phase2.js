@@ -15,7 +15,6 @@ window.createAudioSystem = function() {
       try {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.isEnabled = true;
-        console.log('Audio system initialized');
         return true;
       } catch (error) {
         console.error('Failed to initialize audio system:', error);
@@ -100,7 +99,6 @@ window.createAudioSystem = function() {
     // Toggle mute state
     toggleMute() {
       this.isMuted = !this.isMuted;
-      console.log('Audio', this.isMuted ? 'muted' : 'unmuted');
       return this.isMuted;
     },
     
@@ -257,7 +255,6 @@ window.loadStrategicPairs = async function() {
     const data = await response.json();
     // Handle the actual structure with strategic_pairs wrapper
     const strategicPairs = data.strategic_pairs || data;
-    console.log('Loaded strategic pairs:', strategicPairs.length, 'pairs');
     return strategicPairs;
   } catch (error) {
     console.error('Error loading strategic pairs:', error);
@@ -404,7 +401,6 @@ window.createVotingSystem = function() {
     },
 
     voteA() {
-      console.log('Vote A clicked!', this.votes);
       const currentPairIndex = this.getCurrentPairIndex();
       
       // Ensure pair votes object exists
@@ -416,7 +412,6 @@ window.createVotingSystem = function() {
       this.pairVotes[currentPairIndex].companyA++;
       this.votes.companyA = this.pairVotes[currentPairIndex].companyA;
       
-      console.log('Vote A updated:', this.votes, 'All pair votes:', this.pairVotes);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
@@ -426,7 +421,6 @@ window.createVotingSystem = function() {
     },
 
     voteB() {
-      console.log('Vote B clicked!', this.votes);
       const currentPairIndex = this.getCurrentPairIndex();
       
       // Ensure pair votes object exists
@@ -438,7 +432,6 @@ window.createVotingSystem = function() {
       this.pairVotes[currentPairIndex].companyB++;
       this.votes.companyB = this.pairVotes[currentPairIndex].companyB;
       
-      console.log('Vote B updated:', this.votes, 'All pair votes:', this.pairVotes);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
@@ -448,7 +441,6 @@ window.createVotingSystem = function() {
     },
 
     decreaseVoteA() {
-      console.log('Decrease Vote A clicked!', this.votes);
       const currentPairIndex = this.getCurrentPairIndex();
       
       // Ensure pair votes object exists
@@ -461,7 +453,6 @@ window.createVotingSystem = function() {
         this.pairVotes[currentPairIndex].companyA--;
         this.votes.companyA = this.pairVotes[currentPairIndex].companyA;
         
-        console.log('Vote A decreased:', this.votes, 'All pair votes:', this.pairVotes);
         
         // Update session data
         const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
@@ -472,7 +463,6 @@ window.createVotingSystem = function() {
     },
 
     decreaseVoteB() {
-      console.log('Decrease Vote B clicked!', this.votes);
       const currentPairIndex = this.getCurrentPairIndex();
       
       // Ensure pair votes object exists
@@ -485,7 +475,6 @@ window.createVotingSystem = function() {
         this.pairVotes[currentPairIndex].companyB--;
         this.votes.companyB = this.pairVotes[currentPairIndex].companyB;
         
-        console.log('Vote B decreased:', this.votes, 'All pair votes:', this.pairVotes);
         
         // Update session data
         const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
@@ -505,7 +494,6 @@ window.createVotingSystem = function() {
       this.votes.companyA = 0;
       this.votes.companyB = 0;
       
-      console.log('Votes reset for pair', currentPairIndex);
       
       // Update session data
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
@@ -532,7 +520,6 @@ window.createVotingSystem = function() {
         this.votes.companyB = 0;
       }
       
-      console.log('Loaded votes for pair', currentPairIndex, ':', this.votes);
     },
 
     get totalVotes() {
@@ -555,12 +542,10 @@ window.createVotingSystem = function() {
 window.initializePhase2 = async function() {
   try {
     // Load strategic pairs
-    console.log('Loading strategic pairs...');
     const allStrategicPairs = await window.loadStrategicPairs();
     
     // Select random 5 pairs
     const selectedPairs = window.selectRandomPairs(allStrategicPairs, 5);
-    console.log('Selected pairs for session:', selectedPairs.length, 'pairs');
     
     // Initialize audio system
     const audioSystem = window.createAudioSystem();

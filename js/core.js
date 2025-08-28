@@ -1,7 +1,11 @@
 // Core application logic and Alpine.js data structure
 // Handles session management, data persistence, and app initialization
 
-// Initialize LocalForage for data persistence
+/**
+ * Initialize LocalForage for data persistence with fallback drivers
+ * @returns {Promise<boolean>} True if initialization successful
+ * @throws {Error} If all storage drivers fail
+ */
 const initializeStorage = async () => {
   localforage.config({
     driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE],
@@ -14,7 +18,6 @@ const initializeStorage = async () => {
   // Wait for LocalForage to be ready
   try {
     const driver = await localforage.driver();
-    console.log('LocalForage initialized with driver:', driver);
     return true;
   } catch (error) {
     console.error('Failed to initialize LocalForage:', error);
@@ -22,7 +25,10 @@ const initializeStorage = async () => {
   }
 };
 
-// Default session structure
+/**
+ * Create default session structure with initial data
+ * @returns {Object} Default session object with all phases initialized
+ */
 const createDefaultSession = () => ({
   id: generateSessionId(),
   createdAt: new Date().toISOString(),
@@ -62,7 +68,10 @@ const createDefaultSession = () => ({
   }
 });
 
-// Generate unique session ID
+/**
+ * Generate unique session ID using timestamp and random string
+ * @returns {string} Unique session identifier
+ */
 const generateSessionId = () => {
   return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 };
@@ -171,9 +180,11 @@ document.addEventListener('alpine:init', () => {
       intervalId: null
     },
     
-    // Initialization
+    /**
+     * Initialize the application including storage, phases, and UI
+     * @async
+     */
     async init() {
-      console.log('Initializing Analogy Game Facilitator...');
       
       try {
         // Initialize storage
@@ -192,13 +203,10 @@ document.addEventListener('alpine:init', () => {
         
         // Initialize Phase 2 functionality
         if (window.initializePhase2) {
-          console.log('Initializing Phase 2...');
           try {
             this.phase2 = await window.initializePhase2();
-            console.log('Phase 2 initialized:', this.phase2);
             // Load Phase 2 state if it exists
             if (this.session.phase2) {
-              console.log('Loading Phase 2 saved state:', this.session.phase2);
               this.phase2.loadState(this.session.phase2);
             }
           } catch (error) {
@@ -217,11 +225,7 @@ document.addEventListener('alpine:init', () => {
         // Setup keyboard shortcuts
         this.setupKeyboardShortcuts();
         
-        console.log('Application initialized successfully', {
-          sessionId: this.session.id,
-          currentPhase: this.currentPhase,
-          phase2Initialized: !!this.phase2
-        });
+        // Application initialized successfully
         
       } catch (error) {
         console.error('Failed to initialize application:', error);
@@ -242,9 +246,8 @@ document.addEventListener('alpine:init', () => {
           // Deep merge saved session with default structure to preserve any new fields
           this.session = this.deepMerge(this.session, savedSession);
           this.syncSessionToPhaseData();
-          console.log('Loaded existing session:', this.session.id);
         } else {
-          console.log('Creating new session');
+          // Creating new session
           // Sync default data to phase data
           this.syncSessionToPhaseData();
           await this.saveSession();
@@ -254,15 +257,17 @@ document.addEventListener('alpine:init', () => {
       }
     },
     
+    /**
+     * Save current session to local storage with verification
+     * @async
+     * @throws {Error} If save operation fails
+     */
     async saveSession() {
       try {
         this.updateSessionFromPhaseData();
         this.session.updatedAt = new Date().toISOString();
         
-        console.log('Attempting to save session:', {
-          sessionId: this.session.id,
-          phase2Patterns: this.session.phase2?.patterns
-        });
+        // Save session data
         
         // Create a clean serializable copy of the session data
         const sessionToSave = JSON.parse(JSON.stringify(this.session));
@@ -273,7 +278,6 @@ document.addEventListener('alpine:init', () => {
         const verification = await localforage.getItem('current-session');
         if (verification && verification.id === this.session.id) {
           this.saveStatus = 'saved';
-          console.log('Session saved successfully and verified');
         } else {
           throw new Error('Save verification failed');
         }
@@ -303,12 +307,6 @@ document.addEventListener('alpine:init', () => {
       }
       
       this.timer.duration = this.session.settings.timerDuration;
-      
-      console.log('Session synced to phase data', {
-        currentPhase: this.currentPhase,
-        phase2Patterns: this.phase2.patterns,
-        phase3Forerunner: this.phase3.forerunner
-      });
     },
     
     updateSessionFromPhaseData() {
@@ -326,11 +324,6 @@ document.addEventListener('alpine:init', () => {
       this.session.phase3 = JSON.parse(JSON.stringify(this.phase3));
       this.session.phase4 = JSON.parse(JSON.stringify(this.phase4));
       this.session.settings.timerDuration = this.timer.duration;
-      
-      console.log('Updated session from phase data', {
-        phase2Votes: this.session.phase2?.votes || 'Not available',
-        phase3Forerunner: this.session.phase3.forerunner
-      });
     },
     
     async loadCompanyPairs() {
@@ -654,7 +647,6 @@ document.addEventListener('alpine:init', () => {
       if (confirm('Are you sure you want to clear all local storage? This will delete all saved sessions and cannot be undone.')) {
         try {
           await localforage.clear();
-          console.log('Local storage cleared successfully');
           
           // Reset current session to default state
           this.session = createDefaultSession();
