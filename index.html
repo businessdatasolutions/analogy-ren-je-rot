@@ -759,9 +759,9 @@
                          'bg-gradient-to-br from-purple-100 to-pink-100': phase2?.timerState === 'discussion'
                      }">
                     
-                    <!-- Position Guide Arrows -->
+                    <!-- Position Guide Arrows (Presentation Mode Only) -->
                     <div class="absolute top-8 left-8 z-20" 
-                         x-show="phase2?.timerState === 'countdown' || phase2?.timerState === 'announcement'">
+                         x-show="presentationMode && (phase2?.timerState === 'countdown' || phase2?.timerState === 'announcement')">
                         <div class="flex items-center bg-blue-900 text-white px-6 py-3 rounded-full shadow-lg">
                             <span class="text-2xl mr-3">←</span>
                             <span class="font-bold text-lg">Go LEFT for</span>
@@ -769,7 +769,7 @@
                     </div>
                     
                     <div class="absolute top-8 right-8 z-20" 
-                         x-show="phase2?.timerState === 'countdown' || phase2?.timerState === 'announcement'">
+                         x-show="presentationMode && (phase2?.timerState === 'countdown' || phase2?.timerState === 'announcement')">
                         <div class="flex items-center bg-green-900 text-white px-6 py-3 rounded-full shadow-lg">
                             <span class="font-bold text-lg">Go RIGHT for</span>
                             <span class="text-2xl ml-3">→</span>
@@ -808,9 +808,15 @@
                         </div>
                         
                         <!-- Simplified VS Divider with Timer -->
-                        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
-                            <div class="w-32 h-32 bg-white rounded-full border-4 shadow-2xl flex items-center justify-center transition-all duration-500" 
+                        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-500"
+                             :class="{
+                                 'z-30': presentationMode,
+                                 'z-10': !presentationMode
+                             }">
+                            <div class="bg-white rounded-full border-4 shadow-2xl flex items-center justify-center transition-all duration-500" 
                                  :class="{
+                                     'w-32 h-32': presentationMode,
+                                     'w-20 h-20': !presentationMode,
                                      'border-gray-400 bg-white': phase2?.timerState === 'ready',
                                      'border-green-600 bg-green-400 animate-pulse': phase2?.timerState === 'announcement',
                                      'border-blue-500 bg-white': phase2?.timerState === 'countdown',
@@ -819,46 +825,60 @@
                                  }">
                                 
                                 <!-- Timer Ring (Countdown only) -->
-                                <svg x-show="phase2?.timerState === 'countdown'" class="absolute w-32 h-32" viewBox="0 0 128 128">
-                                    <circle cx="64" cy="64" r="58" stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
-                                    <circle cx="64" cy="64" r="58" 
+                                <svg x-show="phase2?.timerState === 'countdown'" 
+                                     :class="presentationMode ? 'w-32 h-32' : 'w-20 h-20'"
+                                     class="absolute" 
+                                     :viewBox="presentationMode ? '0 0 128 128' : '0 0 80 80'">
+                                    <circle :cx="presentationMode ? '64' : '40'" 
+                                            :cy="presentationMode ? '64' : '40'" 
+                                            :r="presentationMode ? '58' : '36'" 
+                                            stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
+                                    <circle :cx="presentationMode ? '64' : '40'" 
+                                            :cy="presentationMode ? '64' : '40'" 
+                                            :r="presentationMode ? '58' : '36'"
                                             :stroke="(phase2?.timerLeft || 10) <= 3 ? '#dc2626' : (phase2?.timerLeft || 10) <= 5 ? '#f59e0b' : '#059669'"
                                             stroke-width="4" fill="none" stroke-linecap="round" 
-                                            :stroke-dasharray="364.42"
-                                            :stroke-dashoffset="364.42 - (364.42 * (10 - (phase2?.timerLeft || 10)) / 10)"
+                                            :stroke-dasharray="presentationMode ? '364.42' : '226.19'"
+                                            :stroke-dashoffset="presentationMode ? (364.42 - (364.42 * (10 - (phase2?.timerLeft || 10)) / 10)) : (226.19 - (226.19 * (10 - (phase2?.timerLeft || 10)) / 10))"
                                             class="transition-all duration-1000"></circle>
                                 </svg>
                                 
                                 <div class="text-center z-10">
                                     <!-- Ready State -->
                                     <div x-show="phase2?.timerState === 'ready'">
-                                        <div class="text-sm font-bold text-gray-700">READY</div>
+                                        <div :class="presentationMode ? 'text-sm' : 'text-xs'" 
+                                             class="font-bold text-gray-700">READY</div>
                                     </div>
                                     
                                     <!-- Announcement State -->
                                     <div x-show="phase2?.timerState === 'announcement'" class="animate-bounce">
-                                        <div class="text-2xl font-black text-white">GO!</div>
+                                        <div :class="presentationMode ? 'text-2xl' : 'text-lg'" 
+                                             class="font-black text-white">GO!</div>
                                     </div>
                                     
                                     <!-- Countdown State -->
                                     <div x-show="phase2?.timerState === 'countdown'">
-                                        <div class="text-3xl font-black" 
-                                             :class="{
+                                        <div :class="{
+                                                 'text-3xl': presentationMode,
+                                                 'text-xl': !presentationMode,
                                                  'text-red-600 animate-pulse': (phase2?.timerLeft || 10) <= 3,
                                                  'text-orange-600': (phase2?.timerLeft || 10) <= 5 && (phase2?.timerLeft || 10) > 3,
                                                  'text-blue-600': (phase2?.timerLeft || 10) > 5
                                              }"
+                                             class="font-black"
                                              x-text="phase2?.timerLeft || 10"></div>
                                     </div>
                                     
                                     <!-- Completed State -->
                                     <div x-show="phase2?.timerState === 'completed'" class="animate-bounce">
-                                        <div class="text-lg font-black text-white">STOP!</div>
+                                        <div :class="presentationMode ? 'text-lg' : 'text-sm'" 
+                                             class="font-black text-white">STOP!</div>
                                     </div>
                                     
                                     <!-- Discussion State -->
                                     <div x-show="phase2?.timerState === 'discussion'">
-                                        <div class="text-lg text-white">💬</div>
+                                        <div :class="presentationMode ? 'text-lg' : 'text-sm'" 
+                                             class="text-white">💬</div>
                                     </div>
                                 </div>
                             </div>
@@ -894,8 +914,9 @@
                         </div>
                     </div>
                     
-                    <!-- Simplified Question Overlay -->
-                    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-95 rounded-2xl shadow-2xl p-6 max-w-3xl transition-all duration-500"
+                    <!-- Simplified Question Overlay (Presentation Mode Only) -->
+                    <div x-show="presentationMode" 
+                         class="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-95 rounded-2xl shadow-2xl p-6 max-w-3xl transition-all duration-500"
                          :class="{
                              'bg-yellow-400 bg-opacity-95 animate-pulse': phase2?.timerState === 'announcement'
                          }">

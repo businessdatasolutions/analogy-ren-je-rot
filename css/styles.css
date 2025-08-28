@@ -54,6 +54,26 @@ button:focus {
     outline-offset: 2px;
 }
 
+/* Control mode specific styles */
+.control-mode .timer-circle-large {
+    width: 5rem !important;
+    height: 5rem !important;
+}
+
+.control-mode .timer-text-large {
+    font-size: 1.25rem !important;
+}
+
+.control-mode .company-display {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure overlays don't interfere in control mode */
+.control-mode .overlay-element {
+    display: none !important;
+}
+
 /* Print styles for reports */
 @media print {
     .control-panel,
