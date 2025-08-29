@@ -107,21 +107,31 @@ Create a user-friendly, frontend-only web application that enables facilitators 
     phase1: {
       companyPairs: [CompanyPair],
       results: [VotingResult],
-      winners: ["string"]
+      winners: [Winner]
     },
     phase2: {
-      patterns: ["string"],
-      archetype: "string"
+      selectedSources: ["string"], // 1-3 source companies from winners
+      verticalAnalyses: {
+        "companyName": {
+          premises: ["string"],
+          conclusions: ["string"],
+          causalChain: "string"
+        }
+      },
+      canvasRows: [CanvasMapping],
+      synthesisNotes: "string",
+      gapsSummary: [Gap]
     },
     phase3: {
-      forerunner: "string",
-      positiveAnalogies: [Analogy],
-      negativeAnalogies: [Analogy],
-      causalRelations: [CausalRelation]
-    },
-    phase4: {
-      hypotheses: [Hypothesis],
-      actionItems: [ActionItem]
+      consolidatedGaps: [ConsolidatedGap],
+      aiSolutions: [AISolution],
+      priorityMatrix: [MatrixEntry],
+      actionPlan: {
+        quickWins: [ActionItem],
+        mediumTerm: [ActionItem], 
+        longTerm: [ActionItem]
+      },
+      investmentSummary: "string"
     }
   }
 }
@@ -144,12 +154,51 @@ Company {
   characteristics: ["string"]
 }
 
-VotingResult {
-  pairId: "string",
-  votesA: number,
-  votesB: number,
-  winner: "string",
-  timestamp: "datetime"
+Winner {
+  name: "string",
+  votes: number,
+  pairIndex: number,
+  winType: "clear|tied",
+  strategicContrast: "string",
+  winnerStrategy: "string",
+  winnerTag: "string"
+}
+
+CanvasMapping {
+  id: "uuid",
+  source: "string", // company name from dropdown
+  relation: "positive|negative",
+  targetMapping: "string", // how this maps to our company
+  category: "string", // optional: Innovation, Platform, Customer, etc.
+  notes: "string"
+}
+
+ConsolidatedGap {
+  id: "uuid",
+  description: "string",
+  sources: ["string"], // which companies highlight this gap
+  category: "string",
+  priority: "high|medium|low",
+  currentImpact: "string"
+}
+
+AISolution {
+  id: "uuid",
+  gapId: "string",
+  description: "string",
+  category: "automation|enhancement|innovation|intelligence",
+  feasibility: "high|medium|low",
+  resources: "string",
+  timeline: "string",
+  expectedImpact: "string"
+}
+
+MatrixEntry {
+  solutionId: "string",
+  impactScore: number, // 1-10
+  effortScore: number, // 1-10
+  priority: "high|medium|low",
+  quadrant: "quick-win|major-project|fill-in|question-mark"
 }
 ```
 
@@ -183,43 +232,92 @@ VotingResult {
 - **Progress Indicator:** Shows current round (e.g., "Round 2 of 5")
 - **Edit Capability:** Modify results of completed rounds
 
-### 6.2 Phase 2: Archetype Analysis
+### 6.2 Phase 2: Analogie-Deconstructie (Analogy Deconstruction)
 
-#### 6.2.1 Winners Overview
-- **Winner Display:** Grid view of all winning companies
-- **Company Details:** Name, characteristics, voting margin
-- **Visual Grouping:** Color coding for pattern recognition
+#### 6.2.1 Source Company Selection
+- **Winner Overview:** Grid view of all Phase 1 winners with vote counts
+- **Multi-Select Interface:** Choose 1-3 most convincing winners as source companies
+- **Strategic Rationale:** Brief explanation for each selection
+- **Visual Indicators:** Selected sources highlighted with distinct colors
 
-#### 6.2.2 Pattern Recognition Tool
-- **Keyword Input:** Free-form text input for pattern words
-- **Word Clustering:** Visual grouping of similar concepts
-- **Guided Prompts:** Structured questions for business model, customer approach, innovation style
+#### 6.2.2 Vertical Analysis Tool
+- **Per-Source Analysis:** Deep dive into WHY each selected company's strategy is successful
+- **Causal Chain Builder:** 
+  - Premise entry (conditions that enable success)
+  - Conclusion documentation (outcomes/results)
+  - Logical connection mapping
+- **Guided Questions:** "What specific conditions make [Source Company]'s approach work?"
+- **Template Prompts:** Common causal patterns (Market Position + Product Design → Customer Loyalty)
 
-#### 6.2.3 Archetype Builder
-- **Template System:** Pre-written archetype templates
-- **Custom Input:** Rich text editor for custom descriptions
-- **Validation:** Ensures 2-3 sentence limit
-- **Preview Mode:** Large text display for team review
+#### 6.2.3 Horizontal Mapping Canvas (Unified Interface)
+- **Three-Column Canvas:**
+  - **Source Column:** Dropdown selector from chosen source companies
+  - **Relation Column:** Positive/Negative classification with color coding
+  - **Target Column:** Free-text mapping to our company situation
+- **Canvas Management:**
+  - Dynamic row addition with "+" button
+  - Row actions: edit, delete, duplicate
+  - Bulk operations: filter by source, filter by relation type
+  - Auto-save on every change
+- **Visual Features:**
+  - Color coding by source company
+  - Icons for positive (✓) / negative (✗) relations
+  - Expandable rows for detailed explanations
+  - Summary statistics per source company
 
-### 6.3 Phase 3: Strategic Translation
+#### 6.2.4 Canvas Views & Analysis
+- **View Options:**
+  - All mappings view (default)
+  - Grouped by source company
+  - Positive only / Negative only filter
+  - Matrix view showing all sources vs. our capabilities
+- **Analysis Support:**
+  - Count of positive vs. negative per source
+  - Gap identification (areas with only negatives)
+  - Strength identification (areas with multiple positives)
+  - Conflict resolution (when sources contradict)
+- **Export Preparation:** Structured data ready for Phase 3 gap analysis
 
-#### 6.3.1 Hypothesis Builder
-- **If-Then Structure:** Enforced format for strategic hypotheses
-- **Template System:** Common hypothesis patterns (Platform, Premium, Ecosystem, Innovation, Customer-Centric)
-- **Validation:** Ensures clear premise and conclusion
-- **Prioritization:** Ranking of hypotheses by importance
+### 6.3 Phase 3: Het AI Actieplan (The AI Action Plan)
 
-#### 6.3.2 Action Item Tracker
-- **Task Definition:** What needs to be done
-- **Owner Assignment:** Who is responsible
-- **Priority Setting:** High, Medium, Low priority levels
-- **Status Tracking:** Planned, In Progress, Complete status
+#### 6.3.1 Gap Analysis Dashboard
+- **Negative Analogies Import:** Automatic import of all negative mappings from Phase 2 canvas
+- **Gap Consolidation Tool:** 
+  - Merge similar gaps from different sources
+  - Categorize gaps by strategic area (Innovation, Platform, Customer, Operations)
+  - Priority scoring based on frequency across sources
+- **Gap Overview:** 
+  - Visual cards showing each consolidated gap
+  - Source companies that highlight this gap
+  - Current impact assessment
 
-#### 6.3.3 Session Summary
-- **Progress Overview:** Archetype defined, hypotheses created, actions planned
-- **Report Generation:** Comprehensive session overview
-- **Export Options:** JSON, Markdown formats
-- **Session Completion:** Final review and next steps
+#### 6.3.2 AI Solution Generator
+- **Per-Gap Analysis:** For each identified gap, explore AI solutions
+- **Central Question Framework:** "How can AI help us bridge this specific gap?"
+- **Solution Categories:**
+  - Automation (AI replaces manual processes)
+  - Enhancement (AI augments existing capabilities) 
+  - Innovation (AI enables new approaches)
+  - Intelligence (AI provides insights/decisions)
+- **Guided Brainstorming:** Structured prompts for each gap type
+- **Solution Documentation:** Description, feasibility, resources needed
+
+#### 6.3.3 Investment Prioritization Matrix
+- **Multi-Dimensional Scoring:**
+  - Gap criticality (how many sources highlight this)
+  - AI solution feasibility (technical complexity)
+  - Resource requirements (time, budget, skills)
+  - Strategic impact potential
+- **Visual Priority Matrix:** Plot solutions on impact vs. effort grid
+- **Resource Planning:** Estimate timeline and budget for each solution
+- **Risk Assessment:** Technical, organizational, and market risks
+
+#### 6.3.4 AI Action Plan Builder
+- **Prioritized Roadmap:** Ordered list of AI initiatives based on matrix scoring
+- **Implementation Phases:** Group solutions into waves (Quick wins, Medium term, Long term)
+- **Success Metrics:** Define measurement criteria for each AI solution
+- **Dependency Mapping:** Identify prerequisite relationships between solutions
+- **Final Output:** Defendable, concrete AI investment plan linked to strategic ambition
 
 ## 7. User Interface Design
 

@@ -12,15 +12,15 @@ Status: Phase 1 Near Complete, Critical Phase 2 Display Bug
 - Timer, voting, and winner calculation implemented
 - Minor transition issues remain
 
-**⚠️ Phase 2: Archetype Analysis - CRITICAL BUG**
-- Control panel complete and functional
-- **CRITICAL: Presentation display shows wrong content (Decomposition instead of Archetype)**
-- Pattern recognition and archetype definition work in control panel
+**🚨 Phase 2: Analogie-Deconstructie - COMPLETE REDESIGN REQUIRED**
+- Current control panel has wrong functionality (pattern recognition, archetype templates)
+- **CRITICAL: Presentation display shows Decomposition Analysis from old 4-phase model**
+- Needs complete replacement with source selection, vertical analysis, and unified canvas
 
-**✅ Phase 3: Strategic Translation - COMPLETE**
-- Hypothesis builder with IF-THEN structure functional
-- Action item management implemented
-- Ready for use once Phase 2 display is fixed
+**🚨 Phase 3: AI Actieplan - MAJOR REDESIGN REQUIRED** 
+- Current hypothesis builder is generic, not AI-focused
+- Missing gap analysis and AI solution framework
+- Needs priority matrix and investment planning tools
 
 ## Existing Files
 
@@ -36,32 +36,125 @@ Status: Phase 1 Near Complete, Critical Phase 2 Display Bug
 - `tests/03-phase2-preference-round.spec.js` - Phase 1 preference round functionality tests ⚠️ (needs Dutch updates)
 - `tests/fixtures/sample-data.json` - Test data fixtures for all phases ✅
 
-## 🔥 CRITICAL BUGS - Must Fix Immediately
+## 🔥 CRITICAL REDESIGN - Version 1 "Analogie-Deconstructie" Implementation
 
-### **9.0 Fix Phase 2 Display Content** 🚨 APPLICATION BREAKING
-**Priority:** CRITICAL - Application unusable for Phase 2
-**Issue:** Phase 2 presentation display shows "Decomposition Analysis" (old Phase 3) instead of "Archetype Analysis"
+### **13.0 Phase 2: Complete Redesign to "Analogie-Deconstructie"** 🚨 APPLICATION BREAKING
+**Priority:** CRITICAL - Current Phase 2 implementation is completely wrong for Version 1
+**Scope:** Complete replacement of both control panel and presentation display
 
-- [ ] **9.1 Remove incorrect Decomposition content**
-  - [ ] Delete lines 926-1040 in index.html (entire wrong Phase 2 display section)
-  - [ ] Remove all references to `phase3.forerunner`, `positiveAnalogies`, `negativeAnalogies`
-  - [ ] Remove "Select Forerunner" text and related UI
+#### **13.1 Remove Old Implementation** ✅
+- [x] **13.1.1 Delete wrong presentation display**
+  - [x] Remove lines 930-1040 in index.html (Decomposition Analysis content)
+  - [x] Remove all `phase3.forerunner`, `positiveAnalogies`, `negativeAnalogies` references
+  - [x] Remove "Select Forerunner" and "Decomposition Analysis" text
+  
+- [x] **13.1.2 Remove archetype control panel**
+  - [x] Remove pattern recognition interface from control panel
+  - [x] Remove archetype templates (lines 508-529 in core.js)
+  - [x] Remove `applyArchetypeTemplate()` function
+  - [x] Clear `phase2.patterns` and `phase2.archetype` data model
 
-- [ ] **9.2 Create proper Phase 2 Archetype presentation view**
-  - [ ] Display "Archetype Analyse" as main title (Dutch)
-  - [ ] Show emerging patterns from winners in visual format
-  - [ ] Display archetype definition as it's being created
-  - [ ] Show winning companies with vote counts
+#### **13.2 Implement Source Company Selection**
+- [x] **13.2.1 Create source selector interface**
+  - [x] Multi-select grid of Phase 1 winners (1-3 selections)
+  - [x] Visual indicators for selected sources (colors/badges)
+  - [x] Strategic rationale input field per selection
+  - [x] Save to `phase2.selectedSources[]`
 
-- [ ] **9.3 Fix data model references**
-  - [ ] Ensure Phase 2 display uses `phase2` object, not `phase3`
-  - [ ] Connect to `phase2.patterns` and `phase2.archetype` data
-  - [ ] Display `phase2.winnersFromPhase1` properly
+#### **13.3 Build Vertical Analysis Tool**
+- [x] **13.3.1 Create per-source analysis interface**
+  - [x] Tabbed view for each selected source company
+  - [x] Premise entry fields (WHY this strategy works)
+  - [x] Conclusion documentation fields
+  - [x] Causal chain visualization
+  - [x] Save to `phase2.verticalAnalyses{}`
 
-- [ ] **9.4 Test Phase 2 display works correctly**
-  - [ ] Verify presentation mode shows archetype content
-  - [ ] Test data flows from control panel to presentation view
-  - [ ] Ensure no Decomposition content appears in Phase 2
+#### **13.4 Implement Unified Canvas Interface**
+- [ ] **13.4.1 Create three-column canvas table**
+  - [ ] Source column: Dropdown from selectedSources
+  - [ ] Relation column: Positive/Negative selector with icons
+  - [ ] Target column: Free-text mapping to our company
+  - [ ] Row CRUD operations (Add, Edit, Delete)
+  - [ ] Save to `phase2.canvasRows[]`
+
+- [ ] **13.4.2 Add canvas management features**
+  - [ ] Filter by source company
+  - [ ] Filter by positive/negative relations  
+  - [ ] Group view by source
+  - [ ] Summary statistics (counts per source/relation)
+  - [ ] Export negative mappings to Phase 3
+
+#### **13.5 Create New Presentation Display**
+- [ ] **13.5.1 Build live canvas visualization**
+  - [ ] Show selected source companies
+  - [ ] Display canvas mappings in real-time
+  - [ ] Highlight gaps (negative-only areas)
+  - [ ] Visual progress indicators
+
+### **14.0 Phase 3: Complete Redesign to "AI Actieplan"**
+**Priority:** HIGH - After Phase 2 redesign complete
+
+#### **14.1 Remove Generic Hypothesis Builder**
+- [ ] **14.1.1 Replace current Phase 3 implementation**
+  - [ ] Remove generic IF-THEN hypothesis templates
+  - [ ] Remove general action item tracker
+  - [ ] Clear current `phase3` data structure
+
+#### **14.2 Implement Gap Analysis Dashboard**
+- [ ] **14.2.1 Import and consolidate gaps**
+  - [ ] Auto-import negative analogies from Phase 2
+  - [ ] Group similar gaps from multiple sources
+  - [ ] Categorize by strategic area (Innovation, Platform, etc.)
+  - [ ] Priority scoring based on frequency
+  - [ ] Save to `phase3.consolidatedGaps[]`
+
+#### **14.3 Build AI Solution Generator**
+- [ ] **14.3.1 Per-gap solution interface**
+  - [ ] Central question framework: "How can AI bridge this gap?"
+  - [ ] Solution category selector (Automation, Enhancement, Innovation, Intelligence)
+  - [ ] Feasibility assessment fields
+  - [ ] Resource estimation inputs
+  - [ ] Save to `phase3.aiSolutions[]`
+
+#### **14.4 Implement Priority Matrix**
+- [ ] **14.4.1 Multi-dimensional scoring**
+  - [ ] Impact vs Effort grid visualization
+  - [ ] Drag-and-drop solution positioning
+  - [ ] Auto-categorize quadrants (Quick wins, Major projects, etc.)
+  - [ ] Save to `phase3.priorityMatrix[]`
+
+#### **14.5 Create AI Action Plan Builder**
+- [ ] **14.5.1 Phased roadmap generator**
+  - [ ] Group solutions into waves (Quick, Medium, Long term)
+  - [ ] Success metrics definition
+  - [ ] Dependency mapping
+  - [ ] Investment summary generation
+  - [ ] Save to `phase3.actionPlan{}`
+
+### **15.0 Updated Phase Transitions**
+#### **15.1 Phase 1 → Phase 2 Transition**
+- [ ] Pass complete winner data with strategic context
+- [ ] Pre-populate source selector with winners
+- [ ] Clear transition instructions for facilitator
+
+#### **15.2 Phase 2 → Phase 3 Transition** 
+- [ ] Auto-extract negative analogies as gaps
+- [ ] Preserve source company linkages
+- [ ] Initialize gap analysis dashboard
+
+### **TASKS TO REMOVE/DEPRECATE:**
+- ❌ Task 9.0 (old Archetype fix) - completely wrong approach
+- ❌ Task 10.1 (archetype templates) - not used in Version 1
+- ❌ Task 10.2 (Pattern Recognition) - replaced with canvas
+- ❌ Task 11.0 (Winner enhancement) - already implemented
+- ❌ Task 8.2 (old archetype transition) - needs complete rewrite
+
+### **UPDATED DUTCH LANGUAGE REQUIREMENTS:**
+- **Phase 2 Terms:** "Analogie-Deconstructie", "Verticale Analyse", "Bron Bedrijf"
+- **Phase 3 Terms:** "AI Actieplan", "Gap Analyse", "Prioriteits Matrix"
+- **Canvas Terms:** "Positieve/Negatieve Analogie", "Doel Mapping"
+
+This represents a fundamental shift from pattern-based archetype building to rigorous causal analysis with AI-specific solutions.
 
 ## Completed Tasks
 
@@ -98,86 +191,62 @@ JSON and Markdown export fully functional.
 - [x] 8.1.6 Add smooth transition animations ✅
 - [ ] 8.1.7 Test complete Phase 1-2 workflow
 
-## High Priority Tasks
+## Supporting Tasks (After Critical Redesign)
 
-### **10.0 Complete Dutch Language Consistency**
-**Priority:** HIGH - Required for professional use
+### **16.0 Dutch Language Updates for Version 1**
+**Priority:** HIGH - After Phase 2/3 redesign
 
-- [ ] **10.1 Translate all archetype templates to Dutch**
-  - [ ] Fix templates in core.js lines 503-524
-  - [ ] "digital transformation" → "digitale transformatie"
-  - [ ] Translate all template descriptions
+- [ ] **16.1 Translate new Phase 2 interface**
+  - [ ] "Analogie-Deconstructie" → main title
+  - [ ] "Bron Bedrijf Selectie" → source selection
+  - [ ] "Verticale Analyse" → causal analysis
+  - [ ] "Mapping Canvas" → canvas interface
+  - [ ] "Positieve/Negatieve Analogie" → relation types
 
-- [ ] **10.2 Add Phase 2 Facilitator Guide**
-  - [ ] Create guide section in Phase 2 controls
-  - [ ] "Patroon Herkenning" instructions
-  - [ ] "Archetype Definitie" guidance
-  - [ ] Purpose explanation for templates
+- [ ] **16.2 Translate new Phase 3 interface**
+  - [ ] "AI Actieplan" → main title
+  - [ ] "Gap Analyse" → gap dashboard
+  - [ ] "AI Oplossingen" → solution generator
+  - [ ] "Prioriteits Matrix" → priority matrix
+  - [ ] "Investerings Roadmap" → action plan
 
-- [ ] **10.3 Add Phase 3 Facilitator Guide**
-  - [ ] Create guide for hypothesis building
-  - [ ] Action item instructions
-  - [ ] Session completion guidance
+- [ ] **16.3 Update facilitator guides**
+  - [ ] Phase 2 guide: Source selection and canvas usage
+  - [ ] Phase 3 guide: Gap analysis and AI brainstorming
+  - [ ] Canvas instructions and best practices
 
-- [ ] **10.4 Fix remaining English UI text**
-  - [ ] Review all button labels
-  - [ ] Check error messages
-  - [ ] Verify placeholder text
+### **17.0 Testing & Quality Assurance**
+**Priority:** MEDIUM - After implementation
 
-### **11.0 Enhance Winner Data Structure**
-**Priority:** HIGH - Improves strategic context
+- [ ] **17.1 Create new test scenarios**
+  - [ ] Source company selection flows
+  - [ ] Canvas CRUD operations
+  - [ ] Vertical analysis saving/loading
+  - [ ] Gap extraction and consolidation
+  - [ ] AI solution generation
+  - [ ] Priority matrix interactions
 
-- [ ] **11.1 Include full strategic context in winners**
-  - [ ] Add `dilemmaQuestion` from strategic pair
-  - [ ] Include winning company's `strategy`
-  - [ ] Add `niveau` and `dimensieNummer`
+- [ ] **17.2 Update existing tests**
+  - [ ] Remove archetype-related tests
+  - [ ] Update Dutch UI text expectations
+  - [ ] Phase transition test scenarios
+  - [ ] Data persistence for new models
 
-- [ ] **11.2 Display enhanced data in Phase 2**
-  - [ ] Show dilemma question for each winner
-  - [ ] Display the chosen strategy
-  - [ ] Group by strategic level
+## Future Enhancements (Version 2.0+)
 
-- [ ] **11.3 Remove duplicate winner displays**
-  - [ ] Keep only enhanced display in "Fase 1 Resultaten"
-  - [ ] Remove duplicate from top of Phase 2 controls
+### **18.0 Multiple Game Versions**
+**Priority:** FUTURE - After Version 1 complete
 
-### **12.0 Improve Phase Completion Feedback**
-**Priority:** MEDIUM - Better UX
+- [ ] **18.1 Version selection interface**
+  - [ ] Game mode selector on startup
+  - [ ] Version 1: "Strategische Blauwdruk" (rigorous analysis)
+  - [ ] Version 2: "Disruption Game" (creative business models)  
+  - [ ] Version 3: "Verhaal & Verander" (team alignment)
 
-- [ ] **12.1 Add progress indicators**
-  - [ ] Show "Ronde X van Y" in presentation mode
-  - [ ] Visual progress bar for completion
-  - [ ] Minimum rounds indicator
-
-- [ ] **12.2 Clear completion notifications**
-  - [ ] "Fase 1 Compleet!" message
-  - [ ] Audio/visual cue on completion
-  - [ ] Manual override for facilitator
-
-- [ ] **12.3 Improve celebration screen trigger**
-  - [ ] Better detection logic
-  - [ ] Smooth transition to celebration
-  - [ ] Clear path to Phase 2
-
-## Remaining Phase Transitions
-
-### **8.2 Phase 2 → Phase 3 Transition**
-**Priority:** MEDIUM - After fixing Phase 2 display
-
-- [ ] 8.2.1 Add archetype completion validation
-- [ ] 8.2.2 Create archetype summary display
-- [ ] 8.2.3 Implement hypothesis template pre-selection
-- [ ] 8.2.4 Design transition UI
-- [ ] 8.2.5 Test data flow to Phase 3
-
-### **8.3 Phase 3 → Export Transition**
-**Priority:** LOW - Nice to have
-
-- [ ] 8.3.1 Add session completion validation
-- [ ] 8.3.2 Create completion celebration
-- [ ] 8.3.3 Implement session summary
-- [ ] 8.3.4 Design final presentation
-- [ ] 8.3.5 Add next steps guidance
+- [ ] **18.2 Conditional interface logic**
+  - [ ] Dynamic Phase 2/3 content based on version
+  - [ ] Version-specific data models
+  - [ ] Adaptive facilitator guides
 
 ## Minor Enhancements
 
@@ -226,11 +295,25 @@ JSON and Markdown export fully functional.
 4. **File naming**: Consider renaming phase2.js to phase1.js for clarity
 5. **Documentation**: Keep CLAUDE.md updated with correct 3-phase structure
 
-## Success Criteria
+## Success Criteria for Version 1 "Analogie-Deconstructie"
 
-✅ Application works with 3 phases (not 4)
-✅ Phase 2 shows Archetype Analysis (not Decomposition)
-✅ All text in professional Dutch
-✅ Winners include strategic context
-✅ Clear phase completion feedback
-✅ Smooth transitions between phases
+### **Phase 2: Analogie-Deconstructie**
+- [ ] Source company selection (1-3 from winners) works
+- [ ] Vertical analysis captures WHY each strategy succeeds
+- [ ] Unified canvas allows flexible positive/negative mapping
+- [ ] Presentation view shows live canvas visualization
+- [ ] All interface text in professional Dutch
+
+### **Phase 3: AI Actieplan** 
+- [ ] Gap analysis imports negative analogies from Phase 2
+- [ ] AI solution generator addresses each specific gap
+- [ ] Priority matrix visualizes impact vs effort
+- [ ] Action plan produces concrete AI investment roadmap
+- [ ] Output is defendable and linked to strategic analysis
+
+### **Overall Application**
+- [ ] Complete end-to-end workflow from preference → gaps → AI solutions
+- [ ] All data persists correctly through LocalForage
+- [ ] Smooth transitions between all phases
+- [ ] Professional Dutch throughout (Nederlandse zakentaal)
+- [ ] Export generates comprehensive session reports

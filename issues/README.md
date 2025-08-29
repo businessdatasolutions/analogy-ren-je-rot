@@ -23,6 +23,11 @@ Each issue follows this naming convention:
 
 #### Medium Priority  
 - [005-url-query-parameters.md](./005-url-query-parameters.md) - URL parameters for session setup
+- [008-celebration-screen-timing.md](./008-celebration-screen-timing.md) - Fix celebration screen to only show when facilitator presses "N" after last pair
+
+#### Low Priority (Future Enhancements)
+- [009-timer-duration-customization.md](./009-timer-duration-customization.md) - Implement functional timer duration customization in session settings
+- [010-celebration-details-button.md](./010-celebration-details-button.md) - Non-functional "Bekijk Details" button on celebration screen
 
 ### ✅ Recently Fixed
 - **Keyboard Shortcuts Bug** - Fixed keyboard shortcuts not working in Phase 1 after migration (Commit: `cc23a24`)
@@ -38,6 +43,9 @@ Each issue follows this naming convention:
 | #5 | 🔄 Open | Medium | - | - |
 | #6 | ✅ Resolved | High | 2025-08-28 | `fe188e2` |
 | #7 | 🔄 Open | High | - | - |
+| #8 | 🔄 Open | Medium | - | - |
+| #9 | 🔄 Open | Low | - | - |
+| #10 | 🔄 Open | Low | - | - |
 
 ## How to Use
 

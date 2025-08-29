@@ -8,11 +8,11 @@ This is the "Het Ren-Je-Rot-Analogie-Verkenner-spel" project - a strategic works
 
 **Target Audience:** Dutch management professionals, strategy consultants, and team leaders in Dutch corporate environments and consulting firms.
 
-The game consists of three phases:
+The application implements **Version 1: "De Strategische Blauwdruk"** focusing on rigorous analysis and argumentation to transform intuitive preferences into logically sound strategic arguments. The game consists of three phases:
 
-1. **Strategic Preference Round**: Physical positioning exercise using strategic company pairs to reveal team preferences
-2. **Archetype Analysis**: Pattern recognition to define the team's strategic archetype based on preferences
-3. **Strategic Translation**: Translation of insights into actionable strategic hypotheses and action plans
+1. **Strategic Preference Round (Voorkeursronde)**: Physical positioning exercise using strategic company pairs to reveal team preferences
+2. **Analogie-Deconstructie (Analogy Deconstruction)**: Deep analysis of 1-3 selected source companies through vertical causal analysis and horizontal mapping canvas to identify positive/negative analogies 
+3. **AI Actieplan (AI Action Plan)**: Focus on negative analogies as strategic gaps, brainstorming AI solutions to bridge each gap, and creating a prioritized AI investment roadmap
 
 ## Target Audience & Language Requirements
 

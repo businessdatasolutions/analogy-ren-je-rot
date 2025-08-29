@@ -11,6 +11,10 @@
       "strategies": {
         "companyA": "Open platform voor alle fabrikanten. Schaal door breedte en data.",
         "companyB": "Gesloten ecosysteem met volledige controle. Premium kwaliteit en ervaring."
+      },
+      "strategy_tags": {
+        "companyA": "Open Platform",
+        "companyB": "Gesloten Ecosysteem"
       }
     },
     {
@@ -24,6 +28,10 @@
       "strategies": {
         "companyA": "Auto als computer op wielen. Software-updates en directe verkoop.",
         "companyB": "Perfectie in productie. Efficiëntie, kwaliteit en betrouwbaarheid."
+      },
+      "strategy_tags": {
+        "companyA": "Software-gedreven",
+        "companyB": "Productie-excellentie"
       }
     },
     {
@@ -37,6 +45,10 @@
       "strategies": {
         "companyA": "Geen vastgoed. Waarde via netwerk, reviews en AI-matching.",
         "companyB": "Bezit hotels op toplocaties. Gestandaardiseerde kwaliteit."
+      },
+      "strategy_tags": {
+        "companyA": "Datagedreven Netwerk",
+        "companyB": "Asset-eigendom"
       }
     },
     {
@@ -50,6 +62,10 @@
       "strategies": {
         "companyA": "Laserfocus op één ding: real-time collaboratief design.",
         "companyB": "Brede Creative Cloud suite. Cross-selling in ecosysteem."
+      },
+      "strategy_tags": {
+        "companyA": "Niche Specialist",
+        "companyB": "Brede Suite"
       }
     },
     {
@@ -63,6 +79,10 @@
       "strategies": {
         "companyA": "Hele keten: eigen content, algoritmes en distributie.",
         "companyB": "Één schakel: beste audiodistributie en personalisatie."
+      },
+      "strategy_tags": {
+        "companyA": "Verticale Integratie",
+        "companyB": "Horizontale Focus"
       }
     },
     {
@@ -76,6 +96,10 @@
       "strategies": {
         "companyA": "Gesloten ecosysteem. Data versterkt eigen hardware.",
         "companyB": "Open API's als product. Makkelijke integratie voor anderen."
+      },
+      "strategy_tags": {
+        "companyA": "Gesloten Data",
+        "companyB": "Open API's"
       }
     },
     {
@@ -89,6 +113,10 @@
       "strategies": {
         "companyA": "Centrale controle door Google. Macht en winst gecentraliseerd.",
         "companyB": "Geen eigenaar. Onderhouden door onafhankelijke deelnemers."
+      },
+      "strategy_tags": {
+        "companyA": "Gecentraliseerd",
+        "companyB": "Gedecentraliseerd"
       }
     },
     {
@@ -102,6 +130,10 @@
       "strategies": {
         "companyA": "AI optimaliseert e-commerce en logistiek. Klant koopt fysiek product.",
         "companyB": "Het product ís de intelligentie. Intelligence-as-a-service."
+      },
+      "strategy_tags": {
+        "companyA": "AI Optimalisatie",
+        "companyB": "AI als Product"
       }
     },
     {
@@ -115,6 +147,10 @@
       "strategies": {
         "companyA": "Complex platform voor ondernemingen. Top-down verkoop.",
         "companyB": "Flexibel Work OS. Bottom-up via teamgemak."
+      },
+      "strategy_tags": {
+        "companyA": "Diep Platform",
+        "companyB": "Flexibel Framework"
       }
     },
     {
@@ -128,6 +164,10 @@
       "strategies": {
         "companyA": "Social graph: content van mensen die je volgt.",
         "companyB": "Content graph: algoritme op basis van gedrag, niet connecties."
+      },
+      "strategy_tags": {
+        "companyA": "Social Graph",
+        "companyB": "Content Graph"
       }
     },
     {
@@ -141,6 +181,10 @@
       "strategies": {
         "companyA": "Uitsluitend premium elektrische bakfietsen voor niche.",
         "companyB": "Breed assortiment fietsen voor alle segmenten en prijsklassen."
+      },
+      "strategy_tags": {
+        "companyA": "Niche Premium",
+        "companyB": "Breed Assortiment"
       }
     },
     {
@@ -154,6 +198,10 @@
       "strategies": {
         "companyA": "Totale controle: hardware, software en diensten in ecosysteem.",
         "companyB": "Productie-excellentie. Budget tot high-end in open systeem."
+      },
+      "strategy_tags": {
+        "companyA": "Ecosysteem Controle",
+        "companyB": "Productie-excellentie"
       }
     },
     {
@@ -167,6 +215,10 @@
       "strategies": {
         "companyA": "Gratis diensten voor data. Advertenties als verdienmodel.",
         "companyB": "Software en cloud-abonnementen aan bedrijven. Directe verkoop."
+      },
+      "strategy_tags": {
+        "companyA": "Data Monetisatie",
+        "companyB": "Directe Verkoop"
       }
     },
     {
@@ -180,6 +232,10 @@
       "strategies": {
         "companyA": "Is in de kern een retailer en een logistiek bedrijf; ze kopen, bezitten en verzenden zelf een groot deel van de producten via een eigen, kapitaalintensief netwerk.",
         "companyB": "Is een pure, 'asset-light' marktplaats; ze bezitten geen voorraad maar faciliteren transacties tussen miljoenen kopers en verkopers met digitale tools."
+      },
+      "strategy_tags": {
+        "companyA": "Asset-heavy Retail",
+        "companyB": "Asset-light Platform"
       }
     },
     {
@@ -193,6 +249,10 @@
       "strategies": {
         "companyA": "Een techbedrijf dat data gebruikt om te voorspellen wat men wil zien en op basis daarvan een brede catalogus van nieuwe content produceert.",
         "companyB": "Een mediabedrijf dat zijn decennia-oude, iconische IP (Intellectual Property) maximaal exploiteert via films, series, merchandise en pretparken."
+      },
+      "strategy_tags": {
+        "companyA": "Data Content",
+        "companyB": "IP Franchise"
       }
     },
     {
@@ -206,6 +266,10 @@
       "strategies": {
         "companyA": "Muziekstreaming *is* het volledige bedrijf; ze moeten hier winstgevend zijn om te overleven en concurreren als een pure-play specialist.",
         "companyB": "Muziekstreaming is een middel om de verkoop en loyaliteit van hardware (iPhones, HomePods) te verhogen en gebruikers dieper in het Apple-ecosysteem te verankeren."
+      },
+      "strategy_tags": {
+        "companyA": "Pure-Play Focus",
+        "companyB": "Ecosysteem Feature"
       }
     },
     {
@@ -219,6 +283,10 @@
       "strategies": {
         "companyA": "De ambitie is om de 'Amazon van transport' te worden, door hun logistieke netwerk te diversifiëren naar alles van maaltijdbezorging (Eats) tot vracht (Freight).",
         "companyB": "Heeft zich historisch gezien veel meer gefocust op het winnen van één specifieke markt: personenvervoer in Noord-Amerika."
+      },
+      "strategy_tags": {
+        "companyA": "Globale Diversificatie",
+        "companyB": "Regionale Focus"
       }
     },
     {
@@ -232,6 +300,10 @@
       "strategies": {
         "companyA": "Heeft een merk gebouwd rond unieke ervaringen, authenticiteit en het vertrouwen tussen host en gast ('Belong Anywhere').",
         "companyB": "Is een meester in performance marketing en conversie-optimalisatie. Het platform is ontworpen voor maximale efficiëntie in het zoek- en boekproces."
+      },
+      "strategy_tags": {
+        "companyA": "Community Merk",
+        "companyB": "Conversie Machine"
       }
     },
     {
@@ -245,6 +317,10 @@
       "strategies": {
         "companyA": "Is gebouwd rond een permanente, gecureerde 'grid' die functioneert als een publieke etalage van iemands leven of merk.",
         "companyB": "Is gebouwd rond het idee van snelle, efemere (tijdelijke) communicatie tussen hechte vrienden, wat een meer authentieke en intieme vorm van interactie stimuleert."
+      },
+      "strategy_tags": {
+        "companyA": "Publieke Etalage",
+        "companyB": "Private Berichten"
       }
     },
     {
@@ -258,6 +334,10 @@
       "strategies": {
         "companyA": "Open innovatie via community. LEGO Ideas platform.",
         "companyB": "Gesloten innovatie. Geheime interne ontwikkeling."
+      },
+      "strategy_tags": {
+        "companyA": "Open Innovatie",
+        "companyB": "Gesloten Innovatie"
       }
     },
     {
@@ -271,6 +351,10 @@
       "strategies": {
         "companyA": "Verandert hele industrie. Duurzame materialen, repareerbaar.",
         "companyB": "Direct verlichten van symptoom. 'One for One'-model."
+      },
+      "strategy_tags": {
+        "companyA": "Systeemverandering",
+        "companyB": "Directe Hulp"
       }
     },
     {
@@ -284,6 +368,10 @@
       "strategies": {
         "companyA": "Lage drempel: iedereen kan een webshop starten. Concurreert op gebruiksvriendelijkheid en lage kosten.",
         "companyB": "Hoge drempel: complexe lithografie technologie die decennia ontwikkel- en kapitaalinvestering vereist."
+      },
+      "strategy_tags": {
+        "companyA": "Lage Drempel",
+        "companyB": "Hoge Barrières"
       }
     },
     {
@@ -297,6 +385,10 @@
       "strategies": {
         "companyA": "Ultralage kosten. Geen franje, efficiënte operaties, kosten doorrekenen voor alles extra.",
         "companyB": "Premium ervaring. Luxe service, comfort en prestige rechtvaardigen hogere prijzen."
+      },
+      "strategy_tags": {
+        "companyA": "Kostenleiderschap",
+        "companyB": "Premium Differentiatie"
       }
     },
     {
@@ -310,6 +402,10 @@
       "strategies": {
         "companyA": "Traditionele hiërarchische bankstructuur met duidelijke managementlagen en centraal bestuur.",
         "companyB": "Agile squads en tribes model met autonome teams die snel kunnen experimenteren en itereren."
+      },
+      "strategy_tags": {
+        "companyA": "Hiërarchisch",
+        "companyB": "Agile Teams"
       }
     },
     {
@@ -323,6 +419,10 @@
       "strategies": {
         "companyA": "Extreme geheimhouding. Productontwikkeling achter gesloten deuren, strikte NDA's, 'need to know' basis.",
         "companyB": "Radicale transparantie. Salarissen openbaar, besluitvorming transparant, openheid over uitdagingen."
+      },
+      "strategy_tags": {
+        "companyA": "Geheimhouding",
+        "companyB": "Transparantie"
       }
     },
     {
@@ -336,6 +436,10 @@
       "strategies": {
         "companyA": "Volledig zelfgefinancierd. Organische groei, volledige controle, focus op winstgevendheid vanaf dag één.",
         "companyB": "Venture capital gedreven. Snelle internationale expansie, marktdominantie voor winstgevendheid."
+      },
+      "strategy_tags": {
+        "companyA": "Bootstrapped",
+        "companyB": "VC-gefinancierd"
       }
     }
   ]

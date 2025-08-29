@@ -45,12 +45,13 @@ const createDefaultSession = () => ({
     totalVotes: 0,
     percentageA: 0,
     percentageB: 0,
-    results: []
+    results: [],
+    celebrationTriggered: false
   },
   phase2: {
-    archetype: '',
-    patterns: [],
-    keywords: []
+    selectedSources: [],
+    verticalAnalyses: {},
+    canvasRows: []
   },
   phase3: {
     hypotheses: [],
@@ -136,13 +137,12 @@ document.addEventListener('alpine:init', () => {
     // Phase 1 specific data - Strategic Preference Round (initialized from phase1.js)
     phase1: null,
     
-    // Phase 2 specific data - Archetype Analysis
+    // Phase 2 specific data - Analogie-Deconstructie
     phase2: {
-      archetype: '',
-      patterns: [],
-      keywords: [],
-      winnersFromPhase1: [], // Winners handed off from Phase 1
-      suggestedPatterns: []   // Auto-suggested patterns based on winners
+      selectedSources: [],      // 1-3 selected source companies from Phase 1 winners
+      verticalAnalyses: {},     // Causal analysis per source: {sourceId: {premises, conclusions, chains}}
+      canvasRows: [],           // Unified canvas mappings: [{source, relation, target}]
+      winnersFromPhase1: []     // Winners handed off from Phase 1
     },
     
     // Phase 3 specific data - Strategic Translation
@@ -378,6 +378,10 @@ document.addEventListener('alpine:init', () => {
       // Transition from Phase 1 to Phase 2
       if (fromPhase === 1 && toPhase === 2) {
         this.transferWinnersToPhase2();
+        // Reset celebration flag when leaving Phase 1
+        if (this.phase1) {
+          this.phase1.celebrationTriggered = false;
+        }
       }
       
       // Transition from Phase 2 to Phase 3
@@ -411,65 +415,14 @@ document.addEventListener('alpine:init', () => {
       // Store winners in Phase 2
       this.phase2.winnersFromPhase1 = winners;
 
-      // Generate suggested patterns based on strategic contrasts
-      const strategicContrasts = [...new Set(winners.map(w => w.strategicContrast).filter(Boolean))];
-      const companyNames = winners.map(w => w.name).slice(0, 5); // Top 5 winners
-
-      // Create suggested patterns
-      this.phase2.suggestedPatterns = [
-        // From strategic contrasts
-        ...strategicContrasts,
-        // Common themes based on winner analysis
-        this.generatePatternSuggestions(winners)
-      ].filter(Boolean).join(', ');
-
-      // Auto-populate patterns field if empty
-      if (!this.phase2.patterns || this.phase2.patterns.length === 0) {
-        this.phase2.patterns = this.phase2.suggestedPatterns;
-      }
-
-      console.log('Winners transferred to Phase 2:', {
+      console.log('Winners transferred to Phase 2 for source selection:', {
         winners: winners.length,
-        patterns: this.phase2.suggestedPatterns,
-        topWinners: companyNames
+        availableSources: winners.map(w => w.name)
       });
 
       return true;
     },
 
-    // Generate pattern suggestions based on winner analysis
-    generatePatternSuggestions(winners) {
-      const patterns = [];
-      
-      // Analyze winner names for common themes
-      const winnerNames = winners.map(w => w.name.toLowerCase());
-      
-      // Tech companies
-      const techTerms = ['google', 'apple', 'microsoft', 'amazon', 'netflix', 'spotify', 'uber', 'airbnb', 'tesla'];
-      if (winnerNames.some(name => techTerms.some(term => name.includes(term)))) {
-        patterns.push('digitale transformatie');
-      }
-      
-      // Premium/luxury brands
-      const premiumTerms = ['apple', 'tesla', 'mercedes', 'bmw', 'nike', 'starbucks'];
-      if (winnerNames.some(name => premiumTerms.some(term => name.includes(term)))) {
-        patterns.push('premium positionering');
-      }
-      
-      // Platform/ecosystem companies
-      const platformTerms = ['google', 'amazon', 'apple', 'microsoft', 'uber', 'airbnb'];
-      if (winnerNames.some(name => platformTerms.some(term => name.includes(term)))) {
-        patterns.push('platform strategie');
-      }
-      
-      // Customer-centric companies
-      const customerTerms = ['amazon', 'netflix', 'spotify', 'uber', 'airbnb', 'starbucks'];
-      if (winnerNames.some(name => customerTerms.some(term => name.includes(term)))) {
-        patterns.push('klantgerichtheid');
-      }
-
-      return patterns.join(', ');
-    },
     
     // Timer Methods
     startTimer() {
@@ -498,36 +451,84 @@ document.addEventListener('alpine:init', () => {
       this.timer.remaining = this.timer.duration;
     },
     
-    // Phase 2: Archetype Methods
-    applyArchetypeTemplate(templateName) {
-      const templates = {
-        disruptor: {
-          patterns: 'digital transformation, customer experience, efficiency gains',
-          archetype: 'Companies that leverage technology to fundamentally transform traditional industries and create superior customer experiences.'
-        },
-        premium: {
-          patterns: 'brand excellence, quality focus, premium positioning',
-          archetype: 'Organizations that establish market leadership through superior quality, brand prestige, and premium customer experiences.'
-        },
-        platform: {
-          patterns: 'network effects, ecosystem building, scalability',
-          archetype: 'Companies that create value by connecting multiple parties and enabling interactions within their ecosystem.'
-        },
-        integrated: {
-          patterns: 'end-to-end solutions, vertical integration, seamless experience',
-          archetype: 'Organizations that control the entire value chain to deliver seamless, integrated solutions to customers.'
-        },
-        customer: {
-          patterns: 'customer obsession, personalization, service excellence',
-          archetype: 'Companies that build competitive advantage through deep customer understanding and exceptional service delivery.'
-        }
-      };
+    // Phase 2: Analogie-Deconstructie Methods
+    
+    // Source Company Selection
+    isSourceSelected(winner) {
+      return this.phase2.selectedSources.some(source => source.id === winner.id || source.name === winner.name);
+    },
+    
+    toggleSourceSelection(winner) {
+      const isSelected = this.isSourceSelected(winner);
       
-      if (templates[templateName]) {
-        this.phase2.patterns = templates[templateName].patterns;
-        this.phase2.archetype = templates[templateName].archetype;
-        this.phase2.templateUsed = templateName;
+      if (isSelected) {
+        // Remove from selection
+        this.phase2.selectedSources = this.phase2.selectedSources.filter(
+          source => source.id !== winner.id && source.name !== winner.name
+        );
+      } else {
+        // Add to selection (max 3)
+        if (this.phase2.selectedSources.length < 3) {
+          // Create source object with rationale field
+          const sourceObject = {
+            id: winner.id || winner.name,
+            name: winner.name,
+            votes: winner.votes,
+            strategicContrast: winner.strategicContrast,
+            rationale: '' // Strategic rationale to be filled by facilitator
+          };
+          
+          this.phase2.selectedSources.push(sourceObject);
+        }
+      }
+      
+      this.markUnsaved();
+      
+      console.log('Source selection updated:', {
+        selected: this.phase2.selectedSources.length,
+        sources: this.phase2.selectedSources.map(s => s.name)
+      });
+    },
+    
+    // Vertical Analysis Methods
+    ensureVerticalAnalysis(source) {
+      if (!this.phase2.verticalAnalyses[source.id]) {
+        this.phase2.verticalAnalyses[source.id] = {
+          sourceId: source.id,
+          sourceName: source.name,
+          premises: [],
+          conclusion: '',
+          lastUpdated: new Date().toISOString()
+        };
         this.markUnsaved();
+      }
+    },
+    
+    addPremise(sourceId) {
+      if (!this.phase2.verticalAnalyses[sourceId]) {
+        this.ensureVerticalAnalysis({ id: sourceId });
+      }
+      
+      this.phase2.verticalAnalyses[sourceId].premises.push({
+        text: '',
+        created: new Date().toISOString()
+      });
+      
+      this.markUnsaved();
+      
+      console.log('Added premise for source:', sourceId, {
+        totalPremises: this.phase2.verticalAnalyses[sourceId].premises.length
+      });
+    },
+    
+    removePremise(sourceId, premiseIndex) {
+      if (this.phase2.verticalAnalyses[sourceId]?.premises) {
+        this.phase2.verticalAnalyses[sourceId].premises.splice(premiseIndex, 1);
+        this.markUnsaved();
+        
+        console.log('Removed premise for source:', sourceId, {
+          remainingPremises: this.phase2.verticalAnalyses[sourceId].premises.length
+        });
       }
     },
     
@@ -727,22 +728,14 @@ document.addEventListener('alpine:init', () => {
 ## Phase 1: Preference Round Results
 **Winners:** ${winners}
 
-## Phase 2: Strategic Archetype
-**Patterns:** ${this.phase2.patterns || 'Not defined'}
+## Phase 2: Analogie-Deconstructie
+**Selected Sources:** ${this.phase2.selectedSources.length || 0}
+**Vertical Analyses:** ${Object.keys(this.phase2.verticalAnalyses).length || 0}
+**Canvas Mappings:** ${this.phase2.canvasRows.length || 0}
 
-**Archetype Definition:**
-${this.phase2.archetype || 'Not defined'}
-
-## Phase 3: Decomposition Analysis
-**Forerunner:** ${this.phase3.forerunner || 'Not selected'}
-
-**Positive Analogies:** ${this.phase3.positiveAnalogies.length}
-**Negative Analogies:** ${this.phase3.negativeAnalogies.length} 
-**Causal Relations:** ${this.phase3.causalRelations.length}
-
-## Phase 4: Strategic Translation
-**Hypotheses Created:** ${this.phase4.hypotheses.length}
-**Action Items Planned:** ${this.phase4.actionItems.length}
+## Phase 3: AI Actieplan
+**Status:** Coming soon in Version 1 implementation
+*Note: Current Phase 3 data (${this.phase3.hypotheses.length} hypotheses, ${this.phase3.actionItems.length} actions) will be migrated*
 
 ---
 *Generated by Analogy Game Facilitator*`;

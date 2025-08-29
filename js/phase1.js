@@ -229,11 +229,22 @@ window.createTimer = function(audioSystem = null) {
 
     // New method to advance to next round from discussion phase
     nextRound() {
-      this.reset();
-      // Automatically advance to next pair
       const app = document.querySelector('[x-data="gameApp"]')._x_dataStack[0];
-      if (app?.phase1?.companyPairs?.canGoNext) {
-        app.phase1.nextPair();
+      const isLastPair = !(app?.phase1?.companyPairs?.canGoNext);
+      
+      if (isLastPair) {
+        // Trigger celebration instead of advancing - this is the last pair
+        // Facilitator decides when to end Phase 1 by pressing "N"
+        if (app?.phase1) {
+          app.phase1.celebrationTriggered = true;
+          app.markUnsaved();
+        }
+      } else {
+        // Normal flow: reset timer and advance to next pair
+        this.reset();
+        if (app?.phase1?.companyPairs?.canGoNext) {
+          app.phase1.nextPair();
+        }
       }
     },
 
@@ -383,7 +394,9 @@ window.createCompanyPairs = function(strategicPairs = null) {
       },
       strategicDilemmaQuestion: pair.dilemma_question,
       strategicContrast: pair.strategic_contrast,
-      distinguishingElement: pair.distinguishing_element
+      distinguishingElement: pair.distinguishing_element,
+      strategies: pair.strategies || {},
+      strategy_tags: pair.strategy_tags || {}
     }));
   } else {
     pairs = defaultPairs;
@@ -637,6 +650,9 @@ window.initializePhase1 = async function() {
       
       // Store reference to selected strategic pairs
       selectedStrategicPairs: selectedPairs,
+      
+      // Celebration control flag - only show when facilitator triggers
+      celebrationTriggered: false,
     
     // Convenience getters for templates
     get currentPair() {
@@ -787,7 +803,12 @@ window.initializePhase1 = async function() {
               pairIndex: parseInt(pairIndex),
               winType: 'clear', // clear win
               strategicContrast: pair.strategicContrast || pair.category,
-              description: pair.companyADescription
+              description: pair.companyADescription,
+              winnerStrategy: pair.strategies?.companyA || pair.companyADescription,
+              loserStrategy: pair.strategies?.companyB || pair.companyBDescription,
+              loserName: pair.companyB,
+              winnerTag: pair.strategy_tags?.companyA || pair.companyA,
+              loserTag: pair.strategy_tags?.companyB || pair.companyB
             });
           } else if (votes.companyB > votes.companyA) {
             winners.push({
@@ -796,7 +817,12 @@ window.initializePhase1 = async function() {
               pairIndex: parseInt(pairIndex),
               winType: 'clear', // clear win
               strategicContrast: pair.strategicContrast || pair.category,
-              description: pair.companyBDescription
+              description: pair.companyBDescription,
+              winnerStrategy: pair.strategies?.companyB || pair.companyBDescription,
+              loserStrategy: pair.strategies?.companyA || pair.companyADescription,
+              loserName: pair.companyA,
+              winnerTag: pair.strategy_tags?.companyB || pair.companyB,
+              loserTag: pair.strategy_tags?.companyA || pair.companyA
             });
           } else if (votes.companyA === votes.companyB && votes.companyA > 0) {
             // Handle ties - add both companies as tied winners
@@ -806,7 +832,12 @@ window.initializePhase1 = async function() {
               pairIndex: parseInt(pairIndex),
               winType: 'tied',
               strategicContrast: pair.strategicContrast || pair.category,
-              description: pair.companyADescription
+              description: pair.companyADescription,
+              winnerStrategy: pair.strategies?.companyA || pair.companyADescription,
+              loserStrategy: pair.strategies?.companyB || pair.companyBDescription,
+              loserName: pair.companyB,
+              winnerTag: pair.strategy_tags?.companyA || pair.companyA,
+              loserTag: pair.strategy_tags?.companyB || pair.companyB
             });
             winners.push({
               name: pair.companyB,
@@ -814,7 +845,12 @@ window.initializePhase1 = async function() {
               pairIndex: parseInt(pairIndex),
               winType: 'tied',
               strategicContrast: pair.strategicContrast || pair.category,
-              description: pair.companyBDescription
+              description: pair.companyBDescription,
+              winnerStrategy: pair.strategies?.companyB || pair.companyBDescription,
+              loserStrategy: pair.strategies?.companyA || pair.companyADescription,
+              loserName: pair.companyA,
+              winnerTag: pair.strategy_tags?.companyB || pair.companyB,
+              loserTag: pair.strategy_tags?.companyA || pair.companyA
             });
           }
         }
@@ -877,6 +913,7 @@ window.initializePhase1 = async function() {
       companyPairs: window.createCompanyPairs(),
       votingSystem: window.createVotingSystem(),
       selectedStrategicPairs: [],
+      celebrationTriggered: false,
       get currentPair() { return this.companyPairs.currentPair; },
       get pairCounter() { return this.companyPairs.pairCounter; },
       get votes() { return this.votingSystem.votes; },
@@ -924,14 +961,24 @@ window.initializePhase1 = async function() {
                 name: pair.companyA,
                 votes: votes.companyA,
                 pairIndex: parseInt(pairIndex),
-                winType: 'clear'
+                winType: 'clear',
+                winnerStrategy: pair.strategies?.companyA || pair.companyADescription,
+                loserStrategy: pair.strategies?.companyB || pair.companyBDescription,
+                loserName: pair.companyB,
+                winnerTag: pair.strategy_tags?.companyA || pair.companyA,
+                loserTag: pair.strategy_tags?.companyB || pair.companyB
               });
             } else if (votes.companyB > votes.companyA) {
               winners.push({
                 name: pair.companyB,
                 votes: votes.companyB,
                 pairIndex: parseInt(pairIndex),
-                winType: 'clear'
+                winType: 'clear',
+                winnerStrategy: pair.strategies?.companyB || pair.companyBDescription,
+                loserStrategy: pair.strategies?.companyA || pair.companyADescription,
+                loserName: pair.companyA,
+                winnerTag: pair.strategy_tags?.companyB || pair.companyB,
+                loserTag: pair.strategy_tags?.companyA || pair.companyA
               });
             }
           }

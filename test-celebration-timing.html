@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celebration Screen Timing Test</title>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { margin: 5px; padding: 8px 15px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Celebration Screen Timing Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Scenario</h2>
+        <p><strong>Goal:</strong> Verify celebration screen only shows when facilitator presses "N" after last pair voting</p>
+        
+        <div id="test-steps">
+            <h3>Test Steps:</h3>
+            <ol>
+                <li>Navigate to main app in separate tab: <a href="http://localhost:8000" target="_blank">http://localhost:8000</a></li>
+                <li>Switch to <strong>Control Mode</strong> (click "Beheer" button)</li>
+                <li>Navigate to <strong>Phase 1</strong></li>
+                <li>Vote through all 5 pairs using voting buttons</li>
+                <li>On the 5th (last) pair:</li>
+                <ul>
+                    <li>Record votes for companies A or B</li>
+                    <li>Verify celebration screen does <strong>NOT</strong> appear automatically</li>
+                    <li>Switch to <strong>Presentation Mode</strong> (click "Presentatie" button)</li>
+                    <li>Press <strong>"N"</strong> key</li>
+                    <li>Verify celebration screen <strong>DOES</strong> appear</li>
+                </ul>
+                <li>Test celebration dismissal and Phase 2 transition</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Quick Test Utilities</h2>
+        <p>Use these buttons to simulate test conditions in the main app:</p>
+        
+        <button onclick="simulateLastPairVoting()">🗳️ Simulate Last Pair Voting</button>
+        <button onclick="simulateNKeyPress()">⌨️ Simulate 'N' Key Press</button>
+        <button onclick="checkCelebrationState()">🔍 Check Celebration State</button>
+        <button onclick="resetCelebration()">🔄 Reset Celebration Flag</button>
+        
+        <div id="test-output" style="margin-top: 15px; padding: 10px; background: #f5f5f5;"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('test-output');
+            const className = type === 'error' ? 'error' : (type === 'success' ? 'success' : 'info');
+            output.innerHTML += `<div class="${className}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+        }
+
+        function getMainAppWindow() {
+            // Try to access the main app in another tab
+            // This requires both tabs to be on the same localhost domain
+            try {
+                const mainWindow = window.open('', 'main-app');
+                if (mainWindow && mainWindow.Alpine) {
+                    return mainWindow;
+                }
+            } catch (e) {
+                log('Cannot access main app window. Open main app in separate tab first.', 'error');
+            }
+            return null;
+        }
+
+        function simulateLastPairVoting() {
+            const mainWindow = getMainAppWindow();
+            if (!mainWindow) {
+                log('⚠️ Please open main app at http://localhost:8000 in a separate tab first', 'error');
+                return;
+            }
+
+            try {
+                const bodyEl = mainWindow.document.querySelector('body[x-data]');
+                const appData = mainWindow.Alpine.$data(bodyEl);
+                
+                // Set to last pair
+                appData.phase1.companyPairs.currentIndex = 4; // 5th pair (0-indexed)
+                
+                // Add votes to simulate voting
+                appData.phase1.votingSystem.pairVotes = {
+                    '0': { companyA: 3, companyB: 1 },
+                    '1': { companyA: 1, companyB: 4 },
+                    '2': { companyA: 2, companyB: 2 },
+                    '3': { companyA: 4, companyB: 0 },
+                    '4': { companyA: 2, companyB: 3 }  // Last pair with votes
+                };
+                
+                // Load votes for current (last) pair
+                appData.phase1.votingSystem.loadVotesForCurrentPair();
+                
+                log('✅ Simulated voting through all 5 pairs. Last pair is active with votes recorded.', 'success');
+                log(`Current pair: ${appData.phase1.companyPairs.currentIndex + 1}/5`, 'info');
+                log(`Can go next: ${appData.phase1.companyPairs.canGoNext}`, 'info');
+                log(`Celebration triggered: ${appData.phase1.celebrationTriggered}`, 'info');
+                
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateNKeyPress() {
+            const mainWindow = getMainAppWindow();
+            if (!mainWindow) {
+                log('⚠️ Please open main app at http://localhost:8000 in a separate tab first', 'error');
+                return;
+            }
+
+            try {
+                const bodyEl = mainWindow.document.querySelector('body[x-data]');
+                const appData = mainWindow.Alpine.$data(bodyEl);
+                
+                // Simulate 'N' key press by calling nextRound
+                if (appData.phase1 && appData.phase1.timer && appData.phase1.timer.nextRound) {
+                    appData.phase1.timer.nextRound();
+                    log('✅ Simulated "N" key press (nextRound called)', 'success');
+                    log(`Celebration triggered: ${appData.phase1.celebrationTriggered}`, 'info');
+                } else {
+                    log('❌ nextRound function not found', 'error');
+                }
+                
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function checkCelebrationState() {
+            const mainWindow = getMainAppWindow();
+            if (!mainWindow) {
+                log('⚠️ Please open main app at http://localhost:8000 in a separate tab first', 'error');
+                return;
+            }
+
+            try {
+                const bodyEl = mainWindow.document.querySelector('body[x-data]');
+                const appData = mainWindow.Alpine.$data(bodyEl);
+                
+                log('=== CELEBRATION STATE CHECK ===', 'info');
+                log(`Current phase: ${appData.currentPhase}`, 'info');
+                log(`Presentation mode: ${appData.presentationMode}`, 'info');
+                log(`Celebration triggered: ${appData.phase1?.celebrationTriggered}`, 'info');
+                log(`Is phase complete: ${appData.phase1?.isPhaseComplete ? appData.phase1.isPhaseComplete() : 'N/A'}`, 'info');
+                log(`Current pair: ${(appData.phase1?.companyPairs?.currentIndex || 0) + 1}/5`, 'info');
+                log(`Can go next: ${appData.phase1?.companyPairs?.canGoNext}`, 'info');
+                log(`Votes A: ${appData.phase1?.votes?.companyA || 0}, B: ${appData.phase1?.votes?.companyB || 0}`, 'info');
+                
+                // Check if celebration screen should be visible
+                const shouldShow = appData.presentationMode && appData.currentPhase === 1 && appData.phase1?.celebrationTriggered;
+                log(`Should celebration show: ${shouldShow}`, shouldShow ? 'success' : 'info');
+                
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetCelebration() {
+            const mainWindow = getMainAppWindow();
+            if (!mainWindow) {
+                log('⚠️ Please open main app at http://localhost:8000 in a separate tab first', 'error');
+                return;
+            }
+
+            try {
+                const bodyEl = mainWindow.document.querySelector('body[x-data]');
+                const appData = mainWindow.Alpine.$data(bodyEl);
+                
+                if (appData.phase1) {
+                    appData.phase1.celebrationTriggered = false;
+                    log('✅ Reset celebration flag to false', 'success');
+                } else {
+                    log('❌ phase1 not found', 'error');
+                }
+                
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check state when page loads
+        setTimeout(() => {
+            log('🧪 Celebration timing test utilities ready. Open main app and run tests.', 'info');
+        }, 500);
+    </script>
+</body>
+</html>
