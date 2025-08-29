@@ -54,14 +54,14 @@ Status: Phase 1 Near Complete, Critical Phase 2 Display Bug
   - [x] Remove `applyArchetypeTemplate()` function
   - [x] Clear `phase2.patterns` and `phase2.archetype` data model
 
-#### **13.2 Implement Source Company Selection**
+#### **13.2 Implement Source Company Selection** ✅
 - [x] **13.2.1 Create source selector interface**
   - [x] Multi-select grid of Phase 1 winners (1-3 selections)
   - [x] Visual indicators for selected sources (colors/badges)
   - [x] Strategic rationale input field per selection
   - [x] Save to `phase2.selectedSources[]`
 
-#### **13.3 Build Vertical Analysis Tool**
+#### **13.3 Build Vertical Analysis Tool** ✅
 - [x] **13.3.1 Create per-source analysis interface**
   - [x] Tabbed view for each selected source company
   - [x] Premise entry fields (WHY this strategy works)
@@ -69,20 +69,20 @@ Status: Phase 1 Near Complete, Critical Phase 2 Display Bug
   - [x] Causal chain visualization
   - [x] Save to `phase2.verticalAnalyses{}`
 
-#### **13.4 Implement Unified Canvas Interface**
-- [ ] **13.4.1 Create three-column canvas table**
-  - [ ] Source column: Dropdown from selectedSources
-  - [ ] Relation column: Positive/Negative selector with icons
-  - [ ] Target column: Free-text mapping to our company
-  - [ ] Row CRUD operations (Add, Edit, Delete)
-  - [ ] Save to `phase2.canvasRows[]`
+#### **13.4 Implement Unified Canvas Interface** ✅
+- [x] **13.4.1 Create three-column canvas table**
+  - [x] Source column: Dropdown from selectedSources
+  - [x] Relation column: Positive/Negative selector with icons
+  - [x] Target column: Free-text mapping to our company
+  - [x] Row CRUD operations (Add, Edit, Delete)
+  - [x] Save to `phase2.canvasRows[]`
 
-- [ ] **13.4.2 Add canvas management features**
-  - [ ] Filter by source company
-  - [ ] Filter by positive/negative relations  
-  - [ ] Group view by source
-  - [ ] Summary statistics (counts per source/relation)
-  - [ ] Export negative mappings to Phase 3
+- [x] **13.4.2 Add canvas management features**
+  - [x] Filter by source company
+  - [x] Filter by positive/negative relations  
+  - [x] Group view by source
+  - [x] Summary statistics (counts per source/relation)
+  - [x] Export negative mappings to Phase 3
 
 #### **13.5 Create New Presentation Display**
 - [ ] **13.5.1 Build live canvas visualization**

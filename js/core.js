@@ -532,6 +532,80 @@ document.addEventListener('alpine:init', () => {
       }
     },
     
+    // Unified Canvas Methods
+    addCanvasRow() {
+      const newRow = {
+        id: Date.now().toString(),
+        source: '',
+        relation: '',
+        target: '',
+        created: new Date().toISOString()
+      };
+      
+      this.phase2.canvasRows.push(newRow);
+      this.markUnsaved();
+      
+      console.log('Added canvas row:', {
+        totalRows: this.phase2.canvasRows.length
+      });
+    },
+    
+    removeCanvasRow(index) {
+      if (index >= 0 && index < this.phase2.canvasRows.length) {
+        this.phase2.canvasRows.splice(index, 1);
+        this.markUnsaved();
+        
+        console.log('Removed canvas row:', index, {
+          remainingRows: this.phase2.canvasRows.length
+        });
+      }
+    },
+    
+    removeCanvasRowById(rowId) {
+      const index = this.phase2.canvasRows.findIndex(row => row.id === rowId);
+      if (index !== -1) {
+        this.phase2.canvasRows.splice(index, 1);
+        this.markUnsaved();
+        
+        console.log('Removed canvas row by ID:', rowId, {
+          remainingRows: this.phase2.canvasRows.length
+        });
+      }
+    },
+    
+    exportNegativesToPhase3() {
+      const negativeRows = this.phase2.canvasRows.filter(row => row.relation === 'negative' && row.target);
+      
+      if (negativeRows.length === 0) {
+        alert('Geen negatieve mappings om te exporteren.');
+        return;
+      }
+      
+      // Prepare gaps for Phase 3 (future implementation)
+      const gaps = negativeRows.map(row => ({
+        source: row.source,
+        gapDescription: row.target,
+        category: 'strategy_gap',
+        exportedFrom: 'phase2_canvas',
+        exportedAt: new Date().toISOString()
+      }));
+      
+      // For now, store in a temporary structure (Phase 3 redesign will use this)
+      if (!this.phase3.importedGaps) {
+        this.phase3.importedGaps = [];
+      }
+      
+      this.phase3.importedGaps = gaps;
+      this.markUnsaved();
+      
+      console.log('Exported negative mappings to Phase 3:', {
+        gapCount: gaps.length,
+        sources: [...new Set(gaps.map(g => g.source))]
+      });
+      
+      alert(`${gaps.length} negatieve mappings geëxporteerd naar AI Actieplan (Fase 3).`);
+    },
+    
     // Phase 3: Decomposition Methods
     addPositiveAnalogy() {
       this.phase3.positiveAnalogies.push({

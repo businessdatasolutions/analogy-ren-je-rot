@@ -659,6 +659,272 @@
                                     </template>
                                 </div>
                             </div>
+                            
+                            <!-- Unified Canvas Interface -->
+                            <div x-show="phase2.selectedSources.length > 0" class="mb-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-sm font-medium text-gray-700">
+                                        Mapping Canvas 
+                                        <span class="text-xs text-gray-500">(Horizontale relaties)</span>
+                                    </h4>
+                                    <button @click="addCanvasRow()" 
+                                            class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200">
+                                        + Nieuwe Mapping
+                                    </button>
+                                </div>
+                                
+                                <!-- Canvas Management Controls -->
+                                <div x-show="phase2.canvasRows.length > 0" 
+                                     x-data="{ 
+                                         filterSource: '', 
+                                         filterRelation: '', 
+                                         viewMode: 'table',
+                                         filteredRows() { 
+                                             return phase2.canvasRows.filter(row => {
+                                                 const sourceMatch = !this.filterSource || row.source === this.filterSource;
+                                                 const relationMatch = !this.filterRelation || row.relation === this.filterRelation;
+                                                 return sourceMatch && relationMatch;
+                                             });
+                                         }
+                                     }" 
+                                     class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                     
+                                    <!-- Filter Controls -->
+                                    <div class="flex items-center space-x-4 mb-3">
+                                        <div class="flex items-center space-x-2">
+                                            <label class="text-xs text-gray-600">Filter bron:</label>
+                                            <select x-model="filterSource" class="text-xs border border-gray-300 rounded px-2 py-1">
+                                                <option value="">Alle bronnen</option>
+                                                <template x-for="source in phase2.selectedSources" :key="source.id">
+                                                    <option :value="source.name" x-text="source.name"></option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="flex items-center space-x-2">
+                                            <label class="text-xs text-gray-600">Filter relatie:</label>
+                                            <select x-model="filterRelation" class="text-xs border border-gray-300 rounded px-2 py-1">
+                                                <option value="">Alle relaties</option>
+                                                <option value="positive">✓ Positief</option>
+                                                <option value="negative">✗ Negatief</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="flex items-center space-x-2">
+                                            <label class="text-xs text-gray-600">Weergave:</label>
+                                            <div class="flex bg-white rounded border border-gray-300 overflow-hidden">
+                                                <button @click="viewMode = 'table'" 
+                                                        class="px-2 py-1 text-xs"
+                                                        :class="viewMode === 'table' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'">
+                                                    Tabel
+                                                </button>
+                                                <button @click="viewMode = 'grouped'" 
+                                                        class="px-2 py-1 text-xs border-l"
+                                                        :class="viewMode === 'grouped' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'">
+                                                    Gegroepeerd
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Statistics Summary -->
+                                    <div class="grid grid-cols-4 gap-4 text-xs">
+                                        <div class="bg-white rounded p-2 border">
+                                            <div class="text-gray-500">Totaal</div>
+                                            <div class="font-medium text-gray-800" x-text="filteredRows().length"></div>
+                                        </div>
+                                        <div class="bg-white rounded p-2 border">
+                                            <div class="text-gray-500">✓ Positief</div>
+                                            <div class="font-medium text-green-600" x-text="filteredRows().filter(r => r.relation === 'positive').length"></div>
+                                        </div>
+                                        <div class="bg-white rounded p-2 border">
+                                            <div class="text-gray-500">✗ Negatief</div>
+                                            <div class="font-medium text-red-600" x-text="filteredRows().filter(r => r.relation === 'negative').length"></div>
+                                        </div>
+                                        <div class="bg-white rounded p-2 border">
+                                            <div class="text-gray-500">Bronnen</div>
+                                            <div class="font-medium text-blue-600" x-text="[...new Set(filteredRows().map(r => r.source))].filter(Boolean).length"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Canvas Table -->
+                                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                                    <!-- Table Header -->
+                                    <div class="grid grid-cols-12 gap-2 bg-gray-50 p-3 text-xs font-medium text-gray-700 border-b">
+                                        <div class="col-span-4">Bron Bedrijf</div>
+                                        <div class="col-span-2 text-center">Relatie</div>
+                                        <div class="col-span-5">Mapping naar Ons Bedrijf</div>
+                                        <div class="col-span-1 text-center">Actie</div>
+                                    </div>
+                                    
+                                    <!-- Table View -->
+                                    <div x-show="viewMode === 'table'" class="divide-y divide-gray-200">
+                                        <template x-for="(row, index) in filteredRows()" :key="row.id">
+                                            <div class="grid grid-cols-12 gap-2 p-3 items-start hover:bg-gray-50">
+                                                <!-- Source Column -->
+                                                <div class="col-span-4">
+                                                    <select x-model="row.source" 
+                                                            @change="markUnsaved()"
+                                                            class="w-full text-xs border border-gray-300 rounded p-1">
+                                                        <option value="">Kies bron...</option>
+                                                        <template x-for="source in phase2.selectedSources" :key="source.id">
+                                                            <option :value="source.name" x-text="source.name"></option>
+                                                        </template>
+                                                    </select>
+                                                </div>
+                                                
+                                                <!-- Relation Column -->
+                                                <div class="col-span-2">
+                                                    <select x-model="row.relation" 
+                                                            @change="markUnsaved()"
+                                                            class="w-full text-xs border border-gray-300 rounded p-1">
+                                                        <option value="">Type...</option>
+                                                        <option value="positive">
+                                                            <span>✓ Positief</span>
+                                                        </option>
+                                                        <option value="negative">
+                                                            <span>✗ Negatief</span>
+                                                        </option>
+                                                    </select>
+                                                    <!-- Visual Indicator -->
+                                                    <div class="mt-1 text-center">
+                                                        <span x-show="row.relation === 'positive'" class="text-green-600 text-sm">✓</span>
+                                                        <span x-show="row.relation === 'negative'" class="text-red-600 text-sm">✗</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Target Column -->
+                                                <div class="col-span-5">
+                                                    <textarea 
+                                                        x-model="row.target"
+                                                        @input="markUnsaved()"
+                                                        class="w-full text-xs border border-gray-300 rounded p-2 resize-none"
+                                                        rows="2"
+                                                        placeholder="Hoe relateert dit aan ons bedrijf? Wat is de vergelijking?">
+                                                    </textarea>
+                                                </div>
+                                                
+                                                <!-- Action Column -->
+                                                <div class="col-span-1 text-center">
+                                                    <button @click="removeCanvasRowById(row.id)" 
+                                                            class="text-red-500 hover:text-red-700 text-xs">
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    
+                                    <!-- Grouped View -->
+                                    <div x-show="viewMode === 'grouped'" class="space-y-4">
+                                        <template x-for="source in phase2.selectedSources" :key="source.id">
+                                            <div x-show="filteredRows().some(row => row.source === source.name)">
+                                                <!-- Source Group Header -->
+                                                <div class="bg-blue-50 p-3 border-b">
+                                                    <div class="flex items-center justify-between">
+                                                        <h5 class="font-medium text-blue-800" x-text="source.name"></h5>
+                                                        <div class="text-xs text-blue-600">
+                                                            <span x-text="filteredRows().filter(row => row.source === source.name).length"></span> mappings
+                                                            <span class="ml-2">
+                                                                (<span class="text-green-600" x-text="filteredRows().filter(row => row.source === source.name && row.relation === 'positive').length"></span>✓
+                                                                /<span class="text-red-600" x-text="filteredRows().filter(row => row.source === source.name && row.relation === 'negative').length"></span>✗)
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Source Group Rows -->
+                                                <div class="divide-y divide-gray-200">
+                                                    <template x-for="row in filteredRows().filter(r => r.source === source.name)" :key="row.id">
+                                                        <div class="grid grid-cols-11 gap-2 p-3 items-start hover:bg-gray-50">
+                                                            <!-- Relation Column -->
+                                                            <div class="col-span-2">
+                                                                <select x-model="row.relation" 
+                                                                        @change="markUnsaved()"
+                                                                        class="w-full text-xs border border-gray-300 rounded p-1">
+                                                                    <option value="">Type...</option>
+                                                                    <option value="positive">✓ Positief</option>
+                                                                    <option value="negative">✗ Negatief</option>
+                                                                </select>
+                                                                <div class="mt-1 text-center">
+                                                                    <span x-show="row.relation === 'positive'" class="text-green-600 text-sm">✓</span>
+                                                                    <span x-show="row.relation === 'negative'" class="text-red-600 text-sm">✗</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Target Column -->
+                                                            <div class="col-span-8">
+                                                                <textarea 
+                                                                    x-model="row.target"
+                                                                    @input="markUnsaved()"
+                                                                    class="w-full text-xs border border-gray-300 rounded p-2 resize-none"
+                                                                    rows="2"
+                                                                    placeholder="Hoe relateert dit aan ons bedrijf?">
+                                                                </textarea>
+                                                            </div>
+                                                            
+                                                            <!-- Action Column -->
+                                                            <div class="col-span-1 text-center">
+                                                                <button @click="removeCanvasRowById(row.id)" 
+                                                                        class="text-red-500 hover:text-red-700 text-xs">
+                                                                    ✕
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    
+                                    <!-- Empty State -->
+                                    <div x-show="filteredRows().length === 0" class="text-center py-8 text-gray-500">
+                                        <div x-show="phase2.canvasRows.length === 0">
+                                            <p class="text-xs">Geen mappings toegevoegd. Klik '+ Nieuwe Mapping' om te beginnen.</p>
+                                            <p class="text-xs text-gray-400 mt-1">Vergelijk aspecten van bronbedrijven met uw eigen bedrijf.</p>
+                                        </div>
+                                        <div x-show="phase2.canvasRows.length > 0">
+                                            <p class="text-xs">Geen mappings passen bij de huidige filters.</p>
+                                            <p class="text-xs text-gray-400 mt-1">Pas de filters aan om resultaten te zien.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Canvas Summary -->
+                                <div x-show="phase2.canvasRows.length > 0" class="mt-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-xs text-gray-600">
+                                            <span>
+                                                Totaal: <span class="font-medium" x-text="phase2.canvasRows.length"></span> mappings
+                                            </span>
+                                            <div class="flex space-x-4">
+                                                <span>
+                                                    <span class="text-green-600">✓</span> 
+                                                    Positief: <span class="font-medium" x-text="phase2.canvasRows.filter(r => r.relation === 'positive').length"></span>
+                                                </span>
+                                                <span>
+                                                    <span class="text-red-600">✗</span> 
+                                                    Negatief: <span class="font-medium" x-text="phase2.canvasRows.filter(r => r.relation === 'negative').length"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Export to Phase 3 -->
+                                        <div x-show="phase2.canvasRows.filter(r => r.relation === 'negative').length > 0" 
+                                             class="flex items-center justify-between pt-2 border-t border-gray-300">
+                                            <span class="text-xs text-gray-600">
+                                                <span class="font-medium" x-text="phase2.canvasRows.filter(r => r.relation === 'negative').length"></span> 
+                                                negatieve mappings gereed voor Fase 3
+                                            </span>
+                                            <button @click="exportNegativesToPhase3()" 
+                                                    class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">
+                                                Export naar AI Actieplan →
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Results Summary -->
