@@ -274,7 +274,18 @@ document.addEventListener('alpine:init', () => {
       // Deep merge phase data to preserve nested arrays and objects
       // Phase1 is initialized from phase1.js
       if (this.session.phase2) {
-        this.phase2 = this.deepMerge(this.phase2, this.session.phase2);
+        // Special handling for winnersFromPhase1 - don't merge, replace entirely to prevent old data
+        const sessionPhase2 = { ...this.session.phase2 };
+        if (sessionPhase2.winnersFromPhase1 && Array.isArray(sessionPhase2.winnersFromPhase1)) {
+          // Only use winners if they have proper structure
+          sessionPhase2.winnersFromPhase1 = sessionPhase2.winnersFromPhase1.filter(winner => {
+            return winner && 
+                   typeof winner.name === 'string' && 
+                   typeof winner.votes === 'number' &&
+                   winner.strategicContrast;
+          });
+        }
+        this.phase2 = this.deepMerge(this.phase2, sessionPhase2);
       }
       if (this.session.phase3) {
         this.phase3 = this.deepMerge(this.phase3, this.session.phase3);
@@ -412,12 +423,24 @@ document.addEventListener('alpine:init', () => {
         return false; // No winners to transfer
       }
 
-      // Store winners in Phase 2
-      this.phase2.winnersFromPhase1 = winners;
+      // Clear any existing winners first to prevent old data persistence
+      this.phase2.winnersFromPhase1 = [];
+      
+      // Validate and filter winners before storing
+      const validWinners = winners.filter(winner => {
+        return winner && 
+               typeof winner.name === 'string' && 
+               typeof winner.votes === 'number' &&
+               winner.strategicContrast;
+      });
+
+      // Store only valid winners in Phase 2
+      this.phase2.winnersFromPhase1 = validWinners;
 
       console.log('Winners transferred to Phase 2 for source selection:', {
-        winners: winners.length,
-        availableSources: winners.map(w => w.name)
+        winners: validWinners.length,
+        availableSources: validWinners.map(w => w.name),
+        filtered: winners.length - validWinners.length
       });
 
       return true;
