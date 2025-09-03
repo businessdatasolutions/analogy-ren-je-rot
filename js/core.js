@@ -51,7 +51,8 @@ const createDefaultSession = () => ({
   phase2: {
     selectedSources: [],
     verticalAnalyses: {},
-    canvasRows: []
+    canvasRows: [],
+    winnersFromPhase1: []
   },
   phase3: {
     hypotheses: [],
@@ -224,6 +225,19 @@ document.addEventListener('alpine:init', () => {
         if (savedSession) {
           // Deep merge saved session with default structure to preserve any new fields
           this.session = this.deepMerge(this.session, savedSession);
+          
+          // CRITICAL: Clear Phase 2 winners if Phase 1 isn't completed
+          if (!this.session.phase1 || 
+              !this.session.phase1.results || 
+              this.session.phase1.results.length === 0) {
+            // Phase 1 not completed, clear any Phase 2 data
+            this.session.phase2.winnersFromPhase1 = [];
+            this.session.phase2.selectedSources = [];
+            this.session.phase2.verticalAnalyses = {};
+            this.session.phase2.canvasRows = [];
+            console.log('Phase 1 not completed - cleared Phase 2 data');
+          }
+          
           this.syncSessionToPhaseData();
         } else {
           // Creating new session
@@ -276,7 +290,19 @@ document.addEventListener('alpine:init', () => {
       if (this.session.phase2) {
         // Special handling for winnersFromPhase1 - don't merge, replace entirely to prevent old data
         const sessionPhase2 = { ...this.session.phase2 };
-        if (sessionPhase2.winnersFromPhase1 && Array.isArray(sessionPhase2.winnersFromPhase1)) {
+        
+        // Check if Phase 1 has been completed
+        const phase1Completed = this.session.phase1 && 
+                                this.session.phase1.results && 
+                                this.session.phase1.results.length > 0;
+        
+        if (!phase1Completed) {
+          // Clear Phase 2 data if Phase 1 not completed
+          sessionPhase2.winnersFromPhase1 = [];
+          sessionPhase2.selectedSources = [];
+          sessionPhase2.verticalAnalyses = {};
+          sessionPhase2.canvasRows = [];
+        } else if (sessionPhase2.winnersFromPhase1 && Array.isArray(sessionPhase2.winnersFromPhase1)) {
           // Only use winners if they have proper structure
           sessionPhase2.winnersFromPhase1 = sessionPhase2.winnersFromPhase1.filter(winner => {
             return winner && 
@@ -285,6 +311,7 @@ document.addEventListener('alpine:init', () => {
                    winner.strategicContrast;
           });
         }
+        
         this.phase2 = this.deepMerge(this.phase2, sessionPhase2);
       }
       if (this.session.phase3) {
@@ -763,12 +790,31 @@ document.addEventListener('alpine:init', () => {
             this.phase1 = await window.initializePhase1();
           }
           
+          // EXPLICITLY reset phase2 and phase3 data
+          this.phase2 = {
+            selectedSources: [],
+            verticalAnalyses: {},
+            canvasRows: [],
+            winnersFromPhase1: []
+          };
+          
+          this.phase3 = {
+            hypotheses: [],
+            actionItems: []
+          };
+          
           // Reset timer
           this.timer.duration = this.session.settings.timerDuration;
           this.timer.remaining = this.timer.duration;
           this.resetTimer();
           
+          // Save the clean state
+          await this.saveSession();
+          
           alert('Lokale opslag is gewist. Starten met een nieuwe sessie.');
+          
+          // Reload page for clean start
+          window.location.reload();
         } catch (error) {
           console.error('Error clearing local storage:', error);
           alert('Fout bij het wissen van lokale opslag: ' + error.message);
